@@ -5,13 +5,28 @@
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
     <loc>https://lbg43.github.io/lbg/</loc>
-    <lastmod>2025-04-18</lastmod>
+    <lastmod>2025-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://lbg43.github.io/lbg/index.html</loc>
-    <lastmod>2025-04-18</lastmod>
+    <lastmod>2025-04-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- GitHub Pages URLs -->
+  
+  <!-- Cloudflare Pages URLs -->
+  <url>
+    <loc>https://lbg-4ha.pages.dev/</loc>
+    <lastmod>2025-04-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://lbg-4ha.pages.dev/index.html</loc>
+    <lastmod>2025-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
