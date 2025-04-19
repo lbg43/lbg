@@ -1455,4 +1455,45 @@ nav ul li a.active::after {
     .carousel-next {
         right: 10px;
     }
+}
+
+/* 文章页面移动端导航栏调整 */
+@media (max-width: 768px) {
+    .article-detail .logo img {
+        width: 120px;
+        height: auto;
+    }
+    
+    .article-detail .mobile-menu-btn {
+        width: 35px;
+        height: 30px;
+        margin-top: 5px;
+    }
+    
+    .article-detail .mobile-menu-btn .bar {
+        height: 3px;
+        margin: 5px 0;
+    }
+    
+    .article-detail .header-container {
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .article-detail .logo img {
+        width: 100px;
+        height: auto;
+    }
+    
+    .article-detail .mobile-menu-btn {
+        width: 30px;
+        height: 25px;
+        margin-top: 3px;
+    }
+    
+    .article-detail .mobile-menu-btn .bar {
+        height: 2px;
+        margin: 4px 0;
+    }
 } 
