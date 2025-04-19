@@ -1460,40 +1460,50 @@ nav ul li a.active::after {
 /* 文章页面移动端导航栏调整 */
 @media (max-width: 768px) {
     .article-detail .logo img {
-        width: 120px;
-        height: auto;
+        width: 120px !important;
+        height: auto !important;
+        max-height: 40px;
     }
     
     .article-detail .mobile-menu-btn {
         width: 35px;
         height: 30px;
         margin-top: 5px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     
     .article-detail .mobile-menu-btn .bar {
         height: 3px;
-        margin: 5px 0;
+        margin: 3px 0;
+        width: 100%;
+        background-color: var(--dark-color);
     }
     
     .article-detail .header-container {
         padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 }
 
 @media (max-width: 480px) {
     .article-detail .logo img {
-        width: 100px;
-        height: auto;
+        width: 100px !important;
+        height: auto !important;
+        max-height: 35px;
     }
     
     .article-detail .mobile-menu-btn {
-        width: 30px;
-        height: 25px;
+        width: 28px;
+        height: 24px;
         margin-top: 3px;
     }
     
     .article-detail .mobile-menu-btn .bar {
         height: 2px;
-        margin: 4px 0;
+        margin: 3px 0;
     }
 } 
