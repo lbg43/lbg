@@ -217,10 +217,18 @@ p {
     font-size: 1.8rem;
     font-weight: 700;
     color: var(--primary-color);
+    display: flex;
+    align-items: center;
 }
 
 .logo img {
     height: 40px;
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+.main-header.fixed .logo img {
+    height: 35px;
 }
 
 nav ul {
@@ -948,6 +956,14 @@ nav ul li a.active::after {
         grid-template-columns: repeat(2, 1fr);
         gap: 40px;
     }
+    
+    .logo img {
+        height: 35px;
+    }
+    
+    .main-header.fixed .logo img {
+        height: 32px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1015,6 +1031,22 @@ nav ul li a.active::after {
         right: 20px;
         width: 40px;
         height: 40px;
+    }
+    
+    .main-header {
+        padding: 15px 0;
+    }
+    
+    .main-header.fixed {
+        padding: 12px 0;
+    }
+    
+    .logo img {
+        height: 30px;
+    }
+    
+    .main-header.fixed .logo img {
+        height: 28px;
     }
 }
 
@@ -1459,10 +1491,19 @@ nav ul li a.active::after {
 
 /* 文章页面移动端导航栏调整 */
 @media (max-width: 768px) {
-    .article-detail .logo img {
-        width: 120px !important;
-        height: auto !important;
-        max-height: 40px;
+    .article-detail .logo img,
+    .main-header .logo img {
+        height: 30px !important;
+        width: auto !important;
+        max-width: 120px;
+        object-fit: contain;
+    }
+    
+    /* 特别针对文章页面的logo */
+    body .article-detail .header-container .logo img {
+        height: 28px !important;
+        width: auto !important;
+        max-width: 110px;
     }
     
     .article-detail .mobile-menu-btn {
@@ -1490,10 +1531,19 @@ nav ul li a.active::after {
 }
 
 @media (max-width: 480px) {
-    .article-detail .logo img {
-        width: 100px !important;
-        height: auto !important;
-        max-height: 35px;
+    .article-detail .logo img,
+    .main-header .logo img {
+        height: 25px !important;
+        width: auto !important;
+        max-width: 100px;
+        object-fit: contain;
+    }
+    
+    /* 特别针对文章页面的logo */
+    body .article-detail .header-container .logo img {
+        height: 24px !important;
+        width: auto !important;
+        max-width: 90px;
     }
     
     .article-detail .mobile-menu-btn {
@@ -1505,5 +1555,101 @@ nav ul li a.active::after {
     .article-detail .mobile-menu-btn .bar {
         height: 2px;
         margin: 3px 0;
+    }
+}
+
+/* 添加更小屏幕设备的优化 */
+@media (max-width: 360px) {
+    .main-header .logo img,
+    .article-detail .logo img {
+        height: 22px !important;
+        width: auto !important;
+        max-width: 85px;
+        object-fit: contain;
+    }
+    
+    /* 特别针对文章页面的logo */
+    body .article-detail .header-container .logo img {
+        height: 20px !important;
+        width: auto !important;
+        max-width: 75px;
+    }
+    
+    .main-header {
+        padding: 15px 0;
+    }
+    
+    .main-header.fixed {
+        padding: 10px 0;
+    }
+}
+
+/* 响应式logo样式 */
+.responsive-logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.main-header.fixed .responsive-logo {
+    height: 35px;
+}
+
+@media (max-width: 992px) {
+    .responsive-logo {
+        height: 35px;
+    }
+    
+    .main-header.fixed .responsive-logo {
+        height: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .responsive-logo {
+        height: 30px !important;
+        max-width: 120px;
+    }
+    
+    .main-header.fixed .responsive-logo {
+        height: 28px !important;
+    }
+    
+    .footer-about .responsive-logo {
+        height: 35px !important;
+        max-width: 130px;
+    }
+}
+
+@media (max-width: 480px) {
+    .responsive-logo {
+        height: 25px !important;
+        max-width: 100px;
+    }
+    
+    .main-header.fixed .responsive-logo {
+        height: 24px !important;
+    }
+    
+    .footer-about .responsive-logo {
+        height: 30px !important;
+        max-width: 110px;
+    }
+}
+
+@media (max-width: 360px) {
+    .responsive-logo {
+        height: 22px !important;
+        max-width: 85px;
+    }
+    
+    .main-header.fixed .responsive-logo {
+        height: 20px !important;
+    }
+    
+    .footer-about .responsive-logo {
+        height: 25px !important;
+        max-width: 95px;
     }
 } 
