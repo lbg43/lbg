@@ -1652,4 +1652,41 @@ nav ul li a.active::after {
         height: 25px !important;
         max-width: 95px;
     }
+}
+
+/* 订阅消息样式 */
+.subscribe-message {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: opacity 0.3s ease;
+}
+
+.subscribe-message.success {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #388e3c;
+    border: 1px solid #388e3c;
+}
+
+.subscribe-message.error {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #d32f2f;
+    border: 1px solid #d32f2f;
+}
+
+/* 在页脚中订阅消息的特殊样式 */
+.footer .subscribe-message {
+    color: #fff;
+    margin-top: 10px;
+}
+
+.footer .subscribe-message.success {
+    background-color: rgba(76, 175, 80, 0.3);
+    border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.footer .subscribe-message.error {
+    background-color: rgba(244, 67, 54, 0.3);
+    border: 1px solid rgba(244, 67, 54, 0.5);
 } 
