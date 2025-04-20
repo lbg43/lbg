@@ -1,0 +1,21 @@
+# 忽略依赖目录
+/vendor/
+/node_modules/
+
+# 忽略本地配置文件（包含敏感信息）
+config.local.php
+*.local.php
+
+# 忽略日志文件
+*.log
+subscriptions.log
+
+# 忽略IDE和编辑器文件
+.idea/
+.vscode/
+*.sublime-*
+.DS_Store
+
+# 忽略PHP错误日志
+php_errors.log
+error_log 
