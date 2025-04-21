@@ -43,7 +43,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
                 formData.append('email', email);
                 formData.append('subscribeTime', new Date().toLocaleString());
-                formData.append('_cc', '1508611232@qq.com');
+                formData.append('_subject', '新网站订阅通知');
+                
+                // 添加管理员抄送
+                const adminEmail = '1508611232@qq.com'; // 网站管理员邮箱
+                formData.append('_cc', adminEmail);
+                
+                // 添加更详细的内容给管理员
+                const message = `
+网站有新的订阅者！
+
+订阅者邮箱: ${email}
+订阅时间: ${new Date().toLocaleString()}
+订阅页面: ${window.location.href}
+用户设备: ${navigator.userAgent}
+                `;
+                formData.append('message', message);
                 
                 // 使用XMLHttpRequest代替fetch，避免可能的CSP问题
                 const xhr = new XMLHttpRequest();
