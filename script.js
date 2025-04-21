@@ -379,15 +379,15 @@ function initFormValidation() {
     const contactForm = document.querySelector('.contact-form form');
     
     if (contactForm) {
+        // 添加自定义表单验证和提交
         contactForm.addEventListener('submit', function(e) {
-            // 阻止表单默认提交行为
-            e.preventDefault();
-            
+            // 不阻止表单默认提交行为，让Formspree处理
             let isValid = true;
             
             // 获取所有必填字段
             const name = document.getElementById('name');
             const email = document.getElementById('email');
+            const subject = document.getElementById('subject');
             const message = document.getElementById('message');
             
             // 清除所有错误
@@ -397,24 +397,35 @@ function initFormValidation() {
             if (!name || name.value.trim() === '') {
                 showError(name, '请输入您的姓名');
                 isValid = false;
+                e.preventDefault();
             }
             
             // 验证邮箱
             if (!email || email.value.trim() === '') {
                 showError(email, '请输入您的邮箱');
                 isValid = false;
+                e.preventDefault();
             } else if (!isValidEmail(email.value)) {
                 showError(email, '请输入有效的邮箱地址');
                 isValid = false;
+                e.preventDefault();
+            }
+            
+            // 验证主题
+            if (!subject || subject.value.trim() === '') {
+                showError(subject, '请输入主题');
+                isValid = false;
+                e.preventDefault();
             }
             
             // 验证消息
             if (!message || message.value.trim() === '') {
                 showError(message, '请输入您的消息');
                 isValid = false;
+                e.preventDefault();
             }
             
-            // 如果验证通过，显示成功消息
+            // 如果验证通过，显示加载状态
             if (isValid) {
                 // 禁用提交按钮，防止重复提交
                 const submitButton = contactForm.querySelector('button[type="submit"]');
@@ -423,32 +434,12 @@ function initFormValidation() {
                     submitButton.textContent = '发送中...';
                 }
                 
-                // 显示成功消息
-                setTimeout(() => {
-                    const successMessage = document.createElement('div');
-                    successMessage.className = 'success-message';
-                    successMessage.textContent = '您的消息已发送，我们会尽快联系您！';
-                    
-                    // 清空表单
-                    contactForm.reset();
-                    
-                    // 添加成功消息
-                    contactForm.parentNode.insertBefore(successMessage, contactForm);
-                    
-                    // 恢复提交按钮
-                    if (submitButton) {
-                        submitButton.disabled = false;
-                        submitButton.textContent = '发送留言';
-                    }
-                    
-                    // 3秒后移除成功消息
-                    setTimeout(() => {
-                        successMessage.style.opacity = '0';
-                        setTimeout(() => {
-                            successMessage.remove();
-                        }, 300);
-                    }, 3000);
-                }, 1000);
+                // 表单成功提交后的处理将由Formspree完成
+                // Formspree会自动将数据发送到设置的邮箱
+                // 并将表单重定向到感谢页面
+                
+                // 记录日志
+                console.log('表单提交: ' + name.value + ' (' + email.value + ') - ' + new Date().toLocaleString());
             }
         });
     }
