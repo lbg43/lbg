@@ -381,9 +381,63 @@ function initFormValidation() {
     if (contactForm) {
         console.log('找到联系表单:', contactForm.id);
         
+        // 同步邮箱到_replyto字段
+        const emailField = contactForm.querySelector('input[name="email"]');
+        const replyToField = contactForm.querySelector('input[name="_replyto"]');
+        
+        if (emailField && replyToField) {
+            // 初始化时同步一次
+            if (emailField.value) {
+                replyToField.value = emailField.value;
+            }
+            
+            // 监听邮箱字段变化，同步到_replyto
+            emailField.addEventListener('input', function() {
+                replyToField.value = this.value;
+            });
+            
+            // 在表单提交前再次确认同步
+            emailField.addEventListener('change', function() {
+                replyToField.value = this.value;
+            });
+        }
+        
         // 添加简单的表单验证
         contactForm.addEventListener('submit', function(e) {
             console.log('联系表单提交触发');
+            e.preventDefault(); // 阻止默认表单提交
+            
+            // 检查表单是否已在提交中，避免重复提交
+            if (contactForm.getAttribute('data-submitting') === 'true') {
+                console.log('表单正在提交中，请勿重复点击');
+                return false;
+            }
+            
+            // 验证必填字段
+            const name = contactForm.querySelector('input[name="name"]').value;
+            const email = contactForm.querySelector('input[name="email"]').value;
+            const subject = contactForm.querySelector('input[name="subject"]').value;
+            const message = contactForm.querySelector('textarea[name="message"]').value;
+            
+            if (!name || !email || !subject || !message) {
+                alert('请填写所有必填字段');
+                return false;
+            }
+            
+            // 验证邮箱格式
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('请输入有效的邮箱地址');
+                return false;
+            }
+            
+            // 确保_replyto字段有值
+            if (replyToField) {
+                replyToField.value = email;
+            }
+            
+            // 设置表单状态为提交中
+            contactForm.setAttribute('data-submitting', 'true');
             
             // 禁用提交按钮，防止重复提交
             const submitButton = contactForm.querySelector('button[type="submit"]');
@@ -397,8 +451,12 @@ function initFormValidation() {
                 window._hmt.push(['_trackEvent', '联系表单', '提交', '联系表单提交']);
             }
             
-            // 让表单正常提交
-            return true;
+            // 延迟提交表单，确保所有同步操作完成
+            setTimeout(function() {
+                contactForm.submit();
+            }, 100);
+            
+            return false;
         });
     }
 }
