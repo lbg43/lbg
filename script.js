@@ -435,6 +435,12 @@ function initFormValidation() {
             if (isValid) {
                 console.log('表单验证通过，准备提交');
                 
+                // 设置回复地址
+                const hiddenReplyTo = document.getElementById('hidden-replyto');
+                if (hiddenReplyTo && email) {
+                    hiddenReplyTo.value = email.value;
+                }
+                
                 // 禁用提交按钮，防止重复提交
                 if (submitButton) {
                     submitButton.disabled = true;
@@ -453,6 +459,7 @@ function initFormValidation() {
                 formData.append('submitTime', new Date().toLocaleString());
                 formData.append('_subject', '网站联系表单提交');
                 formData.append('_cc', '1508611232@qq.com');
+                formData.append('_replyto', email.value);
                 
                 // 使用fetch API提交表单
                 fetch(contactForm.getAttribute('action'), {
