@@ -393,6 +393,8 @@ function initFormValidation() {
             const email = document.getElementById('email');
             const subject = document.getElementById('subject');
             const message = document.getElementById('message');
+            const resultElement = contactForm.querySelector('.form-result');
+            const submitButton = contactForm.querySelector('button[type="submit"]');
             
             // 清除所有错误
             clearErrors();
@@ -432,80 +434,99 @@ function initFormValidation() {
             // 如果验证通过，发送表单
             if (isValid) {
                 console.log('表单验证通过，准备提交');
-                // 禁用提交按钮，防止重复提交
-                const submitButton = contactForm.querySelector('button[type="submit"]');
-                const resultElement = contactForm.querySelector('.form-result');
                 
+                // 禁用提交按钮，防止重复提交
                 if (submitButton) {
                     submitButton.disabled = true;
-                    submitButton.textContent = '发送中...';
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
+                }
+                
+                // 隐藏之前的消息
+                if (resultElement) {
+                    resultElement.style.display = 'none';
+                }
+                
+                console.log('表单提交至:', contactForm.getAttribute('action'));
+                // 创建FormData
+                const formData = new FormData(contactForm);
+                // 增加时间戳
+                formData.append('submitTime', new Date().toLocaleString());
+                formData.append('_subject', '网站联系表单提交');
+                formData.append('_cc', '1508611232@qq.com');
+                
+                // 使用fetch API提交表单
+                fetch(contactForm.getAttribute('action'), {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    console.log('Formspree响应状态:', response.status);
+                    if (!response.ok) {
+                        throw new Error('网络响应错误');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Formspree响应数据:', data);
                     
-                    console.log('表单提交至:', contactForm.getAttribute('action'));
-                    // 创建FormData
-                    const formData = new FormData(contactForm);
-                    // 增加时间戳
-                    formData.append('submitTime', new Date().toLocaleString());
-                    
-                    // 使用fetch API提交表单
-                    fetch(contactForm.getAttribute('action'), {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(response => {
-                        console.log('Formspree响应状态:', response.status);
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Formspree响应数据:', data);
-                        // 恢复按钮状态
-                        submitButton.disabled = false;
-                        submitButton.textContent = '发送留言';
+                    if (data.ok) {
+                        console.log('表单提交成功');
+                        // 清空表单字段
+                        contactForm.reset();
                         
-                        if (data.ok) {
-                            console.log('表单提交成功');
-                            // 清空表单字段
-                            contactForm.reset();
-                            
-                            // 显示成功消息
-                            if (resultElement) {
-                                resultElement.textContent = '留言发送成功，感谢您的反馈！';
-                                resultElement.className = 'form-result success';
-                                resultElement.style.display = 'block';
-                                
-                                // 3秒后隐藏消息
-                                setTimeout(() => {
-                                    resultElement.style.display = 'none';
-                                }, 3000);
-                            }
-                            
-                            // 记录日志
-                            console.log('表单提交: ' + name.value + ' (' + email.value + ') - ' + new Date().toLocaleString());
-                        } else {
-                            console.error('表单提交失败:', data);
-                            // 显示错误消息
-                            if (resultElement) {
-                                resultElement.textContent = '留言发送失败，请稍后重试';
-                                resultElement.className = 'form-result error';
-                                resultElement.style.display = 'block';
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        console.error('表单提交错误:', error);
-                        // 恢复按钮状态
-                        submitButton.disabled = false;
-                        submitButton.textContent = '发送留言';
-                        
-                        // 显示错误消息
+                        // 显示成功消息
                         if (resultElement) {
-                            resultElement.textContent = '提交过程中发生错误，请稍后重试';
-                            resultElement.className = 'form-result error';
+                            resultElement.textContent = '留言发送成功，感谢您的反馈！';
+                            resultElement.className = 'form-result success';
                             resultElement.style.display = 'block';
+                            
+                            // 3秒后隐藏消息
+                            setTimeout(() => {
+                                resultElement.style.display = 'none';
+                            }, 3000);
                         }
-                    });
+                        
+                        // 记录日志
+                        console.log('表单提交: ' + name.value + ' (' + email.value + ') - ' + new Date().toLocaleString());
+                        
+                        // 记录到百度统计
+                        if (window._hmt) {
+                            window._hmt.push(['_trackEvent', '联系表单', '提交成功', email.value]);
+                        }
+                    } else {
+                        throw new Error('提交失败');
+                    }
+                })
+                .catch(error => {
+                    console.error('表单提交错误:', error);
+                    
+                    // 显示错误消息
+                    if (resultElement) {
+                        resultElement.textContent = '提交失败，请稍后重试或直接发送邮件至：1508611232@qq.com';
+                        resultElement.className = 'form-result error';
+                        resultElement.style.display = 'block';
+                    }
+                    
+                    // 记录到百度统计
+                    if (window._hmt) {
+                        window._hmt.push(['_trackEvent', '联系表单', '提交失败', error.message]);
+                    }
+                })
+                .finally(() => {
+                    // 恢复按钮状态
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = '发送留言';
+                    }
+                });
+            } else {
+                // 验证失败时，滚动到第一个错误字段
+                const firstError = contactForm.querySelector('.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
         });
