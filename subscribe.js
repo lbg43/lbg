@@ -30,9 +30,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
+                // 准备订阅者表单数据
                 const formData = new FormData(form);
                 formData.append('_autoresponse', '感谢您的订阅！我们会定期发送最新资讯给您。');
                 
+                // 添加管理员通知相关字段
+                formData.append('_cc', '1508611232@qq.com');
+                formData.append('message', `新用户订阅：${email}\n订阅时间：${new Date().toLocaleString()}`);
+                formData.append('_subject', '网站订阅通知');
+                
+                // 发送表单数据
                 const response = await fetch(form.action, {
                     method: 'POST',
                     body: formData,
@@ -55,21 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // 清空表单
                     form.reset();
-                    
-                    // 发送通知邮件到管理员邮箱
-                    const adminEmail = '1508611232@qq.com';
-                    const notificationData = new FormData();
-                    notificationData.append('_to', adminEmail);
-                    notificationData.append('_subject', '新订阅通知');
-                    notificationData.append('message', `新用户订阅：${email}\n订阅时间：${subscriptionTime}`);
-                    
-                    await fetch(form.action, {
-                        method: 'POST',
-                        body: notificationData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
                     
                     // 记录到百度统计
                     if (window._hmt) {
