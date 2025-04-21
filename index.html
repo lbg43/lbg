@@ -399,22 +399,24 @@
                     </div>
                 </div>
                 <div class="contact-form">
-                    <form>
+                    <form action="https://formspree.io/f/xldjqywr" method="POST">
+                        <input type="hidden" name="_cc" value="1508611232@qq.com">
+                        <input type="hidden" name="_subject" value="网站联系表单提交">
                         <div class="form-group">
                             <label for="name">姓名</label>
-                            <input type="text" id="name" placeholder="请输入您的姓名">
+                            <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
                         </div>
                         <div class="form-group">
                             <label for="email">邮箱</label>
-                            <input type="email" id="email" placeholder="请输入您的邮箱">
+                            <input type="email" id="email" name="email" placeholder="请输入您的邮箱" required>
                         </div>
                         <div class="form-group">
                             <label for="subject">主题</label>
-                            <input type="text" id="subject" placeholder="请输入主题">
+                            <input type="text" id="subject" name="subject" placeholder="请输入主题" required>
                         </div>
                         <div class="form-group">
                             <label for="message">留言</label>
-                            <textarea id="message" placeholder="请输入您的留言"></textarea>
+                            <textarea id="message" name="message" placeholder="请输入您的留言" required></textarea>
                         </div>
                         <button type="submit" class="btn">发送留言</button>
                     </form>
