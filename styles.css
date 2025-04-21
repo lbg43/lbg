@@ -702,11 +702,13 @@ nav ul li a.active::after {
 
 .form-group {
     margin-bottom: 20px;
+    position: relative;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 8px;
+    color: #333;
     font-weight: 500;
 }
 
@@ -714,43 +716,83 @@ nav ul li a.active::after {
 .form-group textarea {
     width: 100%;
     padding: 12px 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    font-family: var(--body-font);
-    font-size: var(--body-size);
-    transition: all var(--transition-fast) ease;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #fff;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-    outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(74, 108, 250, 0.2);
+    box-shadow: 0 0 0 2px rgba(74, 108, 250, 0.1);
+    outline: none;
 }
 
 .form-group textarea {
-    height: 150px;
+    min-height: 120px;
     resize: vertical;
 }
 
 .form-group input.error,
 .form-group textarea.error {
-    border-color: var(--error-color);
+    border-color: #ff4444;
+    background-color: #fff8f8;
 }
 
 .error-message {
-    color: var(--error-color);
-    font-size: var(--small-size);
+    color: #ff4444;
+    font-size: 14px;
     margin-top: 5px;
+    display: block;
+    animation: fadeIn 0.3s ease;
 }
 
-.success-message {
-    padding: 20px;
-    background-color: rgba(40, 167, 69, 0.1);
-    border: 1px solid var(--success-color);
-    border-radius: 5px;
-    color: var(--success-color);
-    text-align: center;
+.form-result {
+    padding: 15px;
+    border-radius: 4px;
+    margin: 15px 0;
+    font-size: 15px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.form-result.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.form-result.error {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .form-group input,
+    .form-group textarea {
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+    
+    .form-result {
+        padding: 12px;
+        font-size: 14px;
+    }
 }
 
 /* 页脚 */
