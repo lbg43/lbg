@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' 'unsafe-inline' formspree.io *.formspree.io cdn.amplitude.com fonts.googleapis.com *.gstatic.com api.amplitude.com www.googletagmanager.com *.google-analytics.com analytics.google.com ajax.cloudflare.com o478120.ingest.sentry.io www.linkedin.com *.ads.linkedin.com js.stripe.com m.stripe.network m.stripe.com cdnjs.cloudflare.com use.fontawesome.com static.cloudflareinsights.com recaptcha.net *.recaptcha.net https://unpkg.com/visionscarto-world-atlas@1.0.0/world/110m.json www.google.com https://telegram.org/js/telegram-widget.js https://oauth.telegram.org; worker-src blob: 'self'; connect-src 'self' formspree.io *.formspree.io api.amplitude.com analytics.google.com *.google-analytics.com *.baidu.com hm.baidu.com zz.bdstatic.com; img-src 'self' data: blob: *.baidu.com *.google-analytics.com; font-src 'self' fonts.gstatic.com fonts.googleapis.com cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com use.fontawesome.com; script-src 'self' 'unsafe-eval' 'unsafe-inline' formspree.io *.formspree.io zz.bdstatic.com hm.baidu.com *.google-analytics.com *.baidu.com cdnjs.cloudflare.com;">
+    <!-- 修改CSP策略，确保Formspree可以正常工作 -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' 'unsafe-inline' formspree.io *.formspree.io cdn.amplitude.com fonts.googleapis.com *.gstatic.com api.amplitude.com www.googletagmanager.com *.google-analytics.com analytics.google.com ajax.cloudflare.com o478120.ingest.sentry.io www.linkedin.com *.ads.linkedin.com js.stripe.com m.stripe.network m.stripe.com cdnjs.cloudflare.com use.fontawesome.com static.cloudflareinsights.com recaptcha.net *.recaptcha.net https://unpkg.com/visionscarto-world-atlas@1.0.0/world/110m.json www.google.com https://telegram.org/js/telegram-widget.js https://oauth.telegram.org; worker-src blob: 'self'; connect-src 'self' formspree.io *.formspree.io api.amplitude.com analytics.google.com *.google-analytics.com *.baidu.com hm.baidu.com zz.bdstatic.com; img-src 'self' data: blob: *.baidu.com *.google-analytics.com; font-src 'self' fonts.gstatic.com fonts.googleapis.com cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com use.fontawesome.com; script-src 'self' 'unsafe-eval' 'unsafe-inline' formspree.io *.formspree.io zz.bdstatic.com hm.baidu.com *.google-analytics.com *.baidu.com cdnjs.cloudflare.com; form-action 'self' formspree.io *.formspree.io;">
     <title>现代化企业网站 - 专业网站设计与数字营销服务</title>
     <meta name="description" content="提供专业的网站设计、开发和数字营销服务，帮助企业实现数字化转型，提升品牌价值和市场竞争力。">
     <meta name="keywords" content="网站设计, 网站开发, 数字营销, UI/UX设计, 移动应用开发, 电子商务, 响应式网站">
@@ -400,11 +401,20 @@
                     </div>
                 </div>
                 <div class="contact-form">
+                    <!-- 修改表单配置，添加正确的Formspree端点 -->
                     <form action="https://formspree.io/f/xldjqywr" method="POST" id="contact-form">
-                        <input type="hidden" name="_cc" value="1508611232@qq.com">
-                        <input type="hidden" name="_subject" value="网站联系表单提交">
+                        <input type="hidden" name="_subject" value="网站留言通知">
+                        <!-- 添加重定向URL -->
                         <input type="hidden" name="_next" value="https://lbg-4ha.pages.dev/thank-you.html">
+                        <!-- 添加honeypot防垃圾邮件字段 -->
+                        <input type="text" name="_gotcha" style="display:none">
+                        <!-- 添加_replyto字段确保回复功能正常 -->
+                        <input type="hidden" name="_replyto" id="form-replyto">
+                        <!-- 添加自动回复 -->
                         <input type="hidden" name="_autoresponse" value="感谢您的留言，我们已收到您的信息，并将尽快回复您。如有紧急事项，请直接联系我们：1508611232@qq.com">
+                        <!-- 添加抄送地址 -->
+                        <input type="hidden" name="_cc" value="1508611232@qq.com">
+                        
                         <div class="form-group">
                             <label for="name">姓名</label>
                             <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
@@ -492,4 +502,4 @@
     <script src="script.js"></script>
     <script src="subscribe.js"></script>
 </body>
-</html> 
+</html>
