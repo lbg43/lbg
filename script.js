@@ -381,84 +381,115 @@ function initFormValidation() {
     if (contactForm) {
         console.log('找到联系表单:', contactForm.id);
         
-        // 同步邮箱到_replyto字段
-        const emailField = contactForm.querySelector('input[name="email"]');
-        const replyToField = contactForm.querySelector('input[name="_replyto"]');
-        
-        if (emailField && replyToField) {
-            // 初始化时同步一次
-            if (emailField.value) {
-                replyToField.value = emailField.value;
-            }
-            
-            // 监听邮箱字段变化，同步到_replyto
-            emailField.addEventListener('input', function() {
-                replyToField.value = this.value;
-            });
-            
-            // 在表单提交前再次确认同步
-            emailField.addEventListener('change', function() {
-                replyToField.value = this.value;
-            });
-        }
-        
-        // 添加简单的表单验证
+        // 添加自定义表单验证
         contactForm.addEventListener('submit', function(e) {
+            // 暂时阻止表单提交，先进行验证
+            e.preventDefault();
             console.log('联系表单提交触发');
-            e.preventDefault(); // 阻止默认表单提交
             
-            // 检查表单是否已在提交中，避免重复提交
-            if (contactForm.getAttribute('data-submitting') === 'true') {
-                console.log('表单正在提交中，请勿重复点击');
-                return false;
-            }
+            let isValid = true;
             
-            // 验证必填字段
-            const name = contactForm.querySelector('input[name="name"]').value;
-            const email = contactForm.querySelector('input[name="email"]').value;
-            const subject = contactForm.querySelector('input[name="subject"]').value;
-            const message = contactForm.querySelector('textarea[name="message"]').value;
-            
-            if (!name || !email || !subject || !message) {
-                alert('请填写所有必填字段');
-                return false;
-            }
-            
-            // 验证邮箱格式
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('请输入有效的邮箱地址');
-                return false;
-            }
-            
-            // 确保_replyto字段有值
-            if (replyToField) {
-                replyToField.value = email;
-            }
-            
-            // 设置表单状态为提交中
-            contactForm.setAttribute('data-submitting', 'true');
-            
-            // 禁用提交按钮，防止重复提交
+            // 获取所有必填字段
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const subject = document.getElementById('subject');
+            const message = document.getElementById('message');
             const submitButton = contactForm.querySelector('button[type="submit"]');
-            if (submitButton) {
-                submitButton.disabled = true;
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
+            
+            // 清除所有错误
+            clearErrors();
+            
+            // 验证姓名
+            if (!name || name.value.trim() === '') {
+                showError(name, '请输入您的姓名');
+                isValid = false;
+                console.error('姓名验证失败');
             }
             
-            // 记录到百度统计
-            if (window._hmt) {
-                window._hmt.push(['_trackEvent', '联系表单', '提交', '联系表单提交']);
+            // 验证邮箱
+            if (!email || email.value.trim() === '') {
+                showError(email, '请输入您的邮箱');
+                isValid = false;
+                console.error('邮箱为空验证失败');
+            } else if (!isValidEmail(email.value)) {
+                showError(email, '请输入有效的邮箱地址');
+                isValid = false;
+                console.error('邮箱格式验证失败');
             }
             
-            // 延迟提交表单，确保所有同步操作完成
-            setTimeout(function() {
+            // 验证主题
+            if (!subject || subject.value.trim() === '') {
+                showError(subject, '请输入主题');
+                isValid = false;
+                console.error('主题验证失败');
+            }
+            
+            // 验证消息
+            if (!message || message.value.trim() === '') {
+                showError(message, '请输入您的消息');
+                isValid = false;
+                console.error('消息验证失败');
+            }
+            
+            // 如果验证通过，提交表单
+            if (isValid) {
+                console.log('表单验证通过，准备提交');
+                
+                // 禁用提交按钮，防止重复提交
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
+                }
+                
+                // 记录到百度统计
+                if (window._hmt) {
+                    window._hmt.push(['_trackEvent', '联系表单', '提交', email.value]);
+                }
+                
+                // 提交表单
                 contactForm.submit();
-            }, 100);
-            
-            return false;
+            } else {
+                // 验证失败时，滚动到第一个错误字段
+                const firstError = contactForm.querySelector('.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
         });
     }
+}
+
+/**
+ * 显示错误消息
+ */
+function showError(input, message) {
+    const formGroup = input.parentElement;
+    const errorMessage = document.createElement('div');
+    
+    errorMessage.className = 'error-message';
+    errorMessage.textContent = message;
+    
+    input.classList.add('error');
+    formGroup.appendChild(errorMessage);
+}
+
+/**
+ * 清除所有错误消息
+ */
+function clearErrors() {
+    const errorMessages = document.querySelectorAll('.error-message');
+    const errorInputs = document.querySelectorAll('.error');
+    
+    errorMessages.forEach(error => error.remove());
+    errorInputs.forEach(input => input.classList.remove('error'));
+}
+
+/**
+ * 验证邮箱格式
+ */
+function isValidEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
 }
 
 /**
