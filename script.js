@@ -432,14 +432,15 @@ function initFormValidation() {
                 if (submitButton) {
                     submitButton.disabled = true;
                     submitButton.textContent = '发送中...';
+                    
+                    // 使用常规表单提交而不是fetch，避免CSP问题
+                    // 表单直接提交给Formspree处理
+                    
+                    // 记录日志
+                    console.log('表单提交: ' + name.value + ' (' + email.value + ') - ' + new Date().toLocaleString());
+                    
+                    // 表单成功提交后，Formspree会负责处理重定向
                 }
-                
-                // 表单成功提交后的处理将由Formspree完成
-                // Formspree会自动将数据发送到设置的邮箱
-                // 并将表单重定向到感谢页面
-                
-                // 记录日志
-                console.log('表单提交: ' + name.value + ' (' + email.value + ') - ' + new Date().toLocaleString());
             }
         });
     }
