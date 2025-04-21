@@ -383,6 +383,7 @@ function initFormValidation() {
         
         // 添加自定义表单验证
         contactForm.addEventListener('submit', function(e) {
+            // 暂时阻止表单提交，先进行验证
             e.preventDefault();
             console.log('联系表单提交触发');
             
@@ -393,7 +394,6 @@ function initFormValidation() {
             const email = document.getElementById('email');
             const subject = document.getElementById('subject');
             const message = document.getElementById('message');
-            const resultElement = contactForm.querySelector('.form-result');
             const submitButton = contactForm.querySelector('button[type="submit"]');
             
             // 清除所有错误
@@ -431,7 +431,7 @@ function initFormValidation() {
                 console.error('消息验证失败');
             }
             
-            // 如果验证通过，直接提交表单
+            // 如果验证通过，提交表单
             if (isValid) {
                 console.log('表单验证通过，准备提交');
                 
@@ -441,40 +441,19 @@ function initFormValidation() {
                     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
                 }
                 
-                // 确保表单有正确的 _replyto 字段
-                const hiddenReplyTo = document.getElementById('hidden-replyto');
-                if (hiddenReplyTo && email) {
-                    hiddenReplyTo.value = email.value;
-                }
-                
-                // 使用表单的原生提交方法
-                contactForm.submit();
-                
-                // 显示提交成功信息
-                if (resultElement) {
-                    resultElement.textContent = '留言发送成功，感谢您的反馈！';
-                    resultElement.className = 'form-result success';
-                    resultElement.style.display = 'block';
-                    
-                    // 3秒后隐藏消息
-                    setTimeout(() => {
-                        resultElement.style.display = 'none';
-                        
-                        // 恢复按钮状态
-                        if (submitButton) {
-                            submitButton.disabled = false;
-                            submitButton.innerHTML = '发送留言';
-                        }
-                        
-                        // 清空表单
-                        contactForm.reset();
-                    }, 3000);
+                // 确保表单有正确的发件人邮箱字段
+                const hiddenFromEmail = document.getElementById('hidden-from-email');
+                if (hiddenFromEmail && email) {
+                    hiddenFromEmail.value = email.value;
                 }
                 
                 // 记录到百度统计
                 if (window._hmt) {
-                    window._hmt.push(['_trackEvent', '联系表单', '提交成功', email.value]);
+                    window._hmt.push(['_trackEvent', '联系表单', '提交', email.value]);
                 }
+                
+                // 提交表单
+                contactForm.submit();
             } else {
                 // 验证失败时，滚动到第一个错误字段
                 const firstError = contactForm.querySelector('.error');
