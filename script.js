@@ -441,12 +441,6 @@ function initFormValidation() {
                     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
                 }
                 
-                // 确保表单有正确的发件人邮箱字段
-                const hiddenFromEmail = document.getElementById('hidden-from-email');
-                if (hiddenFromEmail && email) {
-                    hiddenFromEmail.value = email.value;
-                }
-                
                 // 记录到百度统计
                 if (window._hmt) {
                     window._hmt.push(['_trackEvent', '联系表单', '提交', email.value]);
