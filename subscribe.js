@@ -5,140 +5,117 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    const forms = document.querySelectorAll('form[data-subscribe="true"]');
-    console.log(`找到 ${forms.length} 个订阅表单`);
+    // 查找所有订阅表单
+    const forms = document.querySelectorAll('.subscribe-form');
+    console.log(`Found ${forms.length} subscription forms`);
 
     forms.forEach(form => {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const emailInput = form.querySelector('input[type="email"]');
-            const email = emailInput.value;
+            const email = form.querySelector('input[name="email"]').value;
+            const messageDiv = form.querySelector('.subscribe-message');
             
-            if (!validateEmail(email)) {
-                showSubscribeMessage(form, '请输入有效的邮箱地址', 'error');
+            // 验证邮箱格式
+            if (!isValidEmail(email)) {
+                showSubscribeMessage(messageDiv, '请输入有效的邮箱地址', false);
                 return;
             }
 
-            const submitButton = form.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = '提交中...';
-            submitButton.disabled = true;
+            // 检查是否已订阅
+            const subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+            if (subscribers.includes(email)) {
+                showSubscribeMessage(messageDiv, '该邮箱已经订阅过了', false);
+                return;
+            }
 
             try {
-                // 发送订阅请求
+                const formData = new FormData(form);
+                formData.append('_autoresponse', '感谢您的订阅！我们会定期发送最新资讯给您。');
+                
                 const response = await fetch(form.action, {
                     method: 'POST',
-                    body: new FormData(form),
+                    body: formData,
                     headers: {
                         'Accept': 'application/json'
                     }
                 });
 
                 if (response.ok) {
-                    // 发送管理员通知
-                    await sendNotification(email);
-                    // 发送用户确认邮件
-                    await sendConfirmation(email);
+                    // 保存订阅者信息
+                    subscribers.push(email);
+                    localStorage.setItem('subscribers', JSON.stringify(subscribers));
                     
-                    showSubscribeMessage(form, '订阅成功！确认邮件已发送到您的邮箱', 'success');
-                    saveSubscriber(email);
+                    // 记录订阅时间
+                    const subscriptionTime = new Date().toISOString();
+                    localStorage.setItem(`subscription_time_${email}`, subscriptionTime);
+                    
+                    // 发送成功消息
+                    showSubscribeMessage(messageDiv, '订阅成功！感谢您的关注', true);
+                    
+                    // 清空表单
                     form.reset();
+                    
+                    // 发送通知邮件到管理员邮箱
+                    const adminEmail = '1508611232@qq.com';
+                    const notificationData = new FormData();
+                    notificationData.append('_to', adminEmail);
+                    notificationData.append('_subject', '新订阅通知');
+                    notificationData.append('message', `新用户订阅：${email}\n订阅时间：${subscriptionTime}`);
+                    
+                    await fetch(form.action, {
+                        method: 'POST',
+                        body: notificationData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    // 记录到百度统计
+                    if (window._hmt) {
+                        window._hmt.push(['_trackEvent', '订阅', '成功', email]);
+                    }
+                    
+                    // 记录到Google Analytics
+                    if (window.gtag) {
+                        gtag('event', 'subscribe', {
+                            'event_category': 'engagement',
+                            'event_label': email
+                        });
+                    }
+                    
                 } else {
-                    throw new Error('订阅请求失败');
+                    throw new Error('提交失败');
                 }
             } catch (error) {
-                console.error('订阅错误:', error);
-                showSubscribeMessage(form, '订阅失败，请稍后重试', 'error');
-            } finally {
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
+                console.error('订阅出错:', error);
+                showSubscribeMessage(messageDiv, '订阅失败，请稍后重试', false);
+                
+                // 记录错误到统计
+                if (window._hmt) {
+                    window._hmt.push(['_trackEvent', '订阅', '失败', error.message]);
+                }
             }
         });
     });
 });
 
-// 发送管理员通知
-async function sendNotification(email) {
-    const adminEmail = "1508611232@qq.com"; // 管理员邮箱
-    const formData = new FormData();
-    formData.append("_replyto", email);
-    formData.append("_subject", "新订阅通知");
-    formData.append("_cc", adminEmail);
-    formData.append("message", `新用户 ${email} 已订阅您的网站更新`);
-    
-    try {
-        const response = await fetch("https://formspree.io/f/xldjqywr", {
-            method: "POST",
-            body: formData,
-            headers: {
-                Accept: "application/json"
-            }
-        });
-        console.log('管理员通知发送成功');
-    } catch (error) {
-        console.error('管理员通知发送失败:', error);
-    }
-}
-
-// 发送订阅确认邮件
-async function sendConfirmation(email) {
-    const formData = new FormData();
-    formData.append("_replyto", email);
-    formData.append("_subject", "订阅确认");
-    formData.append("message", `感谢您订阅我们的更新！`);
-    
-    try {
-        const response = await fetch("https://formspree.io/f/xldjqywr", {
-            method: "POST",
-            body: formData,
-            headers: {
-                Accept: "application/json"
-            }
-        });
-        console.log('确认邮件发送成功');
-    } catch (error) {
-        console.error('确认邮件发送失败:', error);
-    }
-}
-
 // 验证邮箱格式
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+function isValidEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email.toLowerCase());
 }
 
 // 显示订阅消息
-function showSubscribeMessage(form, message, type) {
-    let messageDiv = form.querySelector('.subscribe-message');
-    if (!messageDiv) {
-        messageDiv = document.createElement('div');
-        messageDiv.className = 'subscribe-message';
-        form.appendChild(messageDiv);
-    }
-
-    messageDiv.textContent = message;
-    messageDiv.className = `subscribe-message ${type}`;
-    messageDiv.style.opacity = '1';
-
+function showSubscribeMessage(element, message, isSuccess) {
+    if (!element) return;
+    
+    element.textContent = message;
+    element.className = 'subscribe-message ' + (isSuccess ? 'success' : 'error');
+    element.style.display = 'block';
+    
+    // 3秒后自动隐藏消息
     setTimeout(() => {
-        messageDiv.style.opacity = '0';
-    }, 5000);
-}
-
-// 保存订阅者信息到本地存储
-function saveSubscriber(email) {
-    try {
-        let subscribers = JSON.parse(localStorage.getItem('subscribers')) || [];
-        if (!subscribers.includes(email)) {
-            subscribers.push({
-                email: email,
-                date: new Date().toISOString()
-            });
-            localStorage.setItem('subscribers', JSON.stringify(subscribers));
-            console.log('订阅者信息已保存');
-        }
-    } catch (error) {
-        console.error('保存订阅者信息失败:', error);
-    }
+        element.style.display = 'none';
+    }, 3000);
 } 
