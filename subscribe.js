@@ -5,213 +5,140 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 获取所有订阅表单
-    const subscribeForms = document.querySelectorAll('.subscribe-form');
-    console.log('找到订阅表单数量:', subscribeForms.length);
-    
-    // 为每个订阅表单添加提交事件监听
-    subscribeForms.forEach((form, index) => {
-        // 确保表单有action属性，如果没有则添加Formspree URL
-        if (!form.getAttribute('action')) {
-            // 已替换为您的Formspree表单URL - 请确保这是正确的URL
-            form.setAttribute('action', 'https://formspree.io/f/xldjqywr');
-            form.setAttribute('method', 'POST');
-            console.log(`表单${index+1}设置action属性:`, form.getAttribute('action'));
-        }
-        
-        // 添加提交事件处理
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            console.log(`表单${index+1}提交触发`);
+    const forms = document.querySelectorAll('form[data-subscribe="true"]');
+    console.log(`找到 ${forms.length} 个订阅表单`);
+
+    forms.forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            // 获取邮箱输入
             const emailInput = form.querySelector('input[type="email"]');
-            const email = emailInput.value.trim();
-            console.log('提交的邮箱:', email);
+            const email = emailInput.value;
             
-            // 简单的邮箱格式验证
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                showSubscribeMessage(form, '请输入有效的邮箱地址', false);
-                console.error('邮箱格式验证失败');
+            if (!validateEmail(email)) {
+                showSubscribeMessage(form, '请输入有效的邮箱地址', 'error');
                 return;
             }
-            
-            // 显示加载状态
+
             const submitButton = form.querySelector('button[type="submit"]');
-            const originalButtonText = submitButton.innerHTML;
+            const originalText = submitButton.textContent;
+            submitButton.textContent = '提交中...';
             submitButton.disabled = true;
-            submitButton.innerHTML = '处理中...';
-            
+
             try {
-                // 创建标准的表单数据对象
-                const formData = new FormData();
-                formData.append('email', email);
-                formData.append('subscribeTime', new Date().toLocaleString());
-                
-                // 添加管理员抄送邮箱，支持多个邮箱以逗号分隔
-                const adminEmails = '1508611232@qq.com';
-                formData.append('_cc', adminEmails);
-                console.log('设置管理员抄送:', adminEmails);
-                
-                console.log('准备发送表单数据到:', form.getAttribute('action'));
-                
-                // 尝试使用fetch API代替XMLHttpRequest
-                try {
-                    const response = await fetch(form.getAttribute('action'), {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
-                    
-                    console.log('Formspree响应状态:', response.status);
-                    const responseData = await response.json();
-                    console.log('Formspree响应数据:', responseData);
-                    
-                    // 恢复按钮状态
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = originalButtonText;
-                    
-                    if (response.ok) {
-                        showSubscribeMessage(form, '订阅成功，感谢您的关注！', true);
-                        // 如果成功，清空输入框
-                        emailInput.value = '';
-                        // 记录订阅成功日志
-                        console.log('新订阅成功: ' + email + ' - ' + new Date().toLocaleString());
-                        
-                        // 将订阅者邮箱存储在本地存储中，避免重复提交
-                        saveSubscriberToLocal(email);
-                        
-                        // 触发转化事件（如果有Google Analytics或百度统计）
-                        if (typeof _hmt !== 'undefined') {
-                            _hmt.push(['_trackEvent', '订阅', '成功', email]);
-                        }
-                        if (typeof gtag !== 'undefined') {
-                            gtag('event', 'subscribe', {
-                                'event_category': 'engagement',
-                                'event_label': email
-                            });
-                        }
-                    } else {
-                        console.error('Formspree返回错误:', responseData);
-                        showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
+                // 发送订阅请求
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'Accept': 'application/json'
                     }
-                } catch (fetchError) {
-                    console.error('Fetch请求失败:', fetchError);
+                });
+
+                if (response.ok) {
+                    // 发送管理员通知
+                    await sendNotification(email);
+                    // 发送用户确认邮件
+                    await sendConfirmation(email);
                     
-                    // 如果fetch失败，回退到XMLHttpRequest
-                    console.log('尝试使用XMLHttpRequest作为备选方案');
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', form.getAttribute('action'));
-                    xhr.setRequestHeader('Accept', 'application/json');
-                    
-                    xhr.onload = function() {
-                        console.log('XMLHttpRequest响应状态:', xhr.status);
-                        // 恢复按钮状态
-                        submitButton.disabled = false;
-                        submitButton.innerHTML = originalButtonText;
-                        
-                        if (xhr.status === 200) {
-                            try {
-                                const response = JSON.parse(xhr.responseText);
-                                console.log('XMLHttpRequest响应数据:', response);
-                                if (response.ok) {
-                                    showSubscribeMessage(form, '订阅成功，感谢您的关注！', true);
-                                    // 如果成功，清空输入框
-                                    emailInput.value = '';
-                                    // 记录订阅成功日志
-                                    console.log('新订阅成功(XHR): ' + email + ' - ' + new Date().toLocaleString());
-                                    // 存储订阅者
-                                    saveSubscriberToLocal(email);
-                                } else {
-                                    console.error('XMLHttpRequest返回错误:', response);
-                                    showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
-                                }
-                            } catch (parseError) {
-                                console.error('解析XMLHttpRequest响应失败:', parseError, xhr.responseText);
-                                showSubscribeMessage(form, '订阅处理出错，请联系管理员', false);
-                            }
-                        } else {
-                            console.error('XMLHttpRequest请求失败，状态码:', xhr.status);
-                            showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
-                        }
-                    };
-                    
-                    xhr.onerror = function(error) {
-                        console.error('XMLHttpRequest发生错误:', error);
-                        // 恢复按钮状态
-                        submitButton.disabled = false;
-                        submitButton.innerHTML = originalButtonText;
-                        showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
-                    };
-                    
-                    xhr.send(formData);
+                    showSubscribeMessage(form, '订阅成功！确认邮件已发送到您的邮箱', 'success');
+                    saveSubscriber(email);
+                    form.reset();
+                } else {
+                    throw new Error('订阅请求失败');
                 }
             } catch (error) {
-                console.error('订阅过程中发生异常:', error);
-                // 恢复按钮状态
+                console.error('订阅错误:', error);
+                showSubscribeMessage(form, '订阅失败，请稍后重试', 'error');
+            } finally {
+                submitButton.textContent = originalText;
                 submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonText;
-                
-                // 显示错误消息
-                showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
             }
         });
     });
+});
+
+// 发送管理员通知
+async function sendNotification(email) {
+    const adminEmail = "1508611232@qq.com"; // 管理员邮箱
+    const formData = new FormData();
+    formData.append("_replyto", email);
+    formData.append("_subject", "新订阅通知");
+    formData.append("_cc", adminEmail);
+    formData.append("message", `新用户 ${email} 已订阅您的网站更新`);
     
-    // 辅助函数：显示订阅消息
-    function showSubscribeMessage(form, message, isSuccess) {
-        console.log(`显示消息: ${message}, 成功状态: ${isSuccess}`);
-        // 创建或获取消息元素
-        let messageElement = form.querySelector('.subscribe-message');
-        
-        if (!messageElement) {
-            messageElement = document.createElement('div');
-            messageElement.className = 'subscribe-message';
-            form.appendChild(messageElement);
-            console.log('创建新的消息元素');
-        }
-        
-        // 设置消息样式和内容
-        messageElement.textContent = message;
-        messageElement.className = 'subscribe-message ' + (isSuccess ? 'success' : 'error');
-        messageElement.style.display = 'block';
-        messageElement.style.opacity = '1';
-        
-        // 3秒后自动隐藏消息
-        setTimeout(() => {
-            messageElement.style.opacity = '0';
-            setTimeout(() => {
-                if (messageElement.parentNode) {
-                    messageElement.textContent = '';
-                    messageElement.className = 'subscribe-message';
-                    messageElement.style.opacity = '';
-                }
-            }, 300);
-        }, 3000);
-    }
-    
-    // 辅助函数：将订阅者保存到本地存储
-    function saveSubscriberToLocal(email) {
-        try {
-            // 获取现有订阅者列表
-            let subscribers = localStorage.getItem('site_subscribers');
-            subscribers = subscribers ? JSON.parse(subscribers) : [];
-            
-            // 检查邮箱是否已存在
-            if (!subscribers.includes(email)) {
-                subscribers.push(email);
-                // 只保留最近的50个订阅者
-                if (subscribers.length > 50) {
-                    subscribers = subscribers.slice(-50);
-                }
-                localStorage.setItem('site_subscribers', JSON.stringify(subscribers));
-                console.log('订阅者已保存到本地存储');
+    try {
+        const response = await fetch("https://formspree.io/f/xldjqywr", {
+            method: "POST",
+            body: formData,
+            headers: {
+                Accept: "application/json"
             }
-        } catch (e) {
-            console.error('保存订阅者到本地存储失败:', e);
-        }
+        });
+        console.log('管理员通知发送成功');
+    } catch (error) {
+        console.error('管理员通知发送失败:', error);
     }
-}); 
+}
+
+// 发送订阅确认邮件
+async function sendConfirmation(email) {
+    const formData = new FormData();
+    formData.append("_replyto", email);
+    formData.append("_subject", "订阅确认");
+    formData.append("message", `感谢您订阅我们的更新！`);
+    
+    try {
+        const response = await fetch("https://formspree.io/f/xldjqywr", {
+            method: "POST",
+            body: formData,
+            headers: {
+                Accept: "application/json"
+            }
+        });
+        console.log('确认邮件发送成功');
+    } catch (error) {
+        console.error('确认邮件发送失败:', error);
+    }
+}
+
+// 验证邮箱格式
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+// 显示订阅消息
+function showSubscribeMessage(form, message, type) {
+    let messageDiv = form.querySelector('.subscribe-message');
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.className = 'subscribe-message';
+        form.appendChild(messageDiv);
+    }
+
+    messageDiv.textContent = message;
+    messageDiv.className = `subscribe-message ${type}`;
+    messageDiv.style.opacity = '1';
+
+    setTimeout(() => {
+        messageDiv.style.opacity = '0';
+    }, 5000);
+}
+
+// 保存订阅者信息到本地存储
+function saveSubscriber(email) {
+    try {
+        let subscribers = JSON.parse(localStorage.getItem('subscribers')) || [];
+        if (!subscribers.includes(email)) {
+            subscribers.push({
+                email: email,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('subscribers', JSON.stringify(subscribers));
+            console.log('订阅者信息已保存');
+        }
+    } catch (error) {
+        console.error('保存订阅者信息失败:', error);
+    }
+} 
