@@ -381,11 +381,33 @@ function initFormValidation() {
     if (contactForm) {
         console.log('找到联系表单:', contactForm.id);
         
+        // 同步邮箱到_replyto字段
+        const emailField = document.getElementById('email');
+        const replyToField = document.getElementById('form-replyto');
+        
+        if (emailField && replyToField) {
+            // 初始化时同步一次
+            if (emailField.value) {
+                replyToField.value = emailField.value;
+            }
+            
+            // 监听邮箱字段变化，同步到_replyto
+            emailField.addEventListener('input', function() {
+                replyToField.value = this.value;
+            });
+        }
+        
         // 添加自定义表单验证
         contactForm.addEventListener('submit', function(e) {
             // 暂时阻止表单提交，先进行验证
             e.preventDefault();
             console.log('联系表单提交触发');
+            
+            // 检查表单是否已在提交中，避免重复提交
+            if (contactForm.getAttribute('data-submitting') === 'true') {
+                console.log('表单正在提交中，请勿重复点击');
+                return false;
+            }
             
             let isValid = true;
             
@@ -435,6 +457,15 @@ function initFormValidation() {
             if (isValid) {
                 console.log('表单验证通过，准备提交');
                 
+                // 确保_replyto字段有值
+                if (replyToField && email && email.value) {
+                    replyToField.value = email.value;
+                    console.log('设置_replyto字段:', email.value);
+                }
+                
+                // 设置表单状态为提交中
+                contactForm.setAttribute('data-submitting', 'true');
+                
                 // 禁用提交按钮，防止重复提交
                 if (submitButton) {
                     submitButton.disabled = true;
@@ -446,8 +477,11 @@ function initFormValidation() {
                     window._hmt.push(['_trackEvent', '联系表单', '提交', email.value]);
                 }
                 
-                // 提交表单
-                contactForm.submit();
+                // 延迟提交表单，确保状态更新完成
+                setTimeout(function() {
+                    contactForm.submit();
+                    console.log('表单已提交');
+                }, 100);
             } else {
                 // 验证失败时，滚动到第一个错误字段
                 const firstError = contactForm.querySelector('.error');
