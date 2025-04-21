@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     subscribeForms.forEach((form, index) => {
         // 确保表单有action属性，如果没有则添加Formspree URL
         if (!form.getAttribute('action')) {
-            // 已替换为您的Formspree表单URL
+            // 已替换为您的Formspree表单URL - 请确保这是正确的URL
             form.setAttribute('action', 'https://formspree.io/f/xldjqywr');
             form.setAttribute('method', 'POST');
             console.log(`表单${index+1}设置action属性:`, form.getAttribute('action'));
@@ -48,23 +48,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
                 formData.append('email', email);
                 formData.append('subscribeTime', new Date().toLocaleString());
-                formData.append('_subject', '新网站订阅通知');
                 
-                // 添加管理员抄送
-                const adminEmail = '1508611232@qq.com'; // 网站管理员邮箱
-                formData.append('_cc', adminEmail);
-                console.log('设置管理员抄送:', adminEmail);
-                
-                // 添加更详细的内容给管理员
-                const message = `
-网站有新的订阅者！
-
-订阅者邮箱: ${email}
-订阅时间: ${new Date().toLocaleString()}
-订阅页面: ${window.location.href}
-用户设备: ${navigator.userAgent}
-                `;
-                formData.append('message', message);
+                // 添加管理员抄送邮箱，支持多个邮箱以逗号分隔
+                const adminEmails = '1508611232@qq.com';
+                formData.append('_cc', adminEmails);
+                console.log('设置管理员抄送:', adminEmails);
                 
                 console.log('准备发送表单数据到:', form.getAttribute('action'));
                 
@@ -92,6 +80,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         emailInput.value = '';
                         // 记录订阅成功日志
                         console.log('新订阅成功: ' + email + ' - ' + new Date().toLocaleString());
+                        
+                        // 将订阅者邮箱存储在本地存储中，避免重复提交
+                        saveSubscriberToLocal(email);
+                        
+                        // 触发转化事件（如果有Google Analytics或百度统计）
+                        if (typeof _hmt !== 'undefined') {
+                            _hmt.push(['_trackEvent', '订阅', '成功', email]);
+                        }
+                        if (typeof gtag !== 'undefined') {
+                            gtag('event', 'subscribe', {
+                                'event_category': 'engagement',
+                                'event_label': email
+                            });
+                        }
                     } else {
                         console.error('Formspree返回错误:', responseData);
                         showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
@@ -121,6 +123,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                     emailInput.value = '';
                                     // 记录订阅成功日志
                                     console.log('新订阅成功(XHR): ' + email + ' - ' + new Date().toLocaleString());
+                                    // 存储订阅者
+                                    saveSubscriberToLocal(email);
                                 } else {
                                     console.error('XMLHttpRequest返回错误:', response);
                                     showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
@@ -187,5 +191,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }, 300);
         }, 3000);
+    }
+    
+    // 辅助函数：将订阅者保存到本地存储
+    function saveSubscriberToLocal(email) {
+        try {
+            // 获取现有订阅者列表
+            let subscribers = localStorage.getItem('site_subscribers');
+            subscribers = subscribers ? JSON.parse(subscribers) : [];
+            
+            // 检查邮箱是否已存在
+            if (!subscribers.includes(email)) {
+                subscribers.push(email);
+                // 只保留最近的50个订阅者
+                if (subscribers.length > 50) {
+                    subscribers = subscribers.slice(-50);
+                }
+                localStorage.setItem('site_subscribers', JSON.stringify(subscribers));
+                console.log('订阅者已保存到本地存储');
+            }
+        } catch (e) {
+            console.error('保存订阅者到本地存储失败:', e);
+        }
     }
 }); 
