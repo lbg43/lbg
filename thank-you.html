@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' 'unsafe-inline' formspree.io *.formspree.io cdn.amplitude.com fonts.googleapis.com fonts.googleapis.com *.gstatic.com api.amplitude.com www.googletagmanager.com *.google-analytics.com analytics.google.com ajax.cloudflare.com o478120.ingest.sentry.io www.linkedin.com *.ads.linkedin.com js.stripe.com m.stripe.network m.stripe.com cdnjs.cloudflare.com use.fontawesome.com static.cloudflareinsights.com recaptcha.net *.recaptcha.net https://unpkg.com/visionscarto-world-atlas@1.0.0/world/110m.json www.google.com https://telegram.org/js/telegram-widget.js https://oauth.telegram.org; worker-src blob: 'self'; connect-src 'self' formspree.io *.formspree.io api.amplitude.com analytics.google.com *.google-analytics.com *.baidu.com hm.baidu.com zz.bdstatic.com; img-src 'self' data: blob: *.baidu.com *.google-analytics.com; font-src 'self' fonts.gstatic.com fonts.googleapis.com cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com use.fontawesome.com; script-src 'self' 'unsafe-eval' 'unsafe-inline' formspree.io *.formspree.io zz.bdstatic.com hm.baidu.com *.google-analytics.com *.baidu.com cdnjs.cloudflare.com;">
+    <title>感谢您的留言 - 我们已收到您的信息</title>
+    <meta name="description" content="感谢您联系我们，我们已收到您的留言并将尽快回复。">
+    <meta name="robots" content="noindex, follow">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+    <!-- 字体图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 百度统计代码 -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?459d650ac628c88e8e94ffc76a88658e";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <style>
+        .thank-you-container {
+            text-align: center;
+            padding: 80px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .thank-you-icon {
+            font-size: 5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .thank-you-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .thank-you-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #666;
+        }
+        
+        .home-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .home-button:hover {
+            background-color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html" title="COMPANY首页">
+                    <img src="images/logo.png" alt="COMPANY Logo" class="responsive-logo">
+                </a>
+            </div>
+            <nav aria-label="主导航">
+                <ul>
+                    <li><a href="index.html#home" title="首页">首页</a></li>
+                    <li><a href="index.html#services" title="我们的服务">服务</a></li>
+                    <li><a href="index.html#about" title="关于我们">关于我们</a></li>
+                    <li><a href="index.html#articles" title="行业资讯">资讯</a></li>
+                    <li><a href="index.html#gallery" title="案例展示">案例展示</a></li>
+                    <li><a href="index.html#contact" title="联系我们">联系我们</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-menu-btn" aria-label="移动菜单" role="button" tabindex="0">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 感谢信息 -->
+    <section class="thank-you-container section">
+        <div class="thank-you-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1 class="thank-you-title">感谢您的留言！</h1>
+        <p class="thank-you-message">
+            我们已经收到您的信息，将尽快与您联系。<br>
+            如有紧急事项，请直接联系我们：1508611232@qq.com
+        </p>
+        <a href="index.html" class="home-button">返回首页</a>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo">
+                        <img src="images/logo-white.png" alt="公司Logo" class="responsive-logo">
+                    </div>
+                    <p>我们是一家专注于提供高质量数字解决方案的公司，致力于帮助企业实现数字化转型和业务增长。</p>
+                    <div class="social-links">
+                        <a href="javascript:void(0)" class="social-link" id="footer-wechat-link"><i class="fab fa-weixin"></i></a>
+                        <a href="javascript:void(0)" onclick="alert('微博账号正在审核中');" class="social-link"><i class="fab fa-weibo"></i></a>
+                        <a href="javascript:void(0)" onclick="alert('LinkedIn账号正在审核中');" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="javascript:void(0)" onclick="alert('GitHub账号正在审核中');" class="social-link"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>服务</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html#services">网站开发</a></li>
+                        <li><a href="index.html#services">移动应用开发</a></li>
+                        <li><a href="index.html#services">UI/UX设计</a></li>
+                        <li><a href="index.html#services">数字营销</a></li>
+                        <li><a href="index.html#services">电子商务解决方案</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>快速链接</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html#home">首页</a></li>
+                        <li><a href="index.html#services">服务</a></li>
+                        <li><a href="index.html#about">关于我们</a></li>
+                        <li><a href="index.html#articles">资讯</a></li>
+                        <li><a href="index.html#gallery">案例展示</a></li>
+                        <li><a href="index.html#contact">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>订阅我们</h3>
+                    <p>订阅我们的通讯，获取最新的行业资讯和公司动态</p>
+                    <form class="newsletter-form subscribe-form" action="https://formspree.io/f/xldjqywr" method="POST">
+                        <input type="hidden" name="_subject" value="网站订阅">
+                        <input type="hidden" name="_cc" value="1508611232@qq.com">
+                        <input type="email" name="email" placeholder="请输入您的邮箱" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                        <div class="subscribe-message"></div>
+                    </form>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 公司名称. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <div class="scroll-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+    <script src="subscribe.js"></script>
+    
+    <script>
+        // 记录到百度统计
+        if (window._hmt) {
+            window._hmt.push(['_trackEvent', '联系表单', '提交成功', '表单提交完成']);
+        }
+    </script>
+</body>
+</html> 
