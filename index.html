@@ -400,11 +400,13 @@
                     </div>
                 </div>
                 <div class="contact-form">
-                    <form action="https://formspree.io/f/xldjqywr" method="POST" id="contact-form">
+                    <form action="https://formspree.io/f/xldjqywr" method="POST" id="contact-form" enctype="multipart/form-data">
+                        <input type="hidden" name="_format" value="plain">
                         <input type="hidden" name="_cc" value="1508611232@qq.com">
                         <input type="hidden" name="_subject" value="网站联系表单提交">
                         <input type="hidden" name="_next" value="https://lbg-4ha.pages.dev/thank-you.html">
                         <input type="hidden" name="_autoresponse" value="感谢您的留言，我们已收到您的信息，并将尽快回复您。如有紧急事项，请直接联系我们：1508611232@qq.com">
+                        <input type="text" name="_gotcha" style="display:none">
                         <div class="form-group">
                             <label for="name">姓名</label>
                             <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
@@ -471,6 +473,9 @@
                     <form class="newsletter-form subscribe-form" action="https://formspree.io/f/xldjqywr" method="POST">
                         <input type="hidden" name="_subject" value="网站订阅">
                         <input type="hidden" name="_cc" value="1508611232@qq.com">
+                        <input type="hidden" name="_format" value="plain">
+                        <input type="text" name="_gotcha" style="display:none">
+                        <input type="hidden" name="_autoresponse" value="感谢您的订阅！我们会定期发送最新资讯给您。">
                         <input type="email" name="email" placeholder="请输入您的邮箱" required>
                         <button type="submit"><i class="fas fa-paper-plane"></i></button>
                         <div class="subscribe-message"></div>
