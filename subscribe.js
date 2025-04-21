@@ -13,8 +13,25 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // 检查表单是否已在提交中，避免重复提交
+            if (form.getAttribute('data-submitting') === 'true') {
+                console.log('订阅表单正在提交中，请勿重复点击');
+                return;
+            }
+            
+            // 设置表单状态为提交中
+            form.setAttribute('data-submitting', 'true');
+            
             const email = form.querySelector('input[name="email"]').value;
             const messageDiv = form.querySelector('.subscribe-message');
+            const submitButton = form.querySelector('button[type="submit"]');
+            
+            // 禁用提交按钮
+            if (submitButton) {
+                submitButton.disabled = true;
+                const originalButtonHTML = submitButton.innerHTML;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
             
             // 验证邮箱格式
             if (!isValidEmail(email)) {
@@ -33,6 +50,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData(form);
                 formData.append('_autoresponse', '感谢您的订阅！我们会定期发送最新资讯给您。');
                 
+                // 添加_replyto字段确保邮件回复正常
+                formData.append('_replyto', email);
+                console.log('添加_replyto字段:', email);
+                
                 const response = await fetch(form.action, {
                     method: 'POST',
                     body: formData,
@@ -40,6 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Accept': 'application/json'
                     }
                 });
+
+                let result;
+                try {
+                    result = await response.json();
+                } catch (error) {
+                    console.error('解析响应失败:', error);
+                }
 
                 if (response.ok) {
                     // 保存订阅者信息
@@ -85,7 +113,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     
                 } else {
-                    throw new Error('提交失败');
+                    // 显示Formspree返回的错误信息
+                    let errorMessage = '提交失败，请稍后重试';
+                    if (result && result.error) {
+                        errorMessage = `提交失败: ${result.error}`;
+                        console.error('Formspree错误:', result);
+                    }
+                    showSubscribeMessage(messageDiv, errorMessage, false);
+                    
+                    // 记录错误到统计
+                    if (window._hmt) {
+                        window._hmt.push(['_trackEvent', '订阅', '失败', errorMessage]);
+                    }
                 }
             } catch (error) {
                 console.error('订阅出错:', error);
@@ -95,6 +134,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (window._hmt) {
                     window._hmt.push(['_trackEvent', '订阅', '失败', error.message]);
                 }
+            } finally {
+                // 恢复提交按钮状态
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                }
+                
+                // 延迟恢复表单提交状态
+                setTimeout(() => {
+                    form.setAttribute('data-submitting', 'false');
+                }, 1000);
             }
         });
     });
