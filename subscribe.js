@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // 添加提交事件处理
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('submit', async function(event) {
             event.preventDefault();
             
             // 获取邮箱输入
@@ -38,39 +38,50 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.disabled = true;
             submitButton.innerHTML = '处理中...';
             
-            // 创建FormData对象
-            const formData = new FormData(form);
-            
-            // 添加订阅时间
-            formData.append('subscribeTime', new Date().toLocaleString());
-            
-            // 添加管理员通知邮箱 - 自动接收通知
-            formData.append('_cc', '1508611232@qq.com');
-            
-            // 发送AJAX请求到Formspree
-            fetch(form.getAttribute('action'), {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                // 恢复按钮状态
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonText;
+            try {
+                // 创建标准的表单数据对象
+                const formData = new FormData();
+                formData.append('email', email);
+                formData.append('subscribeTime', new Date().toLocaleString());
+                formData.append('_cc', '1508611232@qq.com');
                 
-                // 显示结果消息
-                if (data.ok) {
-                    showSubscribeMessage(form, '订阅成功，感谢您的关注！', true);
-                    // 如果成功，清空输入框
-                    emailInput.value = '';
-                } else {
+                // 使用XMLHttpRequest代替fetch，避免可能的CSP问题
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', form.getAttribute('action'));
+                xhr.setRequestHeader('Accept', 'application/json');
+                
+                xhr.onload = function() {
+                    // 恢复按钮状态
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                    
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.ok) {
+                            showSubscribeMessage(form, '订阅成功，感谢您的关注！', true);
+                            // 如果成功，清空输入框
+                            emailInput.value = '';
+                            
+                            // 记录订阅成功日志
+                            console.log('新订阅: ' + email + ' - ' + new Date().toLocaleString());
+                        } else {
+                            showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
+                        }
+                    } else {
+                        showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    // 恢复按钮状态
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
                     showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
-                }
-            })
-            .catch(error => {
+                    console.error('订阅请求错误');
+                };
+                
+                xhr.send(formData);
+            } catch (error) {
                 // 恢复按钮状态
                 submitButton.disabled = false;
                 submitButton.innerHTML = originalButtonText;
@@ -78,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 显示错误消息
                 showSubscribeMessage(form, '订阅请求失败，请稍后重试', false);
                 console.error('订阅请求错误:', error);
-            });
+            }
         });
     });
     
