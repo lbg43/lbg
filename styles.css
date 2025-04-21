@@ -1689,4 +1689,25 @@ nav ul li a.active::after {
 .footer .subscribe-message.error {
     background-color: rgba(244, 67, 54, 0.3);
     border: 1px solid rgba(244, 67, 54, 0.5);
+}
+
+.form-result {
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.form-result.success {
+    background-color: rgba(40, 167, 69, 0.1);
+    border: 1px solid var(--success-color);
+    color: var(--success-color);
+}
+
+.form-result.error {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid var(--error-color);
+    color: var(--error-color);
 } 
