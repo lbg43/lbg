@@ -41,6 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // 创建FormData对象
             const formData = new FormData(form);
             
+            // 添加订阅时间
+            formData.append('subscribeTime', new Date().toLocaleString());
+            
+            // 添加管理员通知邮箱 - 自动接收通知
+            formData.append('_cc', '1508611232@qq.com');
+            
             // 发送AJAX请求到Formspree
             fetch(form.getAttribute('action'), {
                 method: 'POST',
