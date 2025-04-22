@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log(`Found ${forms.length} subscription forms`);
 
     forms.forEach(form => {
+        // 重置表单状态，确保从感谢页面返回时按钮正常显示
+        resetSubscribeFormState(form);
+
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -118,4 +121,39 @@ function showSubscribeMessage(element, message, isSuccess) {
     setTimeout(() => {
         element.style.display = 'none';
     }, 3000);
+}
+
+// 监听页面可见性变化和历史返回事件
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        // 页面变为可见时重置表单状态
+        const forms = document.querySelectorAll('.subscribe-form');
+        forms.forEach(form => {
+            resetSubscribeFormState(form);
+        });
+    }
+});
+
+// 页面加载时也重置表单状态
+window.addEventListener('pageshow', function(event) {
+    // 如果是从缓存加载的页面，也需要重置表单
+    if (event.persisted) {
+        const forms = document.querySelectorAll('.subscribe-form');
+        forms.forEach(form => {
+            resetSubscribeFormState(form);
+        });
+    }
+});
+
+/**
+ * 重置订阅表单状态
+ * @param {HTMLFormElement} form - 要重置的表单
+ */
+function resetSubscribeFormState(form) {
+    form.removeAttribute('data-submitting');
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+    }
 } 
