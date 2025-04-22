@@ -393,6 +393,12 @@ function initFormValidation() {
             e.preventDefault();
             console.log('联系表单提交触发');
             
+            // 检查表单是否已经在提交中，避免重复提交
+            if (contactForm.hasAttribute('data-submitting')) {
+                console.log('表单已在提交中，忽略重复提交');
+                return;
+            }
+            
             let isValid = true;
             
             // 获取所有必填字段
@@ -441,6 +447,23 @@ function initFormValidation() {
             if (isValid) {
                 console.log('表单验证通过，准备提交');
                 
+                // 添加回复字段，确保管理员可以直接回复用户
+                if (email && email.value) {
+                    // 检查是否已存在_replyto字段，没有则创建
+                    let replyToField = contactForm.querySelector('input[name="_replyto"]');
+                    if (!replyToField) {
+                        replyToField = document.createElement('input');
+                        replyToField.type = 'hidden';
+                        replyToField.name = '_replyto';
+                        contactForm.appendChild(replyToField);
+                    }
+                    replyToField.value = email.value;
+                    console.log('已设置_replyto字段:', email.value);
+                }
+                
+                // 标记表单为正在提交状态
+                contactForm.setAttribute('data-submitting', 'true');
+                
                 // 禁用提交按钮，防止重复提交
                 if (submitButton) {
                     submitButton.disabled = true;
@@ -451,6 +474,7 @@ function initFormValidation() {
                         if (submitButton.disabled) {
                             submitButton.disabled = false;
                             submitButton.innerHTML = '发送留言';
+                            contactForm.removeAttribute('data-submitting');
                         }
                     }, 10000); // 10秒后自动恢复
                 }
