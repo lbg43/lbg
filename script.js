@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化微信弹窗
     initWechatModal();
     
+    // 重置所有表单状态，确保从感谢页面返回后表单状态正常
+    resetAllForms();
+    
     // 轮播图功能增强
     const carousel = document.querySelector('.carousel');
     if (carousel) {
@@ -381,6 +384,9 @@ function initFormValidation() {
     if (contactForm) {
         console.log('找到联系表单:', contactForm.id);
         
+        // 确保表单状态初始化
+        resetSubmitButton(contactForm);
+        
         // 添加自定义表单验证
         contactForm.addEventListener('submit', function(e) {
             // 暂时阻止表单提交，先进行验证
@@ -439,6 +445,14 @@ function initFormValidation() {
                 if (submitButton) {
                     submitButton.disabled = true;
                     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
+                    
+                    // 设置一个短暂的超时，如果网络问题导致表单无法提交，也能恢复按钮状态
+                    setTimeout(function() {
+                        if (submitButton.disabled) {
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = '发送留言';
+                        }
+                    }, 10000); // 10秒后自动恢复
                 }
                 
                 // 记录到百度统计
@@ -729,4 +743,56 @@ function scrollToService(serviceName) {
             break;
         }
     }
-} 
+}
+
+/**
+ * 重置所有表单状态，确保从感谢页面返回后表单状态正常
+ */
+function resetAllForms() {
+    const contactForms = document.querySelectorAll('.contact-form form');
+    
+    contactForms.forEach(form => {
+        // 重置表单提交状态，确保从感谢页面返回后按钮正常显示
+        form.removeAttribute('data-submitting');
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton && submitButton.disabled) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = '发送留言';
+            console.log('重置提交按钮状态');
+        }
+    });
+}
+
+/**
+ * 重置表单提交按钮状态
+ * @param {HTMLFormElement} form - 要重置的表单
+ */
+function resetSubmitButton(form) {
+    if (!form) return;
+    
+    form.removeAttribute('data-submitting');
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = form.classList.contains('subscribe-form') ? 
+            '<i class="fas fa-paper-plane"></i>' : 
+            '发送留言';
+    }
+}
+
+// 监听页面可见性变化，处理从历史返回的情况
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        // 页面变为可见时，重置所有表单状态
+        resetAllForms();
+    }
+});
+
+// 处理页面从历史记录返回的情况
+window.addEventListener('pageshow', function(event) {
+    // 如果是从缓存加载的页面（如浏览器后退按钮）
+    if (event.persisted) {
+        console.log('页面从缓存加载，重置所有表单状态');
+        resetAllForms();
+    }
+}); 
