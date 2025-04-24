@@ -688,6 +688,7 @@ function initPageLoader() {
 function initWechatModal() {
     const wechatLink = document.getElementById('wechat-link');
     const footerWechatLink = document.getElementById('footer-wechat-link');
+    const articleWechatLink = document.getElementById('article-wechat-link');
     const wechatModal = document.getElementById('wechat-modal');
     const closeModal = document.querySelector('.close-modal');
     
@@ -704,6 +705,15 @@ function initWechatModal() {
         // 点击页脚微信图标显示弹窗
         if (footerWechatLink) {
             footerWechatLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                wechatModal.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // 防止背景滚动
+            });
+        }
+        
+        // 点击文章分享微信图标显示弹窗
+        if (articleWechatLink) {
+            articleWechatLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 wechatModal.style.display = 'block';
                 document.body.style.overflow = 'hidden'; // 防止背景滚动
