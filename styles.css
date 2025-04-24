@@ -1752,4 +1752,38 @@ nav ul li a.active::after {
     background-color: rgba(220, 53, 69, 0.1);
     border: 1px solid var(--error-color);
     color: var(--error-color);
+}
+
+/* 文章分享按钮 */
+.share-buttons {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.share-buttons p {
+    margin-right: 15px;
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.share-buttons .social-link {
+    display: inline-flex;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.article-detail .social-links {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.article-detail .share-buttons .social-link:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-5px);
 } 
