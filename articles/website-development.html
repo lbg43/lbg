@@ -181,11 +181,29 @@
                 
                 <div class="share-buttons">
                     <p>分享文章：</p>
-                    <a href="javascript:void(0)" class="social-link" id="footer-wechat-link" title="分享到微信"><i class="fab fa-weixin"></i></a>
-                    <a href="javascript:void(0)" class="social-link" title="分享到微博"><i class="fab fa-weibo"></i></a>
-                    <a href="javascript:void(0)" class="social-link" title="分享到LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="javascript:void(0)" class="social-link" title="分享到GitHub"><i class="fab fa-github"></i></a>
+                    <a href="javascript:void(0)" class="social-link" id="article-wechat-link" title="分享到微信"><i class="fab fa-weixin"></i></a>
+                    <a href="javascript:void(0)" class="social-link" onclick="alert('微博账号正在审核中');" title="分享到微博"><i class="fab fa-weibo"></i></a>
+                    <a href="javascript:void(0)" class="social-link" onclick="alert('LinkedIn账号正在审核中');" title="分享到LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="javascript:void(0)" class="social-link" onclick="alert('GitHub账号正在审核中');" title="分享到GitHub"><i class="fab fa-github"></i></a>
                 </div>
+                
+                <style>
+                    .share-buttons {
+                        display: flex;
+                        align-items: center;
+                        flex-wrap: wrap;
+                        margin-top: 20px;
+                    }
+                    .share-buttons p {
+                        margin-right: 15px;
+                        margin-bottom: 10px;
+                    }
+                    .share-buttons .social-link {
+                        font-size: 18px;
+                        margin-right: 15px;
+                        margin-bottom: 10px;
+                    }
+                </style>
             </div>
             
             <div class="related-articles">
