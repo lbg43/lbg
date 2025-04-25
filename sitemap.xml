@@ -3,68 +3,139 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  <!-- GitHub Pages URLs -->
   <url>
     <loc>https://lbg43.github.io/lbg/</loc>
-    <lastmod>2025-04-19</lastmod>
+    <lastmod>2025-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://lbg43.github.io/lbg/index.html</loc>
-    <lastmod>2025-04-19</lastmod>
+    <lastmod>2025-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lbg43.github.io/lbg/articles/responsive-design.html</loc>
-    <lastmod>2025-04-19</lastmod>
+    <loc>https://lbg43.github.io/lbg/thank-you.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://lbg43.github.io/lbg/articles/website-development.html</loc>
+    <lastmod>2025-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://lbg43.github.io/lbg/articles/conversion-rate.html</loc>
-    <lastmod>2025-04-19</lastmod>
+    <loc>https://lbg43.github.io/lbg/articles/mobile-app-development.html</loc>
+    <lastmod>2025-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lbg43.github.io/lbg/articles/seo-guide.html</loc>
-    <lastmod>2025-04-19</lastmod>
+    <lastmod>2025-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <!-- GitHub Pages URLs -->
+  <url>
+    <loc>https://lbg43.github.io/lbg/articles/ui-ux-design.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lbg43.github.io/lbg/articles/ecommerce-solutions.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lbg43.github.io/lbg/articles/conversion-rate.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lbg43.github.io/lbg/articles/cloud-services.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lbg43.github.io/lbg/articles/responsive-design.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
   
   <!-- Cloudflare Pages URLs -->
   <url>
     <loc>https://lbg-4ha.pages.dev/</loc>
-    <lastmod>2025-04-19</lastmod>
+    <lastmod>2025-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://lbg-4ha.pages.dev/index.html</loc>
-    <lastmod>2025-04-19</lastmod>
+    <lastmod>2025-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lbg-4ha.pages.dev/articles/responsive-design.html</loc>
-    <lastmod>2025-04-19</lastmod>
+    <loc>https://lbg-4ha.pages.dev/thank-you.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://lbg-4ha.pages.dev/articles/website-development.html</loc>
+    <lastmod>2025-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://lbg-4ha.pages.dev/articles/conversion-rate.html</loc>
-    <lastmod>2025-04-19</lastmod>
+    <loc>https://lbg-4ha.pages.dev/articles/mobile-app-development.html</loc>
+    <lastmod>2025-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lbg-4ha.pages.dev/articles/seo-guide.html</loc>
-    <lastmod>2025-04-19</lastmod>
+    <lastmod>2025-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <!-- 您可以为其他页面添加更多的URL条目 -->
+  <url>
+    <loc>https://lbg-4ha.pages.dev/articles/ui-ux-design.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lbg-4ha.pages.dev/articles/ecommerce-solutions.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lbg-4ha.pages.dev/articles/conversion-rate.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lbg-4ha.pages.dev/articles/cloud-services.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lbg-4ha.pages.dev/articles/responsive-design.html</loc>
+    <lastmod>2025-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset> 
