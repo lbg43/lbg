@@ -278,16 +278,18 @@ nav ul li a.active::after {
 
 /* 主区域 */
 .hero-area {
-    padding: 180px 0 100px;
-    background: linear-gradient(135deg, rgba(74, 108, 250, 0.1) 0%, rgba(93, 59, 232, 0.1) 100%);
+    padding-top: 100px;
+    padding-bottom: var(--section-spacing);
     position: relative;
+    background: linear-gradient(135deg, rgba(74, 108, 250, 0.1) 0%, rgba(93, 59, 232, 0.1) 100%);
     overflow: hidden;
 }
 
 .hero-content {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
     position: relative;
     z-index: 1;
 }
@@ -959,7 +961,7 @@ nav ul li a.active::after {
     }
     
     .hero-area {
-        padding: 150px 0 80px;
+        padding-top: 80px;
     }
     
     .stats-grid {
@@ -969,9 +971,18 @@ nav ul li a.active::after {
 
 @media (max-width: 992px) {
     :root {
-        --h1-size: 2.8rem;
-        --h2-size: 2rem;
-        --section-spacing: 60px;
+        --section-spacing: 70px;
+        --h1-size: 3rem;
+        --h2-size: 2.2rem;
+    }
+    
+    .hero-area {
+        padding-top: 80px;
+    }
+    
+    .carousel {
+        height: 450px;
+        margin-bottom: 40px;
     }
     
     .about-content,
@@ -1010,10 +1021,51 @@ nav ul li a.active::after {
 
 @media (max-width: 768px) {
     :root {
+        --section-spacing: 60px;
         --h1-size: 2.5rem;
-        --h2-size: 1.8rem;
+        --h2-size: 2rem;
         --h3-size: 1.5rem;
-        --section-spacing: 50px;
+    }
+    
+    .hero-area {
+        padding-top: 70px;
+    }
+    
+    .carousel {
+        height: 400px;
+        margin-bottom: 30px;
+    }
+    
+    .about-content,
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .hero-text {
+        max-width: 100%;
+        margin-bottom: 40px;
+    }
+    
+    .hero-text .buttons {
+        justify-content: center;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .logo img {
+        height: 30px;
+    }
+    
+    .main-header.fixed .logo img {
+        height: 28px;
     }
     
     .mobile-menu-btn {
@@ -1094,9 +1146,19 @@ nav ul li a.active::after {
 
 @media (max-width: 576px) {
     :root {
-        --h1-size: 2.2rem;
-        --h2-size: 1.7rem;
+        --section-spacing: 50px;
+        --h1-size: 2rem;
+        --h2-size: 1.8rem;
         --body-size: 0.95rem;
+    }
+    
+    .hero-area {
+        padding-top: 60px;
+    }
+    
+    .carousel {
+        height: 350px;
+        margin-bottom: 25px;
     }
     
     .section-header {
@@ -1107,12 +1169,8 @@ nav ul li a.active::after {
         padding: 10px 25px;
     }
     
-    .hero-area {
-        padding: 130px 0 60px;
-    }
-    
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
     }
     
     .about-image::before {
@@ -1120,16 +1178,14 @@ nav ul li a.active::after {
     }
     
     .filter-buttons {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: 15px;
-        margin-bottom: 25px;
-        -webkit-overflow-scrolling: touch;
+        flex-wrap: wrap;
+        justify-content: center;
     }
     
     .filter-btn {
-        flex: 0 0 auto;
-        white-space: nowrap;
+        margin: 5px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
     }
 }
 
@@ -1220,16 +1276,15 @@ nav ul li a.active::after {
 /* 轮播图样式优化 */
 .carousel {
     position: relative;
+    width: 100%;
     overflow: hidden;
     border-radius: var(--border-radius-lg);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
-    margin: 2.5rem 0;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+    margin-bottom: 60px;
     height: 500px;
-    /* 控制宽高比例 */
     aspect-ratio: 16 / 9;
     max-height: 600px;
-    width: 100%;
-    background-color: #000; /* 添加黑色背景以确保没有闪烁 */
+    background-color: #000;
 }
 
 @media (max-width: 1200px) {
@@ -1271,7 +1326,7 @@ nav ul li a.active::after {
     align-items: center;
     justify-content: center;
     text-align: center;
-    will-change: opacity, transform; /* 提高性能 */
+    will-change: opacity, transform;
     z-index: 1;
 }
 
@@ -1283,8 +1338,8 @@ nav ul li a.active::after {
     height: 100%;
     object-fit: cover;
     z-index: 1;
-    transform: scale(1.05); /* 初始状态稍微放大 */
-    transition: transform 1.5s cubic-bezier(0.215, 0.61, 0.355, 1); /* 更平滑的缩放效果 */
+    transform: scale(1.05);
+    transition: transform 1.5s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 .carousel-item.active {
@@ -1294,7 +1349,7 @@ nav ul li a.active::after {
 }
 
 .carousel-item.active img {
-    transform: scale(1); /* 激活状态正常大小 */
+    transform: scale(1);
 }
 
 .carousel-item.entering {
@@ -1366,8 +1421,8 @@ nav ul li a.active::after {
     color: #fff;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     font-weight: 700;
-    transform: translateY(0); /* 初始状态 */
-    transition: transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) 0.1s; /* 延迟过渡 */
+    transform: translateY(0);
+    transition: transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) 0.1s;
 }
 
 .carousel-item p {
@@ -1376,8 +1431,8 @@ nav ul li a.active::after {
     color: rgba(255, 255, 255, 0.95);
     line-height: 1.6;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    transform: translateY(0); /* 初始状态 */
-    transition: transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) 0.2s; /* 延迟过渡 */
+    transform: translateY(0);
+    transition: transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) 0.2s;
 }
 
 .carousel-item .btn {
@@ -1387,7 +1442,7 @@ nav ul li a.active::after {
     text-transform: none;
     font-size: 1rem;
     transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
-    transform: translateY(0); /* 初始状态 */
+    transform: translateY(0);
     opacity: 1;
 }
 
