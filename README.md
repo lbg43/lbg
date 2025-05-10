@@ -22,6 +22,7 @@
 - **性能优化**：图片懒加载、CSS/JS优化
 - **搜索引擎优化**：结构化数据、元标签优化、语义化HTML
 - **百度统计集成**：支持用户行为分析
+- **百度站长工具验证**：已完成百度站长平台验证，支持百度收录
 - **多设备兼容性**：支持各种主流浏览器
 
 ## 文件结构
@@ -36,7 +37,8 @@
 ├── sitemap.xml                 # 网站地图
 ├── robots.txt                  # 搜索引擎爬虫配置
 ├── baidu-push.js               # 百度推送脚本
-├── baidu_verify_code.html      # 百度站点验证
+├── urls.txt                    # 百度URL推送列表
+├── baidu_push_commands.txt     # 百度推送命令示例
 ├── articles/                   # 文章目录
 │   ├── website-development.html  # 网站开发服务文章
 │   ├── mobile-app-development.html  # 移动应用开发文章
@@ -97,6 +99,13 @@
 - 元素逐步显示动画
 - 数字计数动画
 
+### 8. 搜索引擎优化
+
+- 完整的站点地图(sitemap.xml)
+- 已完成百度站长平台验证
+- 支持百度URL推送API
+- 针对移动设备优化的布局
+
 ## 代码细节
 
 ### HTML特点
@@ -150,6 +159,15 @@
 2. 创建站点获取统计代码
 3. 替换`index.html`中的百度统计代码片段
 
+### 百度站长工具配置
+
+1. 注册百度站长平台账号：https://ziyuan.baidu.com/
+2. 添加并验证您的网站
+3. 使用PowerShell或其他工具推送URL：
+   ```powershell
+   Invoke-WebRequest -Uri "http://data.zz.baidu.com/urls?site=您的网站&token=您的TOKEN" -Method Post -ContentType "text/plain" -Body "https://您的网站/需要推送的页面.html"
+   ```
+
 ## 浏览器兼容性
 
 - Chrome (最新版)
@@ -178,11 +196,7 @@
 
 ## 许可证
 
-版权所有 © 2023 公司名称。保留所有权利。
-
----
-
-如有问题或需要支持，请联系我们。 
+版权所有 © 2023-2024 公司名称。保留所有权利。
 
 ---
 
