@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /private/
 
-Sitemap: https://www.yourcompany.com/sitemap.xml 
+Sitemap: https://www.wbhasdifhwzgja.icu/sitemap.xml 
