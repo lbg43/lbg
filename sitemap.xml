@@ -3,70 +3,64 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-  <!-- 主域名URLs -->
+  <!-- 主域名URL -->
   <url>
     <loc>https://www.wbhasdifhwzgja.icu/</loc>
-    <lastmod>2025-05-10</lastmod>
+    <lastmod>2023-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.wbhasdifhwzgja.icu/index.html</loc>
-    <lastmod>2025-05-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.wbhasdifhwzgja.icu/thank-you.html</loc>
-    <lastmod>2025-05-10</lastmod>
+    <lastmod>2023-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://www.wbhasdifhwzgja.icu/articles/website-development.html</loc>
-    <lastmod>2025-05-10</lastmod>
+    <lastmod>2023-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.wbhasdifhwzgja.icu/articles/mobile-app-development.html</loc>
-    <lastmod>2025-05-10</lastmod>
+    <lastmod>2023-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.wbhasdifhwzgja.icu/articles/seo-guide.html</loc>
-    <lastmod>2025-05-10</lastmod>
+    <lastmod>2023-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.wbhasdifhwzgja.icu/articles/ui-ux-design.html</loc>
-    <lastmod>2025-05-10</lastmod>
+    <lastmod>2023-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.wbhasdifhwzgja.icu/articles/ecommerce-solutions.html</loc>
-    <lastmod>2025-05-10</lastmod>
+    <lastmod>2023-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.wbhasdifhwzgja.icu/articles/conversion-rate.html</loc>
-    <lastmod>2025-05-10</lastmod>
+    <lastmod>2023-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.wbhasdifhwzgja.icu/articles/cloud-services.html</loc>
-    <lastmod>2025-05-10</lastmod>
+    <lastmod>2023-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.wbhasdifhwzgja.icu/articles/responsive-design.html</loc>
-    <lastmod>2025-05-10</lastmod>
+    <lastmod>2023-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
