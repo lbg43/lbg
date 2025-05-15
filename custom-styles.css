@@ -529,7 +529,7 @@
     flex-direction: column;
     width: 100%;
     max-width: 400px;
-    margin-left: 0;
+    margin-left: auto;
     margin-right: auto;
 }
 
@@ -542,7 +542,6 @@
     margin-bottom: 10px;
     width: 100%;
     box-sizing: border-box;
-    text-align: left;
 }
 
 .newsletter-form button {
@@ -569,12 +568,11 @@
     margin-left: 5px;
 }
 
-/* 确保在所有设备上保持一致的左对齐样式 */
+/* 确保在所有设备上保持一致的样式 */
 @media (max-width: 992px), (max-width: 768px), (max-width: 480px) {
     .newsletter-form {
         max-width: 400px;
         width: 100%;
-        margin-left: 0;
     }
     
     .newsletter-form input[type="email"],
@@ -585,7 +583,6 @@
     
     .newsletter-form input[type="email"] {
         height: 50px;
-        text-align: left;
     }
     
     .newsletter-form button {
