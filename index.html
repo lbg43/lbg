@@ -942,6 +942,26 @@
                     infoText.style.textAlign = 'center';
                 }
             });
+            
+            // 确保表单居中
+            const form = document.getElementById('contact-form');
+            if (form) {
+                form.style.margin = '0 auto';
+                
+                // 在移动设备上调整表单样式
+                if (window.innerWidth <= 768) {
+                    const formGroups = form.querySelectorAll('.form-group');
+                    formGroups.forEach(group => {
+                        group.style.textAlign = 'center';
+                        
+                        const inputs = group.querySelectorAll('input, textarea');
+                        inputs.forEach(input => {
+                            input.style.margin = '0 auto';
+                            input.style.display = 'block';
+                        });
+                    });
+                }
+            }
         }
         
         // 页面加载和窗口大小变化时执行
