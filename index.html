@@ -92,7 +92,7 @@
         <div class="container">
             <!-- 轮播图部分 -->
             <div class="carousel">
-                <div class="carousel-items">
+                <div class="carousel-slide">
                     <div class="carousel-item">
                         <img src="images/carousel-1.jpg" alt="创新数字解决方案展示-企业数字化转型服务">
                         <div class="carousel-content">
@@ -495,7 +495,7 @@
     <script src="script.js"></script>
     <script src="subscribe.js"></script>
     
-    <!-- 覆盖滚动效果和加载器，让内容立即显示，同时修复轮播图 -->
+    <!-- 覆盖滚动效果和加载器，让内容立即显示，同时实现轮播图 -->
     <script>
         // 立即执行，不等待DOMContentLoaded
         (function() {
@@ -529,152 +529,163 @@
             document.addEventListener('DOMContentLoaded', function() {
                 showAllElements();
                 
-                // 阻止原initScrollEffects函数的滚动监听
+                // 禁用滚动效果
                 window.initScrollEffects = function() {
                     console.log('滚动效果已禁用');
                 };
                 
-                // 完全重写轮播图功能
-                const carousel = document.querySelector('.carousel');
-                if (carousel) {
+                // 简单轮播图实现
+                function initCarousel() {
+                    const carousel = document.querySelector('.carousel');
+                    if (!carousel) return;
+                    
                     const items = document.querySelectorAll('.carousel-item');
-                    const dots = document.querySelector('.carousel-dots');
+                    const dotsContainer = document.querySelector('.carousel-dots');
                     const prevBtn = document.querySelector('.carousel-prev');
                     const nextBtn = document.querySelector('.carousel-next');
                     
+                    if (items.length === 0) return;
+                    
                     let currentIndex = 0;
-                    let slideInterval;
+                    let autoPlayTimer = null;
                     
-                    // 确保第一张图片显示
-                    items[0].classList.add('active');
-                    
-                    // 创建导航点
-                    for (let i = 0; i < items.length; i++) {
-                        const dot = document.createElement('div');
-                        dot.classList.add('carousel-dot');
-                        if (i === 0) {
-                            dot.classList.add('active');
-                        }
-                        dots.appendChild(dot);
+                    // 切换到指定幻灯片
+                    function goToSlide(index) {
+                        // 移除所有活动类
+                        items.forEach(item => item.classList.remove('active'));
                         
-                        // 点击导航点切换到对应的幻灯片
-                        dot.addEventListener('click', function() {
-                            goToSlide(i);
+                        // 更新当前索引并激活当前幻灯片
+                        currentIndex = index;
+                        items[currentIndex].classList.add('active');
+                        
+                        // 更新导航点
+                        if (dotsContainer) {
+                            const dots = dotsContainer.querySelectorAll('.carousel-dot');
+                            dots.forEach(dot => dot.classList.remove('active'));
+                            dots[currentIndex].classList.add('active');
+                        }
+                    }
+                    
+                    // 下一张幻灯片
+                    function nextSlide() {
+                        goToSlide((currentIndex + 1) % items.length);
+                    }
+                    
+                    // 上一张幻灯片
+                    function prevSlide() {
+                        goToSlide((currentIndex - 1 + items.length) % items.length);
+                    }
+                    
+                    // 初始化导航点
+                    if (dotsContainer) {
+                        dotsContainer.innerHTML = '';
+                        items.forEach((_, index) => {
+                            const dot = document.createElement('div');
+                            dot.classList.add('carousel-dot');
+                            if (index === 0) dot.classList.add('active');
+                            
+                            dot.addEventListener('click', () => {
+                                clearInterval(autoPlayTimer);
+                                goToSlide(index);
+                                startAutoPlay();
+                            });
+                            
+                            dotsContainer.appendChild(dot);
                         });
                     }
                     
-                    // 轮播图切换函数
-                    function goToSlide(index) {
-                        // 移除当前活动状态
-                        items[currentIndex].classList.remove('active');
-                        document.querySelectorAll('.carousel-dot')[currentIndex].classList.remove('active');
-                        
-                        // 设置新的活动状态
-                        currentIndex = index;
-                        items[currentIndex].classList.add('active');
-                        document.querySelectorAll('.carousel-dot')[currentIndex].classList.add('active');
-                        
-                        // 重置自动播放
-                        resetInterval();
-                    }
-                    
-                    // 下一张
-                    function nextSlide() {
-                        let nextIndex = currentIndex + 1;
-                        if (nextIndex >= items.length) {
-                            nextIndex = 0;
-                        }
-                        goToSlide(nextIndex);
-                    }
-                    
-                    // 上一张
-                    function prevSlide() {
-                        let prevIndex = currentIndex - 1;
-                        if (prevIndex < 0) {
-                            prevIndex = items.length - 1;
-                        }
-                        goToSlide(prevIndex);
-                    }
-                    
-                    // 设置自动播放
-                    function startInterval() {
-                        slideInterval = setInterval(function() {
-                            nextSlide();
-                        }, 5000);
-                    }
-                    
-                    // 重置自动播放
-                    function resetInterval() {
-                        clearInterval(slideInterval);
-                        startInterval();
-                    }
-                    
-                    // 注册事件
-                    nextBtn.addEventListener('click', function() {
-                        nextSlide();
-                    });
-                    
-                    prevBtn.addEventListener('click', function() {
-                        prevSlide();
-                    });
-                    
-                    // 开始自动播放
-                    startInterval();
-                    
-                    // 添加触摸滑动支持
-                    let touchStartX = 0;
-                    let touchEndX = 0;
-                    
-                    carousel.addEventListener('touchstart', function(e) {
-                        touchStartX = e.changedTouches[0].screenX;
-                    }, {passive: true});
-                    
-                    carousel.addEventListener('touchend', function(e) {
-                        touchEndX = e.changedTouches[0].screenX;
-                        handleSwipe();
-                    }, {passive: true});
-                    
-                    function handleSwipe() {
-                        if (touchEndX < touchStartX) {
-                            // 左滑，下一张
-                            nextSlide();
-                        } else if (touchEndX > touchStartX) {
-                            // 右滑，上一张
+                    // 绑定按钮事件
+                    if (prevBtn) {
+                        prevBtn.addEventListener('click', () => {
+                            clearInterval(autoPlayTimer);
                             prevSlide();
-                        }
+                            startAutoPlay();
+                        });
                     }
+                    
+                    if (nextBtn) {
+                        nextBtn.addEventListener('click', () => {
+                            clearInterval(autoPlayTimer);
+                            nextSlide();
+                            startAutoPlay();
+                        });
+                    }
+                    
+                    // 触摸支持
+                    let touchStartX = 0;
+                    carousel.addEventListener('touchstart', e => {
+                        touchStartX = e.changedTouches[0].screenX;
+                        clearInterval(autoPlayTimer);
+                    }, {passive: true});
+                    
+                    carousel.addEventListener('touchend', e => {
+                        const touchEndX = e.changedTouches[0].screenX;
+                        const diff = touchEndX - touchStartX;
+                        
+                        if (Math.abs(diff) > 50) {
+                            if (diff > 0) {
+                                prevSlide(); // 右滑，上一张
+                            } else {
+                                nextSlide(); // 左滑，下一张
+                            }
+                        }
+                        
+                        startAutoPlay();
+                    }, {passive: true});
+                    
+                    // 自动播放
+                    function startAutoPlay() {
+                        clearInterval(autoPlayTimer);
+                        autoPlayTimer = setInterval(nextSlide, 5000);
+                    }
+                    
+                    // 页面可见性变化处理
+                    document.addEventListener('visibilitychange', () => {
+                        if (document.visibilityState === 'visible') {
+                            startAutoPlay();
+                        } else {
+                            clearInterval(autoPlayTimer);
+                        }
+                    });
+                    
+                    // 显示第一张并开始自动播放
+                    goToSlide(0);
+                    startAutoPlay();
                 }
                 
-                // 确保微信弹窗正常工作
+                // 初始化轮播图
+                initCarousel();
+                
+                // 微信弹窗处理
                 const wechatLink = document.getElementById('wechat-link');
                 const footerWechatLink = document.getElementById('footer-wechat-link');
                 const wechatModal = document.getElementById('wechat-modal');
                 const closeModal = document.querySelector('.close-modal');
                 
                 if (wechatLink && wechatModal) {
-                    wechatLink.addEventListener('click', function(e) {
+                    wechatLink.addEventListener('click', e => {
                         e.preventDefault();
                         wechatModal.style.display = 'flex';
-                        document.body.style.overflow = 'hidden'; // 防止背景滚动
+                        document.body.style.overflow = 'hidden';
                     });
                 }
                 
                 if (footerWechatLink && wechatModal) {
-                    footerWechatLink.addEventListener('click', function(e) {
+                    footerWechatLink.addEventListener('click', e => {
                         e.preventDefault();
                         wechatModal.style.display = 'flex';
-                        document.body.style.overflow = 'hidden'; // 防止背景滚动
+                        document.body.style.overflow = 'hidden';
                     });
                 }
                 
                 if (closeModal && wechatModal) {
-                    closeModal.addEventListener('click', function() {
+                    closeModal.addEventListener('click', () => {
                         wechatModal.style.display = 'none';
                         document.body.style.overflow = '';
                     });
                 }
                 
-                window.addEventListener('click', function(e) {
+                window.addEventListener('click', e => {
                     if (e.target === wechatModal) {
                         wechatModal.style.display = 'none';
                         document.body.style.overflow = '';
