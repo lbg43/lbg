@@ -16,8 +16,6 @@
     <link rel="stylesheet" href="styles.min.css">
     <!-- 字体图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 自定义样式 -->
-    <link rel="stylesheet" href="custom-styles.css">
     <!-- 百度自动推送 -->
     <script src="baidu-push.js"></script>
     
@@ -215,24 +213,24 @@
                 </div>
                 <div class="about-text">
                     <h2>关于我们</h2>
-                    <p>我们是一家致力于提供高质量数字服务的专业团队，拥有超过5年的行业经验。我们的使命是帮助企业实现数字化转型，提升品牌价值和市场竞争力。</p>
+                    <p>我们是一家致力于提供高质量数字服务的专业团队，拥有超过10年的行业经验。我们的使命是帮助企业实现数字化转型，提升品牌价值和市场竞争力。</p>
                     <p>我们相信每个项目都是独特的，因此我们为每位客户提供量身定制的解决方案，满足其特定需求和目标。</p>
                     <a href="#contact" class="btn">联系我们</a>
                     <div class="stats-grid">
                         <div class="stat-item">
-                            <div class="number" data-count="98">0</div>
+                            <div class="number" data-count="150">0</div>
                             <div class="label">客户满意</div>
                         </div>
                         <div class="stat-item">
-                            <div class="number" data-count="120">0</div>
+                            <div class="number" data-count="200">0</div>
                             <div class="label">完成项目</div>
                         </div>
                         <div class="stat-item">
-                            <div class="number" data-count="8">0</div>
+                            <div class="number" data-count="15">0</div>
                             <div class="label">专业团队</div>
                         </div>
                         <div class="stat-item">
-                            <div class="number" data-count="5">0</div>
+                            <div class="number" data-count="10">0</div>
                             <div class="label">行业经验</div>
                         </div>
                     </div>
@@ -347,78 +345,85 @@
     </section>
 
     <!-- 联系部分 -->
-    <section id="contact" class="contact section contact-section-new">
+    <section id="contact" class="contact section">
         <div class="container">
             <div class="section-header">
                 <h2>联系我们</h2>
                 <p>有任何问题或项目需求，请随时与我们联系</p>
             </div>
-            
-            <div class="contact-info-new">
-                <div class="contact-info-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <h3>地址</h3>
-                    <p>中国北京市朝阳区建国路88号</p>
-                </div>
-                
-                <div class="contact-info-item">
-                    <i class="fas fa-phone"></i>
-                    <h3>电话</h3>
-                    <p>+86 13376717896</p>
-                </div>
-                
-                <div class="contact-info-item">
-                    <i class="fas fa-envelope"></i>
-                    <h3>邮箱</h3>
-                    <p>1508611232@qq.com</p>
-                </div>
-                
-                <div class="contact-info-item">
-                    <div class="contact-info-social">
-                        <a href="javascript:void(0)" id="wechat-link"><i class="fab fa-weixin"></i></a>
-                        <a href="javascript:void(0)" onclick="alert('微博账号正在审核中');"><i class="fab fa-weibo"></i></a>
-                        <a href="javascript:void(0)" onclick="alert('LinkedIn账号正在审核中');"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="javascript:void(0)" onclick="alert('GitHub账号正在审核中');"><i class="fab fa-github"></i></a>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>地址</h3>
+                            <p>中国北京市朝阳区建国路88号</p>
+                        </div>
+                    </div>
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>电话</h3>
+                            <p>+86 13376717896</p>
+                        </div>
+                    </div>
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>邮箱</h3>
+                            <p>1508611232@qq.com</p>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="javascript:void(0)" class="social-link" id="wechat-link"><i class="fab fa-weixin"></i></a>
+                        <a href="javascript:void(0)" onclick="alert('微博账号正在审核中');" class="social-link"><i class="fab fa-weibo"></i></a>
+                        <a href="javascript:void(0)" onclick="alert('LinkedIn账号正在审核中');" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="javascript:void(0)" onclick="alert('GitHub账号正在审核中');" class="social-link"><i class="fab fa-github"></i></a>
+                    </div>
+                    
+                    <!-- 微信二维码弹窗 -->
+                    <div id="wechat-modal" class="wechat-modal">
+                        <div class="wechat-modal-content">
+                            <span class="close-modal">&times;</span>
+                            <h3>扫描二维码添加微信</h3>
+                            <div class="qrcode-container">
+                                <img src="images/wechat-qrcode.jpg" alt="公司官方微信二维码-扫码获取更多服务信息" width="200" height="200">
+                            </div>
+                            <p>微信号: pds051207</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- 微信二维码弹窗 - 只在点击微信图标时显示 -->
-            <div id="wechat-modal" class="wechat-modal">
-                <div class="wechat-modal-content">
-                    <span class="close-modal">&times;</span>
-                    <h3>扫描二维码添加微信</h3>
-                    <div class="qrcode-container">
-                        <img src="images/wechat-qrcode.jpg" alt="公司官方微信二维码-扫码获取更多服务信息" width="250" height="250">
-                    </div>
-                    <p>微信号: <strong>pds051207</strong></p>
+                <div class="contact-form">
+                    <form action="https://formspree.io/f/xldjqywr" method="POST" id="contact-form" onreset="resetSubmitButton(this)">
+                        <input type="hidden" name="_subject" value="网站联系表单提交">
+                        <input type="hidden" name="_next" value="https://lbg-4ha.pages.dev/thank-you.html">
+                        <input type="hidden" name="_autoresponse" value="感谢您的留言，我们已收到您的信息，并将尽快回复您。如有紧急事项，请直接联系我们：1508611232@qq.com">
+                        <input type="hidden" name="_to" value="1508611232@qq.com">
+                        <div class="form-group">
+                            <label for="name">姓名</label>
+                            <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">邮箱</label>
+                            <input type="email" id="email" name="email" placeholder="请输入您的邮箱" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">主题</label>
+                            <input type="text" id="subject" name="subject" placeholder="请输入主题" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">留言</label>
+                            <textarea id="message" name="message" placeholder="请输入您的留言" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">发送留言</button>
+                    </form>
                 </div>
-            </div>
-            
-            <div class="contact-form-new">
-                <form action="https://formspree.io/f/xldjqywr" method="POST" id="contact-form" onreset="resetSubmitButton(this)">
-                    <input type="hidden" name="_subject" value="网站联系表单提交">
-                    <input type="hidden" name="_next" value="https://lbg-4ha.pages.dev/thank-you.html">
-                    <input type="hidden" name="_autoresponse" value="感谢您的留言，我们已收到您的信息，并将尽快回复您。如有紧急事项，请直接联系我们：1508611232@qq.com">
-                    <input type="hidden" name="_to" value="1508611232@qq.com">
-                    <div class="form-group">
-                        <label for="name">姓名</label>
-                        <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">邮箱</label>
-                        <input type="email" id="email" name="email" placeholder="请输入您的邮箱" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="subject">主题</label>
-                        <input type="text" id="subject" name="subject" placeholder="请输入主题" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">留言</label>
-                        <textarea id="message" name="message" placeholder="请输入您的留言" required></textarea>
-                    </div>
-                    <button type="submit" class="btn">发送留言</button>
-                </form>
             </div>
         </div>
     </section>
@@ -487,6 +492,5 @@
     <!-- JavaScript -->
     <script src="script.min.js"></script>
     <script src="subscribe.js"></script>
-    <script src="custom-scripts.js"></script>
 </body>
 </html> 
