@@ -46,7 +46,9 @@
         [class*="carousel"] [class*="dots"],
         [class*="carousel"] [class*="dot"],
         [class*="slider"] [class*="dots"],
-        [class*="slider"] [class*="dot"] {
+        [class*="slider"] [class*="dot"],
+        [class*="slide"] [class*="dots"],
+        [class*="slide"] [class*="dot"] {
             display: none !important;
             opacity: 0 !important;
             visibility: hidden !important;
@@ -58,26 +60,6 @@
             pointer-events: none !important;
             left: -9999px !important;
             top: -9999px !important;
-        }
-    }
-    
-    /* 响应式表单样式 */
-    @media (max-width: 480px) {
-        #contact-form > div {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-        }
-        
-        #contact-form label {
-            width: 100% !important;
-            text-align: left !important;
-            margin-right: 0 !important;
-            margin-bottom: 5px !important;
-        }
-        
-        #contact-form input,
-        #contact-form textarea {
-            width: 100% !important;
         }
     }
     </style>
@@ -532,7 +514,7 @@
                     </div>
                 </div>
                 <div class="contact-form">
-                    <form action="https://formspree.io/f/xldjqywr" method="POST" id="contact-form" onreset="resetSubmitButton(this)" style="max-width: 500px; margin: 0 auto;">
+                    <form action="https://formspree.io/f/xldjqywr" method="POST" id="contact-form" onreset="resetSubmitButton(this)">
                         <!-- 隐藏字段放在表单开头，不参与网格布局 -->
                         <input type="hidden" name="_subject" value="网站联系表单提交">
                         <input type="hidden" name="_next" value="https://lbg-4ha.pages.dev/thank-you.html">
@@ -540,25 +522,25 @@
                         <input type="hidden" name="_to" value="1508611232@qq.com">
                         
                         <!-- 表单字段 -->
-                        <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                            <label for="name" style="width: 60px; text-align: right; margin-right: 15px;">姓名：</label>
-                            <input type="text" id="name" name="name" placeholder="请输入您的姓名" required style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <div class="form-group">
+                            <label for="name">姓名：</label>
+                            <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
                         </div>
-                        <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                            <label for="email" style="width: 60px; text-align: right; margin-right: 15px;">邮箱：</label>
-                            <input type="email" id="email" name="email" placeholder="请输入您的邮箱" required style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <div class="form-group">
+                            <label for="email">邮箱：</label>
+                            <input type="email" id="email" name="email" placeholder="请输入您的邮箱" required>
                         </div>
-                        <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                            <label for="subject" style="width: 60px; text-align: right; margin-right: 15px;">主题：</label>
-                            <input type="text" id="subject" name="subject" placeholder="请输入主题" required style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <div class="form-group">
+                            <label for="subject">主题：</label>
+                            <input type="text" id="subject" name="subject" placeholder="请输入主题" required>
                         </div>
-                        <div style="display: flex; margin-bottom: 15px; align-items: flex-start;">
-                            <label for="message" style="width: 60px; text-align: right; margin-right: 15px; margin-top: 10px;">留言：</label>
-                            <textarea id="message" name="message" placeholder="请输入您的留言" required style="flex: 1; min-height: 120px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+                        <div class="form-group">
+                            <label for="message">留言：</label>
+                            <textarea id="message" name="message" placeholder="请输入您的留言" required></textarea>
                         </div>
                         
                         <!-- 按钮居中 -->
-                        <div style="text-align: center; margin-top: 20px;">
+                        <div style="text-align: center; margin-top: 20px; grid-column: 1 / -1;">
                             <button type="submit" class="btn">发送留言</button>
                         </div>
                     </form>
