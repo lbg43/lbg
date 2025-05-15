@@ -271,34 +271,15 @@ function initScrollEffects() {
     // 滚动显示元素
     const scrollItems = document.querySelectorAll('.service-item, .about-content, .article-card, .gallery-item, .contact-method');
     
-    // 初始隐藏元素
+    // 直接显示所有元素，不需要滚动触发
     scrollItems.forEach(item => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateY(30px)';
+        item.style.opacity = '1';
+        item.style.transform = 'translateY(0)';
         item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
     });
     
-    // 检查元素是否在视图中
-    const checkInView = function() {
-        scrollItems.forEach((item, index) => {
-            const rect = item.getBoundingClientRect();
-            const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-            
-            if (rect.top <= windowHeight * 0.85) {
-                // 添加延迟动画
-                setTimeout(() => {
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateY(0)';
-                }, index * 100);
-            }
-        });
-    };
-    
-    // 首次检查
-    checkInView();
-    
-    // 滚动时检查
-    window.addEventListener('scroll', throttle(checkInView, 100));
+    // 不再需要滚动检查
+    // window.addEventListener('scroll', throttle(checkInView, 100));
 }
 
 /**
