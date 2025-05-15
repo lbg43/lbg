@@ -102,28 +102,25 @@
     width: 100%;
 }
 
+/* 联系方式对齐设置 */
 .contact-method {
-    display: flex;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    align-items: center;
     margin-bottom: 25px;
-    position: relative;
-    padding-left: 50px; /* 固定左侧图标空间 */
 }
 
 .contact-icon {
-    position: absolute;
-    left: 0;
-    top: 3px;
+    width: 60px;
     display: flex;
+    justify-content: center;
     align-items: center;
     font-size: 24px;
-    width: 40px; /* 固定宽度 */
-    justify-content: center; /* 居中图标 */
+    color: #4a6cfa;
 }
 
 .contact-details {
     text-align: left;
-    flex: 1;
 }
 
 .contact-details h3 {
@@ -205,11 +202,12 @@
     }
     
     .contact-method {
-        padding-left: 40px; /* 移动端减少左侧间距 */
+        grid-template-columns: 50px 1fr;
     }
     
     .contact-icon {
-        width: 30px; /* 移动端减小图标区域 */
+        width: 50px;
+        font-size: 20px;
     }
     
     /* 手机上改为单列布局 */
@@ -235,11 +233,12 @@
 /* 在小屏幕设备上调整对齐距离 */
 @media (max-width: 480px) {
     .contact-method {
-        padding-left: 35px; /* 更小屏幕进一步减少间距 */
+        grid-template-columns: 40px 1fr;
     }
     
     .contact-icon {
-        width: 25px; /* 更小屏幕进一步减小图标区域 */
+        width: 40px;
+        font-size: 18px;
     }
 }
 
