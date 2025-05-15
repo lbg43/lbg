@@ -546,7 +546,7 @@
                         </div>
                         
                         <!-- 按钮居中，独占一行 -->
-                        <div style="text-align: center; margin-top: 20px;">
+                        <div style="text-align: center; margin-top: 20px; grid-column: 1 / -1;">
                             <button type="submit" class="btn">发送留言</button>
                         </div>
                     </form>
@@ -921,6 +921,47 @@
         
         window.addEventListener('load', optimizeContactSection);
         window.addEventListener('resize', optimizeContactSection);
+    </script>
+
+    <!-- 确保联系区域对齐 -->
+    <script>
+        // 确保联系区域对齐
+        function ensureContactAlignment() {
+            // 获取所有联系方式项
+            const contactMethods = document.querySelectorAll('.contact-method');
+            
+            if (contactMethods.length === 0) return;
+            
+            // 让所有图标垂直对齐
+            contactMethods.forEach(method => {
+                const icon = method.querySelector('.contact-icon');
+                if (icon) {
+                    // 确保图标居中显示
+                    icon.style.display = 'flex';
+                    icon.style.justifyContent = 'center';
+                    icon.style.alignItems = 'center';
+                }
+                
+                // 确保文本内容统一间距
+                const details = method.querySelector('.contact-details');
+                if (details) {
+                    const heading = details.querySelector('h3');
+                    const paragraph = details.querySelector('p');
+                    
+                    if (heading) {
+                        heading.style.margin = '0 0 5px 0';
+                    }
+                    
+                    if (paragraph) {
+                        paragraph.style.margin = '0';
+                    }
+                }
+            });
+        }
+        
+        // 页面加载后执行
+        document.addEventListener('DOMContentLoaded', ensureContactAlignment);
+        window.addEventListener('resize', ensureContactAlignment);
     </script>
 </body>
 </html>
