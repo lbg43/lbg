@@ -1,26 +1,78 @@
 /* 微信二维码弹窗样式增强 */
 .wechat-modal {
     z-index: 1200;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
 }
 
 .wechat-modal-content {
+    background-color: white;
     max-width: 400px;
+    width: 90%;
     padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.qrcode-container {
+    margin: 20px auto;
+    border: 1px solid #eee;
+    padding: 10px;
+    display: inline-block;
+    background-color: white;
 }
 
 .qrcode-container img {
     width: 250px;
     height: 250px;
+    display: block;
 }
 
 .wechat-modal-content h3 {
     font-size: 22px;
     margin-bottom: 20px;
+    color: #333;
 }
 
 .wechat-modal-content p {
     font-size: 18px;
     margin-top: 20px;
+    color: #555;
 }
 
 /* 表单字段增大 */
@@ -77,5 +129,91 @@
     .qrcode-container img {
         width: 200px;
         height: 200px;
+    }
+}
+
+/* 新的联系信息布局样式 */
+.contact-info-new {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.contact-info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.contact-info-item i {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.contact-info-item h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.contact-info-item p, 
+.contact-info-item a {
+    font-size: 18px;
+    color: #555;
+}
+
+.contact-info-social {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.contact-info-social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    transition: all 0.3s ease;
+}
+
+.contact-info-social a i {
+    font-size: 20px;
+    color: #555;
+    margin: 0;
+}
+
+.contact-info-social a:hover {
+    background-color: var(--primary-color);
+}
+
+.contact-info-social a:hover i {
+    color: white;
+}
+
+.contact-section-new {
+    display: flex;
+    flex-direction: column;
+    padding: 50px 0;
+}
+
+.contact-form-new {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .contact-info-item h3 {
+        font-size: 20px;
+    }
+
+    .contact-info-item p,
+    .contact-info-item a {
+        font-size: 16px;
     }
 } 
