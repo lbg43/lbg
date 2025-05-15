@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e) e.preventDefault();
         wechatModal.style.display = 'flex';
         document.body.style.overflow = 'hidden'; // 防止背景滚动
+        console.log('显示微信弹窗');
     }
     
     // 关闭弹窗的函数
@@ -25,22 +26,38 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = '';
     }
     
-    // 获取所有微信链接
+    // 为页面上所有微信相关链接添加点击事件
+    // 1. 通过ID查找微信链接
     const wechatLinks = [
         document.getElementById('wechat-link'),
         document.getElementById('footer-wechat-link'),
         document.getElementById('article-wechat-link')
     ].filter(Boolean); // 过滤掉不存在的元素
     
-    // 为所有微信链接添加点击事件
+    // 2. 通过类名和标题查找微信链接
+    const shareWechatLinks = document.querySelectorAll('.social-link[title="分享到微信"], .social-link[title="微信"], .fab.fa-weixin').forEach(function(link) {
+        link.addEventListener('click', showWechatModal);
+    });
+    
+    // 3. 为所有微信图标添加事件（不依赖于特定ID或标题）
+    document.querySelectorAll('.fab.fa-weixin').forEach(function(icon) {
+        // 找到包含此图标的最近的a标签
+        const parentLink = icon.closest('a');
+        if (parentLink) {
+            parentLink.addEventListener('click', showWechatModal);
+        }
+    });
+    
+    // 4. 为找到的ID链接添加事件
     wechatLinks.forEach(function(link) {
         link.addEventListener('click', showWechatModal);
     });
     
-    // 获取所有带有"分享到微信"标题的链接
-    const shareWechatLinks = document.querySelectorAll('.social-link[title="分享到微信"], .social-link[title="微信"]');
-    shareWechatLinks.forEach(function(link) {
-        link.addEventListener('click', showWechatModal);
+    // 5. 为文章页面中的社交分享按钮添加事件
+    document.querySelectorAll('.share-buttons a').forEach(function(link) {
+        if (link.querySelector('.fa-weixin') || link.querySelector('.fab.fa-weixin')) {
+            link.addEventListener('click', showWechatModal);
+        }
     });
     
     // 为关闭按钮添加点击事件
