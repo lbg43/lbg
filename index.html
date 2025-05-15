@@ -495,7 +495,7 @@
     <script src="script.js"></script>
     <script src="subscribe.js"></script>
     
-    <!-- 覆盖滚动效果和加载器，让内容立即显示 -->
+    <!-- 覆盖滚动效果和加载器，让内容立即显示，同时修复轮播图 -->
     <script>
         // 立即执行，不等待DOMContentLoaded
         (function() {
@@ -534,6 +534,114 @@
                     console.log('滚动效果已禁用');
                 };
                 
+                // 修复轮播图显示
+                const carousel = document.querySelector('.carousel');
+                if (carousel) {
+                    const carouselItems = carousel.querySelectorAll('.carousel-item');
+                    const carouselDots = carousel.querySelector('.carousel-dots');
+                    let currentIndex = 0;
+                    let interval;
+                    
+                    // 清除之前可能存在的活动类
+                    carouselItems.forEach(item => {
+                        item.classList.remove('active', 'entering', 'leaving');
+                    });
+                    
+                    // 激活第一个轮播项
+                    carouselItems[0].classList.add('active');
+                    
+                    // 创建导航点
+                    if (carouselDots) {
+                        carouselDots.innerHTML = '';
+                        carouselItems.forEach((_, index) => {
+                            const dot = document.createElement('div');
+                            dot.classList.add('carousel-dot');
+                            if (index === 0) dot.classList.add('active');
+                            dot.addEventListener('click', () => {
+                                clearInterval(interval);
+                                goToSlide(index);
+                                startAutoSlide();
+                            });
+                            carouselDots.appendChild(dot);
+                        });
+                    }
+                    
+                    // 上一张/下一张按钮事件
+                    const prevBtn = carousel.querySelector('.carousel-prev');
+                    const nextBtn = carousel.querySelector('.carousel-next');
+                    
+                    if (prevBtn) {
+                        prevBtn.addEventListener('click', () => {
+                            clearInterval(interval);
+                            const prevIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
+                            goToSlide(prevIndex);
+                            startAutoSlide();
+                        });
+                    }
+                    
+                    if (nextBtn) {
+                        nextBtn.addEventListener('click', () => {
+                            clearInterval(interval);
+                            const nextIndex = (currentIndex + 1) % carouselItems.length;
+                            goToSlide(nextIndex);
+                            startAutoSlide();
+                        });
+                    }
+                    
+                    // 切换幻灯片
+                    function goToSlide(index) {
+                        if (index === currentIndex) return;
+                        
+                        const currentSlide = carouselItems[currentIndex];
+                        const nextSlide = carouselItems[index];
+                        
+                        // 移除当前活动幻灯片
+                        currentSlide.classList.add('leaving');
+                        currentSlide.classList.remove('active');
+                        
+                        // 设置新的活动幻灯片
+                        nextSlide.classList.add('active', 'entering');
+                        
+                        // 更新导航点
+                        if (carouselDots) {
+                            const dots = carouselDots.querySelectorAll('.carousel-dot');
+                            dots[currentIndex].classList.remove('active');
+                            dots[index].classList.add('active');
+                        }
+                        
+                        // 动画完成后清理类
+                        setTimeout(() => {
+                            currentSlide.classList.remove('leaving');
+                            nextSlide.classList.remove('entering');
+                        }, 800);
+                        
+                        currentIndex = index;
+                    }
+                    
+                    // 自动轮播
+                    function startAutoSlide() {
+                        clearInterval(interval);
+                        interval = setInterval(() => {
+                            if (document.visibilityState === 'visible') {
+                                const nextIndex = (currentIndex + 1) % carouselItems.length;
+                                goToSlide(nextIndex);
+                            }
+                        }, 5000);
+                    }
+                    
+                    // 开始自动轮播
+                    startAutoSlide();
+                    
+                    // 页面可见性变化处理
+                    document.addEventListener('visibilitychange', function() {
+                        if (document.visibilityState === 'visible') {
+                            startAutoSlide();
+                        } else {
+                            clearInterval(interval);
+                        }
+                    });
+                }
+                
                 // 确保微信弹窗正常工作
                 const wechatLink = document.getElementById('wechat-link');
                 const footerWechatLink = document.getElementById('footer-wechat-link');
@@ -544,6 +652,7 @@
                     wechatLink.addEventListener('click', function(e) {
                         e.preventDefault();
                         wechatModal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden'; // 防止背景滚动
                     });
                 }
                 
@@ -551,18 +660,21 @@
                     footerWechatLink.addEventListener('click', function(e) {
                         e.preventDefault();
                         wechatModal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden'; // 防止背景滚动
                     });
                 }
                 
                 if (closeModal && wechatModal) {
                     closeModal.addEventListener('click', function() {
                         wechatModal.style.display = 'none';
+                        document.body.style.overflow = '';
                     });
                 }
                 
                 window.addEventListener('click', function(e) {
                     if (e.target === wechatModal) {
                         wechatModal.style.display = 'none';
+                        document.body.style.overflow = '';
                     }
                 });
             });
