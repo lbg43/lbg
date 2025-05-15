@@ -20,6 +20,51 @@
     <link rel="stylesheet" href="custom-styles.css">
     <!-- 轮播图样式 -->
     <link rel="stylesheet" href="carousel.css">
+    <style>
+    /* 完全禁用所有设备上的轮播图导航点 */
+    .carousel-dots, 
+    .carousel-dot,
+    .carousel .carousel-dots,
+    .carousel .carousel-dot,
+    .hero-carousel .carousel-dots,
+    .hero-carousel .carousel-dot {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        width: 0 !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 专门针对移动设备的样式覆盖 */
+    @media (max-width: 768px) {
+        .carousel-dots, 
+        .carousel-dot,
+        [class*="carousel"] [class*="dots"],
+        [class*="carousel"] [class*="dot"],
+        [class*="slider"] [class*="dots"],
+        [class*="slider"] [class*="dot"],
+        [class*="slide"] [class*="dots"],
+        [class*="slide"] [class*="dot"] {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transform: none !important;
+            height: 0 !important;
+            overflow: hidden !important;
+            position: absolute !important;
+            z-index: -9999 !important;
+            pointer-events: none !important;
+            left: -9999px !important;
+            top: -9999px !important;
+        }
+    }
+    </style>
+    <!-- 强制覆盖所有设备上的导航点样式 -->
+    <link rel="stylesheet" href="no-dots.css">
     <!-- 百度自动推送 -->
     <script src="baidu-push.js"></script>
     
@@ -570,6 +615,63 @@
                 });
             });
         })();
+    </script>
+
+    <!-- 彻底移除轮播图导航点的额外脚本 -->
+    <script>
+        // 在DOM加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 立即移除导航点
+            removeCarouselDots();
+            
+            // 延迟执行，确保所有动态加载的内容也被处理
+            setTimeout(removeCarouselDots, 500);
+            setTimeout(removeCarouselDots, 1000);
+            setTimeout(removeCarouselDots, 2000);
+        });
+        
+        // 监听页面完全加载事件
+        window.addEventListener('load', function() {
+            removeCarouselDots();
+            setTimeout(removeCarouselDots, 1000);
+        });
+        
+        // 监听屏幕大小变化事件
+        window.addEventListener('resize', removeCarouselDots);
+        
+        // 移除所有可能的导航点元素
+        function removeCarouselDots() {
+            // 查找所有可能的导航点元素
+            const dotElements = document.querySelectorAll('.carousel-dots, .carousel-dot, [class*="carousel"] [class*="dot"], [class*="carousel"] [class*="dots"]');
+            
+            // 移除找到的元素
+            dotElements.forEach(function(element) {
+                if(element && element.parentNode) {
+                    element.parentNode.removeChild(element);
+                    console.log('移除了导航点元素', element);
+                }
+            });
+            
+            // 应用内联样式以强制隐藏
+            const style = document.createElement('style');
+            style.textContent = `
+                .carousel-dots, .carousel-dot, 
+                [class*="carousel"] [class*="dots"], 
+                [class*="carousel"] [class*="dot"],
+                [class*="slider"] [class*="dots"],
+                [class*="slider"] [class*="dot"] {
+                    display: none !important;
+                    opacity: 0 !important;
+                    visibility: hidden !important;
+                    position: absolute !important;
+                    width: 0 !important;
+                    height: 0 !important;
+                    pointer-events: none !important;
+                    z-index: -9999 !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
     </script>
 </body>
 </html> 
