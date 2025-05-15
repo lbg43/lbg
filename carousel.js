@@ -28,14 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const oldDotsContainer = carousel.querySelector('.carousel-dots');
     if (oldDotsContainer) {
         oldDotsContainer.remove();
-        console.log('移除了旧的导航点容器');
+        console.log('移除了导航点容器');
     }
-    
-    // 创建新的导航点容器
-    const dotsContainer = document.createElement('div');
-    dotsContainer.className = 'carousel-dots';
-    carousel.appendChild(dotsContainer);
-    console.log('创建了新的导航点容器');
     
     // 当前项目索引
     let currentIndex = 0;
@@ -43,9 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初始化轮播图
     function initCarousel() {
-        // 创建导航点
-        createDots();
-        
         // 显示第一个项目
         showSlide(0);
         
@@ -54,28 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 开始自动播放
         startAutoPlay();
-    }
-    
-    // 创建导航点
-    function createDots() {
-        if (!dotsContainer) return;
-        
-        dotsContainer.innerHTML = '';
-        items.forEach((_, index) => {
-            const dot = document.createElement('button');
-            dot.className = 'carousel-dot';
-            if (index === 0) {
-                dot.classList.add('active');
-            }
-            dot.setAttribute('aria-label', `切换到第${index+1}张幻灯片`);
-            dot.addEventListener('click', () => {
-                showSlide(index);
-                console.log('点击了导航点:', index);
-            });
-            dotsContainer.appendChild(dot);
-        });
-        
-        console.log('创建了', items.length, '个导航点');
     }
     
     // 绑定按钮和触摸事件
@@ -167,25 +136,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // 显示当前幻灯片
         items[currentIndex].classList.add('active');
         
-        // 更新导航点状态
-        updateDots();
-        
         // 调试输出
         console.log('切换到幻灯片:', currentIndex);
-    }
-    
-    // 更新导航点状态
-    function updateDots() {
-        if (!dotsContainer) return;
-        
-        const dots = dotsContainer.querySelectorAll('.carousel-dot');
-        dots.forEach((dot, index) => {
-            if (index === currentIndex) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
-        });
     }
     
     // 上一张幻灯片
