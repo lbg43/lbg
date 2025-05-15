@@ -483,10 +483,10 @@
                 <h2>联系我们</h2>
                 <p>有任何问题或项目需求，请随时与我们联系</p>
             </div>
-            <div class="contact-grid">
-                <div class="contact-info">
-                    <div class="contact-method">
-                        <div class="contact-icon">
+            <div class="contact-grid" style="display: flex; flex-direction: column; align-items: center; max-width: 768px; margin: 0 auto; gap: 40px;">
+                <div class="contact-info" style="width: 100%;">
+                    <div class="contact-method" style="display: flex; align-items: center; justify-content: center; text-align: center; margin-bottom: 25px;">
+                        <div class="contact-icon" style="margin-right: 15px;">
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
                         <div class="contact-details">
@@ -494,8 +494,8 @@
                             <p>中国北京市朝阳区建国路88号</p>
                         </div>
                     </div>
-                    <div class="contact-method">
-                        <div class="contact-icon">
+                    <div class="contact-method" style="display: flex; align-items: center; justify-content: center; text-align: center; margin-bottom: 25px;">
+                        <div class="contact-icon" style="margin-right: 15px;">
                             <i class="fas fa-phone"></i>
                         </div>
                         <div class="contact-details">
@@ -503,8 +503,8 @@
                             <p>+86 13376717896</p>
                         </div>
                     </div>
-                    <div class="contact-method">
-                        <div class="contact-icon">
+                    <div class="contact-method" style="display: flex; align-items: center; justify-content: center; text-align: center; margin-bottom: 25px;">
+                        <div class="contact-icon" style="margin-right: 15px;">
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div class="contact-details">
@@ -512,14 +512,14 @@
                             <p>1508611232@qq.com</p>
                         </div>
                     </div>
-                    <div class="social-links">
+                    <div class="social-links" style="display: flex; justify-content: center; margin-top: 20px;">
                         <a href="javascript:void(0)" class="social-link" id="wechat-link"><i class="fab fa-weixin"></i></a>
                         <a href="javascript:void(0)" onclick="alert('微博账号正在审核中');" class="social-link"><i class="fab fa-weibo"></i></a>
                         <a href="javascript:void(0)" onclick="alert('LinkedIn账号正在审核中');" class="social-link"><i class="fab fa-linkedin-in"></i></a>
                         <a href="javascript:void(0)" onclick="alert('GitHub账号正在审核中');" class="social-link"><i class="fab fa-github"></i></a>
                     </div>
                 </div>
-                <div class="contact-form">
+                <div class="contact-form" style="width: 100%; max-width: 600px; margin: 0 auto;">
                     <form action="https://formspree.io/f/xldjqywr" method="POST" id="contact-form" onreset="resetSubmitButton(this)">
                         <input type="hidden" name="_subject" value="网站联系表单提交">
                         <input type="hidden" name="_next" value="https://lbg-4ha.pages.dev/thank-you.html">
@@ -541,7 +541,9 @@
                             <label for="message">留言</label>
                             <textarea id="message" name="message" placeholder="请输入您的留言" required></textarea>
                         </div>
-                        <button type="submit" class="btn">发送留言</button>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button type="submit" class="btn">发送留言</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -805,6 +807,61 @@
         window.addEventListener('load', optimizeLogo);
         window.addEventListener('resize', optimizeLogo);
         window.addEventListener('orientationchange', optimizeLogo);
+    </script>
+    
+    <!-- 联系部分居中脚本 -->
+    <script>
+        // 确保联系我们部分居中显示
+        function optimizeContactSection() {
+            // 获取联系部分元素
+            const contactGrid = document.querySelector('.contact-grid');
+            if (!contactGrid) return;
+            
+            // 应用居中样式
+            contactGrid.style.display = 'flex';
+            contactGrid.style.flexDirection = 'column';
+            contactGrid.style.alignItems = 'center';
+            contactGrid.style.maxWidth = '768px';
+            contactGrid.style.margin = '0 auto';
+            contactGrid.style.gap = '40px';
+            
+            // 处理联系信息部分
+            const contactInfo = document.querySelector('.contact-info');
+            if (contactInfo) {
+                contactInfo.style.width = '100%';
+                
+                // 处理联系方式
+                const contactMethods = contactInfo.querySelectorAll('.contact-method');
+                contactMethods.forEach(method => {
+                    method.style.display = 'flex';
+                    method.style.alignItems = 'center';
+                    method.style.justifyContent = 'center';
+                    method.style.textAlign = 'center';
+                    method.style.marginBottom = '25px';
+                });
+                
+                // 处理社交链接
+                const socialLinks = contactInfo.querySelector('.social-links');
+                if (socialLinks) {
+                    socialLinks.style.display = 'flex';
+                    socialLinks.style.justifyContent = 'center';
+                    socialLinks.style.marginTop = '20px';
+                }
+            }
+            
+            // 处理联系表单
+            const contactForm = document.querySelector('.contact-form');
+            if (contactForm) {
+                contactForm.style.width = '100%';
+                contactForm.style.maxWidth = '600px';
+                contactForm.style.margin = '0 auto';
+            }
+        }
+        
+        // 在页面加载和窗口大小变化时执行
+        document.addEventListener('DOMContentLoaded', optimizeContactSection);
+        window.addEventListener('load', optimizeContactSection);
+        window.addEventListener('resize', optimizeContactSection);
     </script>
 </body>
 </html> 
