@@ -521,26 +521,31 @@
                 </div>
                 <div class="contact-form" style="width: 100%; max-width: 600px; margin: 0 auto;">
                     <form action="https://formspree.io/f/xldjqywr" method="POST" id="contact-form" onreset="resetSubmitButton(this)">
+                        <!-- 隐藏字段放在表单开头，不参与网格布局 -->
                         <input type="hidden" name="_subject" value="网站联系表单提交">
                         <input type="hidden" name="_next" value="https://lbg-4ha.pages.dev/thank-you.html">
                         <input type="hidden" name="_autoresponse" value="感谢您的留言，我们已收到您的信息，并将尽快回复您。如有紧急事项，请直接联系我们：1508611232@qq.com">
                         <input type="hidden" name="_to" value="1508611232@qq.com">
+                        
+                        <!-- 表单字段 - 使用网格布局对齐 -->
                         <div class="form-group">
-                            <label for="name">姓名</label>
+                            <label for="name">姓名：</label>
                             <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
                         </div>
                         <div class="form-group">
-                            <label for="email">邮箱</label>
+                            <label for="email">邮箱：</label>
                             <input type="email" id="email" name="email" placeholder="请输入您的邮箱" required>
                         </div>
                         <div class="form-group">
-                            <label for="subject">主题</label>
+                            <label for="subject">主题：</label>
                             <input type="text" id="subject" name="subject" placeholder="请输入主题" required>
                         </div>
                         <div class="form-group">
-                            <label for="message">留言</label>
+                            <label for="message">留言：</label>
                             <textarea id="message" name="message" placeholder="请输入您的留言" required></textarea>
                         </div>
+                        
+                        <!-- 按钮居中，独占一行 -->
                         <div style="text-align: center; margin-top: 20px;">
                             <button type="submit" class="btn">发送留言</button>
                         </div>
@@ -855,11 +860,86 @@
                 contactForm.style.width = '100%';
                 contactForm.style.maxWidth = '600px';
                 contactForm.style.margin = '0 auto';
+                
+                // 优化表单布局
+                optimizeFormLayout();
+            }
+        }
+        
+        // 优化表单布局
+        function optimizeFormLayout() {
+            const form = document.querySelector('#contact-form');
+            if (!form) return;
+            
+            // 检测设备类型
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // 移动设备单列布局
+                form.style.display = 'flex';
+                form.style.flexDirection = 'column';
+                form.style.gap = '15px';
+                
+                // 处理表单组
+                const formGroups = form.querySelectorAll('.form-group');
+                formGroups.forEach(group => {
+                    group.style.display = 'flex';
+                    group.style.flexDirection = 'column';
+                    group.style.marginBottom = '0';
+                    
+                    // 调整标签
+                    const label = group.querySelector('label');
+                    if (label) {
+                        label.style.textAlign = 'left';
+                        label.style.paddingTop = '0';
+                        label.style.marginBottom = '5px';
+                    }
+                });
+            } else {
+                // 桌面设备网格布局
+                form.style.display = 'grid';
+                form.style.gridTemplateColumns = 'minmax(80px, 100px) 1fr';
+                form.style.gap = '15px 10px';
+                form.style.alignItems = 'start';
+                
+                // 处理表单组
+                const formGroups = form.querySelectorAll('.form-group');
+                formGroups.forEach(group => {
+                    group.style.display = 'contents';
+                    
+                    // 调整标签
+                    const label = group.querySelector('label');
+                    if (label) {
+                        label.style.textAlign = 'right';
+                        label.style.paddingTop = '12px';
+                        label.style.fontWeight = '500';
+                        label.style.color = '#333';
+                    }
+                    
+                    // 调整输入框
+                    const input = group.querySelector('input, textarea');
+                    if (input) {
+                        input.style.gridColumn = '2';
+                        input.style.width = '100%';
+                    }
+                });
+                
+                // 调整按钮容器
+                const buttonContainer = form.querySelector('[style*="text-align: center"]');
+                if (buttonContainer) {
+                    buttonContainer.style.gridColumn = '1 / -1';
+                }
             }
         }
         
         // 在页面加载和窗口大小变化时执行
-        document.addEventListener('DOMContentLoaded', optimizeContactSection);
+        document.addEventListener('DOMContentLoaded', function() {
+            optimizeContactSection();
+            
+            // 监听窗口大小变化
+            window.addEventListener('resize', optimizeFormLayout);
+        });
+        
         window.addEventListener('load', optimizeContactSection);
         window.addEventListener('resize', optimizeContactSection);
     </script>
