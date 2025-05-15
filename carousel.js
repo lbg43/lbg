@@ -31,6 +31,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('移除了导航点容器');
     }
     
+    // 删除所有可能存在的导航点元素
+    const allDotElements = carousel.querySelectorAll('[class*="dot"], [class*="dots"]');
+    allDotElements.forEach(element => {
+        element.remove();
+        console.log('移除了导航点元素:', element);
+    });
+    
     // 当前项目索引
     let currentIndex = 0;
     let autoPlayTimer = null;
@@ -170,4 +177,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初始化轮播图
     initCarousel();
+    
+    // 额外的移除导航点逻辑，防止其他脚本重新创建
+    window.addEventListener('load', function() {
+        // 再次移除所有可能存在的导航点元素
+        const newDotElements = document.querySelectorAll('[class*="dot"], [class*="dots"]');
+        newDotElements.forEach(element => {
+            if (element.classList.contains('carousel-dots') || 
+                element.classList.contains('carousel-dot') ||
+                element.parentElement && (
+                    element.parentElement.classList.contains('carousel') ||
+                    element.parentElement.classList.contains('hero-carousel')
+                )) {
+                element.remove();
+                console.log('页面加载后移除了导航点元素:', element);
+            }
+        });
+    });
 }); 
