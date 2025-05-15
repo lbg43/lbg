@@ -1,0 +1,53 @@
+/* 完全禁用所有设备上的轮播图导航点 - 强制覆盖 */
+.carousel-dots, 
+.carousel-dot,
+.carousel .carousel-dots,
+.carousel .carousel-dot,
+.hero-carousel .carousel-dots,
+.hero-carousel .carousel-dot,
+[class*="carousel"] [class*="dots"],
+[class*="carousel"] [class*="dot"],
+[class*="slider"] [class*="dots"],
+[class*="slider"] [class*="dot"],
+[class*="slide"] [class*="dots"],
+[class*="slide"] [class*="dot"] {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    z-index: -9999 !important;
+    clip: rect(0,0,0,0) !important;
+    clip-path: inset(50%) !important;
+    overflow: hidden !important;
+}
+
+@media (max-width: 768px) {
+    .carousel-dots, 
+    .carousel-dot,
+    .carousel .carousel-dots,
+    .carousel .carousel-dot,
+    .hero-carousel .carousel-dots,
+    .hero-carousel .carousel-dot,
+    [class*="carousel"] [class*="dots"],
+    [class*="carousel"] [class*="dot"],
+    [class*="slider"] [class*="dots"],
+    [class*="slider"] [class*="dot"],
+    [class*="slide"] [class*="dots"],
+    [class*="slide"] [class*="dot"] {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+} 
