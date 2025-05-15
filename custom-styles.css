@@ -100,6 +100,7 @@
 .contact-info {
     display: flex;
     flex-direction: column;
+    align-items: center;
     width: 100%;
     max-width: 400px;
 }
@@ -107,15 +108,16 @@
 /* 新的联系信息布局样式 */
 .info-item {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 20px;
+    flex-direction: column;
+    text-align: center;
 }
 
 .icon {
     font-size: 24px;
     color: #3d70ff;
-    margin-right: 15px;
-    min-width: 30px;
+    margin-bottom: 10px;
     text-align: center;
 }
 
@@ -124,11 +126,13 @@
     font-size: 18px;
     font-weight: bold;
     color: #333;
+    text-align: center;
 }
 
 .info-text p {
     margin: 5px 0 0;
     color: #555;
+    text-align: center;
 }
 
 .social-links {
@@ -172,9 +176,9 @@
 
 .form-group input:focus,
 .form-group textarea:focus {
-    border-color: #4a6cfa;
+    border-color: #3d70ff;
     outline: none;
-    box-shadow: 0 0 0 2px rgba(74, 108, 250, 0.1);
+    box-shadow: 0 0 0 2px rgba(61, 112, 255, 0.1);
 }
 
 .form-group textarea {
@@ -205,7 +209,7 @@
     
     .icon {
         font-size: 22px;
-        margin-right: 12px;
+        margin-bottom: 8px;
     }
     
     /* 手机上改为单列布局 */
@@ -235,7 +239,7 @@
     
     .icon {
         font-size: 20px;
-        margin-right: 10px;
+        margin-bottom: 6px;
     }
 }
 
