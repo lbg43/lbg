@@ -8,46 +8,64 @@ document.addEventListener('DOMContentLoaded', function() {
     const wechatModal = document.getElementById('wechat-modal');
     const closeModal = document.querySelector('.close-modal');
     
-    if (wechatModal && wechatLink) {
-        // 优化点击微信图标显示弹窗
-        wechatLink.addEventListener('click', function(e) {
+    function showWechatModal(e) {
+        if (e) {
             e.preventDefault();
             e.stopPropagation();
-            wechatModal.style.display = 'block';
+        }
+        if (wechatModal) {
+            wechatModal.style.display = 'flex'; // 使用flex布局
             document.body.style.overflow = 'hidden'; // 防止背景滚动
-        });
-        
-        // 点击页脚微信图标显示弹窗
-        if (footerWechatLink) {
-            footerWechatLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                wechatModal.style.display = 'block';
-                document.body.style.overflow = 'hidden'; // 防止背景滚动
-            });
         }
-        
-        // 优化关闭按钮
-        if (closeModal) {
-            closeModal.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                wechatModal.style.display = 'none';
-                document.body.style.overflow = '';
-            });
+    }
+    
+    function hideWechatModal(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
-        
-        // 点击弹窗外区域关闭弹窗
-        window.addEventListener('click', function(e) {
+        if (wechatModal) {
+            wechatModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+    
+    if (wechatLink) {
+        // 优化点击微信图标显示弹窗
+        wechatLink.addEventListener('click', showWechatModal);
+    }
+    
+    // 点击页脚微信图标显示弹窗
+    if (footerWechatLink) {
+        footerWechatLink.addEventListener('click', showWechatModal);
+    }
+    
+    // 优化关闭按钮
+    if (closeModal) {
+        closeModal.addEventListener('click', hideWechatModal);
+    }
+    
+    // 点击弹窗外区域关闭弹窗
+    if (wechatModal) {
+        wechatModal.addEventListener('click', function(e) {
             if (e.target === wechatModal) {
-                wechatModal.style.display = 'none';
-                document.body.style.overflow = '';
+                hideWechatModal();
             }
         });
         
         // 防止点击弹窗内容关闭弹窗
-        document.querySelector('.wechat-modal-content').addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
+        const modalContent = wechatModal.querySelector('.wechat-modal-content');
+        if (modalContent) {
+            modalContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
     }
+    
+    // 确保微信图标在所有其他模块中也能工作
+    document.querySelectorAll('[id^="wechat-link"]').forEach(function(link) {
+        if (link !== wechatLink && link !== footerWechatLink) {
+            link.addEventListener('click', showWechatModal);
+        }
+    });
 }); 
