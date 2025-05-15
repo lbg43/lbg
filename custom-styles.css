@@ -87,6 +87,55 @@
     }
 }
 
+/* 联系我们部分居中显示 */
+.contact-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 768px;
+    margin: 0 auto;
+    gap: 40px;
+}
+
+.contact-info, 
+.contact-form {
+    width: 100%;
+}
+
+.contact-method {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    justify-content: center;
+    text-align: center;
+}
+
+.contact-icon {
+    margin-right: 15px;
+}
+
+.social-links {
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.form-group label {
+    text-align: left;
+    display: block;
+}
+
+/* 在手机设备上进一步优化 */
+@media (max-width: 768px) {
+    .contact-grid {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+    
+    .contact-form {
+        padding: 25px 20px;
+    }
+}
+
 /* 微信二维码弹窗样式 */
 .wechat-modal {
     display: none; /* 默认隐藏 */
