@@ -68,6 +68,94 @@
     <!-- 百度自动推送 -->
     <script src="baidu-push.js"></script>
     
+    <!-- COMPANY标志增强自适应样式 -->
+    <style>
+    /* 标志额外增强样式 - 确保在所有设备上良好显示 */
+    .logo {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+    
+    .responsive-logo {
+        max-width: 100% !important;
+        height: auto !important;
+        width: auto !important;
+        max-height: 48px !important;
+        object-fit: contain !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .main-header.fixed .responsive-logo {
+        max-height: 40px !important;
+    }
+    
+    /* 增强的设备适配 */
+    @media (min-width: 1200px) {
+        .responsive-logo {
+            max-height: 50px !important;
+        }
+        
+        .main-header.fixed .responsive-logo {
+            max-height: 45px !important;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .responsive-logo {
+            max-height: 42px !important;
+        }
+        
+        .main-header.fixed .responsive-logo {
+            max-height: 38px !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .responsive-logo {
+            max-height: 38px !important;
+        }
+        
+        .main-header.fixed .responsive-logo {
+            max-height: 34px !important;
+        }
+        
+        .footer-about .responsive-logo {
+            max-height: 40px !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .responsive-logo {
+            max-height: 32px !important;
+        }
+        
+        .main-header.fixed .responsive-logo {
+            max-height: 30px !important;
+        }
+        
+        .footer-about .responsive-logo {
+            max-height: 36px !important;
+        }
+    }
+    
+    @media (max-width: 360px) {
+        .responsive-logo {
+            max-height: 28px !important;
+        }
+        
+        .main-header.fixed .responsive-logo {
+            max-height: 26px !important;
+        }
+        
+        .footer-about .responsive-logo {
+            max-height: 32px !important;
+        }
+    }
+    </style>
+    
     <!-- 百度统计代码 -->
     <script>
         var _hmt = _hmt || [];
@@ -113,7 +201,7 @@
         <div class="container header-container">
             <div class="logo">
                 <a href="#" title="COMPANY首页">
-                    <img src="images/logo.png" alt="COMPANY专业数字解决方案提供商标志" class="responsive-logo">
+                    <img src="images/logo.png" alt="COMPANY专业数字解决方案提供商标志" class="responsive-logo" loading="eager" fetchpriority="high">
                 </a>
             </div>
             <nav aria-label="主导航">
@@ -478,7 +566,7 @@
             <div class="footer-grid">
                 <div class="footer-about">
                     <div class="logo">
-                        <img src="images/logo-white.png" alt="COMPANY数字解决方案提供商白色标志" class="responsive-logo">
+                        <img src="images/logo-white.png" alt="COMPANY数字解决方案提供商白色标志" class="responsive-logo" loading="lazy">
                     </div>
                     <p>我们是一家专注于提供高质量数字解决方案的公司，致力于帮助企业实现数字化转型和业务增长。</p>
                     <div class="social-links">
@@ -672,6 +760,51 @@
             `;
             document.head.appendChild(style);
         }
+    </script>
+    
+    <!-- 标志自适应处理脚本 -->
+    <script>
+        // 确保标志图片在所有设备上正常显示
+        function optimizeLogo() {
+            const logos = document.querySelectorAll('.responsive-logo');
+            
+            logos.forEach(function(logo) {
+                // 确保标志加载完成
+                if (logo.complete) {
+                    adjustLogo(logo);
+                } else {
+                    logo.onload = function() {
+                        adjustLogo(logo);
+                    };
+                }
+            });
+        }
+        
+        // 调整标志显示
+        function adjustLogo(logo) {
+            // 获取容器宽度
+            const container = logo.closest('.logo');
+            if (!container) return;
+            
+            const containerWidth = container.offsetWidth;
+            
+            // 确保标志不超过容器
+            if (logo.offsetWidth > containerWidth) {
+                logo.style.width = '100%';
+                logo.style.height = 'auto';
+            }
+            
+            // 移除可能的空白边距，确保居中对齐
+            container.style.display = 'flex';
+            container.style.alignItems = 'center';
+            container.style.justifyContent = 'center';
+        }
+        
+        // 在多个事件中处理标志响应
+        document.addEventListener('DOMContentLoaded', optimizeLogo);
+        window.addEventListener('load', optimizeLogo);
+        window.addEventListener('resize', optimizeLogo);
+        window.addEventListener('orientationchange', optimizeLogo);
     </script>
 </body>
 </html> 
