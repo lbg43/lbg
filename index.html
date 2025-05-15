@@ -485,29 +485,29 @@
             </div>
             <div class="contact-grid" style="display: flex; flex-direction: column; align-items: center; max-width: 768px; margin: 0 auto; gap: 40px;">
                 <div class="contact-info" style="width: 100%;">
-                    <div class="contact-method" style="display: flex; align-items: flex-start; justify-content: center; margin-bottom: 25px;">
-                        <div class="contact-icon" style="display: flex; align-items: center; font-size: 24px; margin-right: 15px; padding-top: 3px;">
+                    <div class="contact-method" style="display: flex; align-items: flex-start; justify-content: center; margin-bottom: 25px; position: relative;">
+                        <div class="contact-icon" style="position: absolute; left: 25%; display: flex; align-items: center; font-size: 24px; margin-right: 15px; padding-top: 3px;">
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
-                        <div class="contact-details" style="text-align: left;">
+                        <div class="contact-details" style="text-align: left; margin-left: calc(25% + 30px);">
                             <h3 style="margin-top: 0; margin-bottom: 5px;">地址</h3>
                             <p>中国北京市朝阳区建国路88号</p>
                         </div>
                     </div>
-                    <div class="contact-method" style="display: flex; align-items: flex-start; justify-content: center; margin-bottom: 25px;">
-                        <div class="contact-icon" style="display: flex; align-items: center; font-size: 24px; margin-right: 15px; padding-top: 3px;">
+                    <div class="contact-method" style="display: flex; align-items: flex-start; justify-content: center; margin-bottom: 25px; position: relative;">
+                        <div class="contact-icon" style="position: absolute; left: 25%; display: flex; align-items: center; font-size: 24px; margin-right: 15px; padding-top: 3px;">
                             <i class="fas fa-phone"></i>
                         </div>
-                        <div class="contact-details" style="text-align: left;">
+                        <div class="contact-details" style="text-align: left; margin-left: calc(25% + 30px);">
                             <h3 style="margin-top: 0; margin-bottom: 5px;">电话</h3>
                             <p>+86 13376717896</p>
                         </div>
                     </div>
-                    <div class="contact-method" style="display: flex; align-items: flex-start; justify-content: center; margin-bottom: 25px;">
-                        <div class="contact-icon" style="display: flex; align-items: center; font-size: 24px; margin-right: 15px; padding-top: 3px;">
+                    <div class="contact-method" style="display: flex; align-items: flex-start; justify-content: center; margin-bottom: 25px; position: relative;">
+                        <div class="contact-icon" style="position: absolute; left: 25%; display: flex; align-items: center; font-size: 24px; margin-right: 15px; padding-top: 3px;">
                             <i class="fas fa-envelope"></i>
                         </div>
-                        <div class="contact-details" style="text-align: left;">
+                        <div class="contact-details" style="text-align: left; margin-left: calc(25% + 30px);">
                             <h3 style="margin-top: 0; margin-bottom: 5px;">邮箱</h3>
                             <p>1508611232@qq.com</p>
                         </div>
@@ -842,10 +842,13 @@
                     method.style.alignItems = 'flex-start';
                     method.style.justifyContent = 'center';
                     method.style.marginBottom = '25px';
+                    method.style.position = 'relative';
                     
                     // 处理图标样式
                     const icon = method.querySelector('.contact-icon');
                     if (icon) {
+                        icon.style.position = 'absolute';
+                        icon.style.left = '25%';
                         icon.style.display = 'flex';
                         icon.style.alignItems = 'center';
                         icon.style.fontSize = '24px';
@@ -857,6 +860,7 @@
                     const details = method.querySelector('.contact-details');
                     if (details) {
                         details.style.textAlign = 'left';
+                        details.style.marginLeft = 'calc(25% + 30px)';
                         
                         // 优化标题间距
                         const heading = details.querySelector('h3');
