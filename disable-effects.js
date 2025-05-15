@@ -34,5 +34,66 @@
         window.initScrollEffects = function() {
             console.log('滚动效果已禁用');
         };
+        
+        // 微信二维码弹窗功能
+        // 获取所有微信链接元素
+        const wechatLink = document.getElementById('wechat-link');
+        const footerWechatLink = document.getElementById('footer-wechat-link');
+        const articleWechatLink = document.getElementById('article-wechat-link');
+        const wechatModal = document.getElementById('wechat-modal');
+        const closeModal = document.querySelector('.close-modal');
+        
+        // 为所有微信链接添加点击事件
+        if (wechatLink && wechatModal) {
+            wechatLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                wechatModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // 防止背景滚动
+            });
+        }
+        
+        if (footerWechatLink && wechatModal) {
+            footerWechatLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                wechatModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // 防止背景滚动
+            });
+        }
+        
+        if (articleWechatLink && wechatModal) {
+            articleWechatLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                wechatModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // 防止背景滚动
+            });
+        }
+        
+        // 为关闭按钮添加点击事件
+        if (closeModal && wechatModal) {
+            closeModal.addEventListener('click', function() {
+                wechatModal.style.display = 'none';
+                document.body.style.overflow = '';
+            });
+        }
+        
+        // 点击弹窗外部关闭弹窗
+        window.addEventListener('click', function(e) {
+            if (e.target === wechatModal) {
+                wechatModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+
+        // 检查页面上是否有微信分享按钮，并为其添加事件处理
+        const shareWechatButtons = document.querySelectorAll('.share-buttons .social-link[title="分享到微信"]');
+        shareWechatButtons.forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (wechatModal) {
+                    wechatModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        });
     });
 })(); 
