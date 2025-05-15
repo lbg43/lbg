@@ -494,5 +494,22 @@
     <!-- JavaScript -->
     <script src="script.js"></script>
     <script src="subscribe.js"></script>
+    
+    <!-- 覆盖滚动效果，让内容立即显示 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 立即显示所有元素，不需要滚动触发
+            const scrollItems = document.querySelectorAll('.service-item, .about-content, .article-card, .gallery-item, .contact-method');
+            scrollItems.forEach(function(item) {
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            });
+            
+            // 阻止原initScrollEffects函数的滚动监听
+            window.initScrollEffects = function() {
+                console.log('滚动效果已禁用');
+            };
+        });
+    </script>
 </body>
 </html> 
