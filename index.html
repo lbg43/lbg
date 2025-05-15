@@ -495,21 +495,46 @@
     <script src="script.js"></script>
     <script src="subscribe.js"></script>
     
-    <!-- 覆盖滚动效果，让内容立即显示 -->
+    <!-- 覆盖滚动效果和加载器，让内容立即显示 -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 立即显示所有元素，不需要滚动触发
-            const scrollItems = document.querySelectorAll('.service-item, .about-content, .article-card, .gallery-item, .contact-method');
-            scrollItems.forEach(function(item) {
-                item.style.opacity = '1';
-                item.style.transform = 'translateY(0)';
-            });
-            
-            // 阻止原initScrollEffects函数的滚动监听
-            window.initScrollEffects = function() {
-                console.log('滚动效果已禁用');
+        // 立即执行，不等待DOMContentLoaded
+        (function() {
+            // 禁用页面加载器
+            window.initPageLoader = function() {
+                console.log('页面加载器已禁用');
             };
-        });
+            
+            // 移除任何可能已经创建的加载器
+            const existingLoader = document.querySelector('.page-loader');
+            if (existingLoader) {
+                existingLoader.remove();
+            }
+            
+            // 恢复body滚动
+            document.body.style.overflow = '';
+            
+            // 立即显示所有元素，不需要滚动触发
+            function showAllElements() {
+                const scrollItems = document.querySelectorAll('.service-item, .about-content, .article-card, .gallery-item, .contact-method');
+                scrollItems.forEach(function(item) {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                });
+            }
+            
+            // 立即执行一次
+            showAllElements();
+            
+            // DOM加载完成后再次执行，确保捕获所有元素
+            document.addEventListener('DOMContentLoaded', function() {
+                showAllElements();
+                
+                // 阻止原initScrollEffects函数的滚动监听
+                window.initScrollEffects = function() {
+                    console.log('滚动效果已禁用');
+                };
+            });
+        })();
     </script>
 </body>
 </html> 
