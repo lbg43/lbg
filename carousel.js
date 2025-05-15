@@ -20,10 +20,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // 添加调试信息
     console.log('轮播图初始化 - 找到', items.length, '个项目');
     
-    // 获取轮播图按钮和导航点容器
-    const dotsContainer = carousel.querySelector('.carousel-dots');
+    // 获取轮播图按钮
     const prevBtn = carousel.querySelector('.carousel-prev');
     const nextBtn = carousel.querySelector('.carousel-next');
+    
+    // 清理掉旧的导航点容器
+    const oldDotsContainer = carousel.querySelector('.carousel-dots');
+    if (oldDotsContainer) {
+        oldDotsContainer.remove();
+        console.log('移除了旧的导航点容器');
+    }
+    
+    // 创建新的导航点容器
+    const dotsContainer = document.createElement('div');
+    dotsContainer.className = 'carousel-dots';
+    carousel.appendChild(dotsContainer);
+    console.log('创建了新的导航点容器');
     
     // 当前项目索引
     let currentIndex = 0;
@@ -52,22 +64,36 @@ document.addEventListener('DOMContentLoaded', function() {
         items.forEach((_, index) => {
             const dot = document.createElement('button');
             dot.className = 'carousel-dot';
+            if (index === 0) {
+                dot.classList.add('active');
+            }
             dot.setAttribute('aria-label', `切换到第${index+1}张幻灯片`);
-            dot.addEventListener('click', () => showSlide(index));
+            dot.addEventListener('click', () => {
+                showSlide(index);
+                console.log('点击了导航点:', index);
+            });
             dotsContainer.appendChild(dot);
         });
+        
+        console.log('创建了', items.length, '个导航点');
     }
     
     // 绑定按钮和触摸事件
     function bindEvents() {
         // 上一张按钮
         if (prevBtn) {
-            prevBtn.addEventListener('click', prevSlide);
+            prevBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                prevSlide();
+            });
         }
         
         // 下一张按钮
         if (nextBtn) {
-            nextBtn.addEventListener('click', nextSlide);
+            nextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                nextSlide();
+            });
         }
         
         // 键盘事件
