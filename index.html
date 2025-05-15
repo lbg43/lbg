@@ -948,19 +948,25 @@
             if (form) {
                 form.style.margin = '0 auto';
                 
-                // 在移动设备上调整表单样式
-                if (window.innerWidth <= 768) {
-                    const formGroups = form.querySelectorAll('.form-group');
-                    formGroups.forEach(group => {
-                        group.style.textAlign = 'center';
-                        
-                        const inputs = group.querySelectorAll('input, textarea');
-                        inputs.forEach(input => {
-                            input.style.margin = '0 auto';
-                            input.style.display = 'block';
-                        });
+                // 调整表单样式，确保所有设备上都居中
+                const formGroups = form.querySelectorAll('.form-group');
+                formGroups.forEach(group => {
+                    group.style.textAlign = 'center';
+                    
+                    const label = group.querySelector('label');
+                    if (label) {
+                        label.style.textAlign = 'center';
+                    }
+                    
+                    const inputs = group.querySelectorAll('input, textarea');
+                    inputs.forEach(input => {
+                        input.style.margin = '0 auto';
+                        input.style.display = 'block';
+                        input.style.maxWidth = window.innerWidth <= 360 ? '240px' : 
+                                              window.innerWidth <= 480 ? '280px' : 
+                                              window.innerWidth <= 768 ? '380px' : '400px';
                     });
-                }
+                });
             }
         }
         
