@@ -92,7 +92,7 @@
         <div class="container">
             <!-- 轮播图部分 -->
             <div class="carousel">
-                <div class="carousel-slide">
+                <div class="carousel-items">
                     <div class="carousel-item">
                         <img src="images/carousel-1.jpg" alt="创新数字解决方案展示-企业数字化转型服务">
                         <div class="carousel-content">
@@ -534,112 +534,115 @@
                     console.log('滚动效果已禁用');
                 };
                 
-                // 修复轮播图显示
+                // 完全重写轮播图功能
                 const carousel = document.querySelector('.carousel');
                 if (carousel) {
-                    const carouselItems = carousel.querySelectorAll('.carousel-item');
-                    const carouselDots = carousel.querySelector('.carousel-dots');
+                    const items = document.querySelectorAll('.carousel-item');
+                    const dots = document.querySelector('.carousel-dots');
+                    const prevBtn = document.querySelector('.carousel-prev');
+                    const nextBtn = document.querySelector('.carousel-next');
+                    
                     let currentIndex = 0;
-                    let interval;
+                    let slideInterval;
                     
-                    // 清除之前可能存在的活动类
-                    carouselItems.forEach(item => {
-                        item.classList.remove('active', 'entering', 'leaving');
-                    });
-                    
-                    // 激活第一个轮播项
-                    carouselItems[0].classList.add('active');
+                    // 确保第一张图片显示
+                    items[0].classList.add('active');
                     
                     // 创建导航点
-                    if (carouselDots) {
-                        carouselDots.innerHTML = '';
-                        carouselItems.forEach((_, index) => {
-                            const dot = document.createElement('div');
-                            dot.classList.add('carousel-dot');
-                            if (index === 0) dot.classList.add('active');
-                            dot.addEventListener('click', () => {
-                                clearInterval(interval);
-                                goToSlide(index);
-                                startAutoSlide();
-                            });
-                            carouselDots.appendChild(dot);
-                        });
-                    }
-                    
-                    // 上一张/下一张按钮事件
-                    const prevBtn = carousel.querySelector('.carousel-prev');
-                    const nextBtn = carousel.querySelector('.carousel-next');
-                    
-                    if (prevBtn) {
-                        prevBtn.addEventListener('click', () => {
-                            clearInterval(interval);
-                            const prevIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
-                            goToSlide(prevIndex);
-                            startAutoSlide();
-                        });
-                    }
-                    
-                    if (nextBtn) {
-                        nextBtn.addEventListener('click', () => {
-                            clearInterval(interval);
-                            const nextIndex = (currentIndex + 1) % carouselItems.length;
-                            goToSlide(nextIndex);
-                            startAutoSlide();
-                        });
-                    }
-                    
-                    // 切换幻灯片
-                    function goToSlide(index) {
-                        if (index === currentIndex) return;
-                        
-                        const currentSlide = carouselItems[currentIndex];
-                        const nextSlide = carouselItems[index];
-                        
-                        // 移除当前活动幻灯片
-                        currentSlide.classList.add('leaving');
-                        currentSlide.classList.remove('active');
-                        
-                        // 设置新的活动幻灯片
-                        nextSlide.classList.add('active', 'entering');
-                        
-                        // 更新导航点
-                        if (carouselDots) {
-                            const dots = carouselDots.querySelectorAll('.carousel-dot');
-                            dots[currentIndex].classList.remove('active');
-                            dots[index].classList.add('active');
+                    for (let i = 0; i < items.length; i++) {
+                        const dot = document.createElement('div');
+                        dot.classList.add('carousel-dot');
+                        if (i === 0) {
+                            dot.classList.add('active');
                         }
+                        dots.appendChild(dot);
                         
-                        // 动画完成后清理类
-                        setTimeout(() => {
-                            currentSlide.classList.remove('leaving');
-                            nextSlide.classList.remove('entering');
-                        }, 800);
-                        
-                        currentIndex = index;
+                        // 点击导航点切换到对应的幻灯片
+                        dot.addEventListener('click', function() {
+                            goToSlide(i);
+                        });
                     }
                     
-                    // 自动轮播
-                    function startAutoSlide() {
-                        clearInterval(interval);
-                        interval = setInterval(() => {
-                            if (document.visibilityState === 'visible') {
-                                const nextIndex = (currentIndex + 1) % carouselItems.length;
-                                goToSlide(nextIndex);
-                            }
+                    // 轮播图切换函数
+                    function goToSlide(index) {
+                        // 移除当前活动状态
+                        items[currentIndex].classList.remove('active');
+                        document.querySelectorAll('.carousel-dot')[currentIndex].classList.remove('active');
+                        
+                        // 设置新的活动状态
+                        currentIndex = index;
+                        items[currentIndex].classList.add('active');
+                        document.querySelectorAll('.carousel-dot')[currentIndex].classList.add('active');
+                        
+                        // 重置自动播放
+                        resetInterval();
+                    }
+                    
+                    // 下一张
+                    function nextSlide() {
+                        let nextIndex = currentIndex + 1;
+                        if (nextIndex >= items.length) {
+                            nextIndex = 0;
+                        }
+                        goToSlide(nextIndex);
+                    }
+                    
+                    // 上一张
+                    function prevSlide() {
+                        let prevIndex = currentIndex - 1;
+                        if (prevIndex < 0) {
+                            prevIndex = items.length - 1;
+                        }
+                        goToSlide(prevIndex);
+                    }
+                    
+                    // 设置自动播放
+                    function startInterval() {
+                        slideInterval = setInterval(function() {
+                            nextSlide();
                         }, 5000);
                     }
                     
-                    // 开始自动轮播
-                    startAutoSlide();
+                    // 重置自动播放
+                    function resetInterval() {
+                        clearInterval(slideInterval);
+                        startInterval();
+                    }
                     
-                    // 页面可见性变化处理
-                    document.addEventListener('visibilitychange', function() {
-                        if (document.visibilityState === 'visible') {
-                            startAutoSlide();
-                        } else {
-                            clearInterval(interval);
-                        }
+                    // 注册事件
+                    nextBtn.addEventListener('click', function() {
+                        nextSlide();
                     });
+                    
+                    prevBtn.addEventListener('click', function() {
+                        prevSlide();
+                    });
+                    
+                    // 开始自动播放
+                    startInterval();
+                    
+                    // 添加触摸滑动支持
+                    let touchStartX = 0;
+                    let touchEndX = 0;
+                    
+                    carousel.addEventListener('touchstart', function(e) {
+                        touchStartX = e.changedTouches[0].screenX;
+                    }, {passive: true});
+                    
+                    carousel.addEventListener('touchend', function(e) {
+                        touchEndX = e.changedTouches[0].screenX;
+                        handleSwipe();
+                    }, {passive: true});
+                    
+                    function handleSwipe() {
+                        if (touchEndX < touchStartX) {
+                            // 左滑，下一张
+                            nextSlide();
+                        } else if (touchEndX > touchStartX) {
+                            // 右滑，上一张
+                            prevSlide();
+                        }
+                    }
                 }
                 
                 // 确保微信弹窗正常工作
