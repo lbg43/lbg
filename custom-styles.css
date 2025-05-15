@@ -70,6 +70,30 @@
     .footer-about .responsive-logo {
         max-height: 36px;
     }
+    
+    .contact-info {
+        max-width: 300px;
+    }
+    
+    .icon {
+        font-size: 20px;
+        margin-bottom: 6px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        max-width: 280px;
+    }
+    
+    /* 确保联系表单全宽展示 */
+    .contact-form {
+        width: 100%;
+        padding: 15px;
+    }
+    
+    #contact-form {
+        width: 100%;
+    }
 }
 
 /* 小型手机设备 */
@@ -205,6 +229,9 @@
     
     .contact-form {
         padding: 25px 20px;
+        display: flex;
+        justify-content: center;
+        width: 100%;
     }
     
     .icon {
@@ -217,29 +244,29 @@
         display: flex;
         flex-direction: column;
         gap: 15px;
+        width: 100%;
+        max-width: 100%;
     }
     
     .form-group {
         display: flex;
         flex-direction: column;
         margin-bottom: 0;
+        align-items: center;
+        width: 100%;
     }
     
     .form-group label {
-        text-align: left;
+        text-align: center;
         padding-top: 0;
         margin-bottom: 5px;
-    }
-}
-
-@media (max-width: 480px) {
-    .contact-info {
-        max-width: 300px;
+        width: 100%;
     }
     
-    .icon {
-        font-size: 20px;
-        margin-bottom: 6px;
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        max-width: 400px;
     }
 }
 
