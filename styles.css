@@ -821,11 +821,18 @@ nav ul li a.active::after {
     margin-bottom: 25px;
 }
 
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
 .footer-column h3 {
     color: var(--white);
     font-size: 1.2rem;
     margin-bottom: 25px;
     position: relative;
+    text-align: left;
 }
 
 .footer-column h3::after {
@@ -836,6 +843,10 @@ nav ul li a.active::after {
     width: 40px;
     height: 2px;
     background-color: var(--primary-color);
+}
+
+.footer-column p {
+    text-align: left;
 }
 
 .footer-links {
@@ -859,24 +870,34 @@ nav ul li a.active::after {
 .newsletter-form {
     display: flex;
     margin-top: 20px;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    margin-left: 0;
 }
 
 .newsletter-form input {
     flex: 1;
     padding: 12px 15px;
     border: none;
-    border-radius: 5px 0 0 5px;
+    border-radius: 5px;
     font-family: var(--body-font);
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 .newsletter-form button {
     background-color: var(--primary-color);
     color: var(--white);
     border: none;
-    border-radius: 0 5px 5px 0;
-    padding: 0 20px;
+    border-radius: 5px;
+    padding: 12px 20px;
     cursor: pointer;
     transition: all var(--transition-fast) ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .newsletter-form button:hover {
