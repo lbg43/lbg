@@ -1,7 +1,9 @@
 /**
  * 微信二维码弹窗功能
  * 只有点击微信图标才会显示二维码
+ * (已由script.min.js实现，此处代码暂时注释掉以避免冲突)
  */
+/*
 document.addEventListener('DOMContentLoaded', function() {
     // 获取微信按钮和弹窗元素
     const wechatLink = document.getElementById('wechat-link');
@@ -69,4 +71,5 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-}); 
+});
+*/ 
