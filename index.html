@@ -483,43 +483,43 @@
                 <h2>联系我们</h2>
                 <p>有任何问题或项目需求，请随时与我们联系</p>
             </div>
-            <div class="contact-grid" style="display: flex; flex-direction: column; align-items: center; max-width: 768px; margin: 0 auto; gap: 40px;">
-                <div class="contact-info" style="width: 100%;">
-                    <div class="contact-method" style="display: flex; align-items: flex-start; justify-content: center; margin-bottom: 25px; position: relative;">
-                        <div class="contact-icon" style="position: absolute; left: 25%; display: flex; align-items: center; font-size: 24px; margin-right: 15px; padding-top: 3px;">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-method">
+                        <div class="contact-icon">
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
-                        <div class="contact-details" style="text-align: left; margin-left: calc(25% + 30px);">
-                            <h3 style="margin-top: 0; margin-bottom: 5px;">地址</h3>
+                        <div class="contact-details">
+                            <h3>地址</h3>
                             <p>中国北京市朝阳区建国路88号</p>
                         </div>
                     </div>
-                    <div class="contact-method" style="display: flex; align-items: flex-start; justify-content: center; margin-bottom: 25px; position: relative;">
-                        <div class="contact-icon" style="position: absolute; left: 25%; display: flex; align-items: center; font-size: 24px; margin-right: 15px; padding-top: 3px;">
+                    <div class="contact-method">
+                        <div class="contact-icon">
                             <i class="fas fa-phone"></i>
                         </div>
-                        <div class="contact-details" style="text-align: left; margin-left: calc(25% + 30px);">
-                            <h3 style="margin-top: 0; margin-bottom: 5px;">电话</h3>
+                        <div class="contact-details">
+                            <h3>电话</h3>
                             <p>+86 13376717896</p>
                         </div>
                     </div>
-                    <div class="contact-method" style="display: flex; align-items: flex-start; justify-content: center; margin-bottom: 25px; position: relative;">
-                        <div class="contact-icon" style="position: absolute; left: 25%; display: flex; align-items: center; font-size: 24px; margin-right: 15px; padding-top: 3px;">
+                    <div class="contact-method">
+                        <div class="contact-icon">
                             <i class="fas fa-envelope"></i>
                         </div>
-                        <div class="contact-details" style="text-align: left; margin-left: calc(25% + 30px);">
-                            <h3 style="margin-top: 0; margin-bottom: 5px;">邮箱</h3>
+                        <div class="contact-details">
+                            <h3>邮箱</h3>
                             <p>1508611232@qq.com</p>
                         </div>
                     </div>
-                    <div class="social-links" style="display: flex; justify-content: center; margin-top: 20px;">
+                    <div class="social-links">
                         <a href="javascript:void(0)" class="social-link" id="wechat-link"><i class="fab fa-weixin"></i></a>
                         <a href="javascript:void(0)" onclick="alert('微博账号正在审核中');" class="social-link"><i class="fab fa-weibo"></i></a>
                         <a href="javascript:void(0)" onclick="alert('LinkedIn账号正在审核中');" class="social-link"><i class="fab fa-linkedin-in"></i></a>
                         <a href="javascript:void(0)" onclick="alert('GitHub账号正在审核中');" class="social-link"><i class="fab fa-github"></i></a>
                     </div>
                 </div>
-                <div class="contact-form" style="width: 100%; max-width: 600px; margin: 0 auto;">
+                <div class="contact-form">
                     <form action="https://formspree.io/f/xldjqywr" method="POST" id="contact-form" onreset="resetSubmitButton(this)">
                         <!-- 隐藏字段放在表单开头，不参与网格布局 -->
                         <input type="hidden" name="_subject" value="网站联系表单提交">
@@ -970,4 +970,4 @@
         window.addEventListener('resize', optimizeContactSection);
     </script>
 </body>
-</html> 
+</html>
