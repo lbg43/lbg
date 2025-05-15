@@ -822,140 +822,93 @@
             const contactGrid = document.querySelector('.contact-grid');
             if (!contactGrid) return;
             
-            // 应用居中样式
-            contactGrid.style.display = 'flex';
-            contactGrid.style.flexDirection = 'column';
-            contactGrid.style.alignItems = 'center';
-            contactGrid.style.maxWidth = '768px';
-            contactGrid.style.margin = '0 auto';
-            contactGrid.style.gap = '40px';
+            // 应用居中样式 - 这些样式已在CSS中定义，不需要重复
+            // contactGrid.style.display = 'flex';
+            // contactGrid.style.flexDirection = 'column';
+            // contactGrid.style.alignItems = 'center';
+            // contactGrid.style.maxWidth = '768px';
+            // contactGrid.style.margin = '0 auto';
+            // contactGrid.style.gap = '40px';
             
             // 处理联系信息部分
             const contactInfo = document.querySelector('.contact-info');
             if (contactInfo) {
-                contactInfo.style.width = '100%';
+                // contactInfo.style.width = '100%';
                 
-                // 处理联系方式
+                // 处理联系方式 - 使用CSS中定义的固定padding布局，而不是百分比定位
                 const contactMethods = contactInfo.querySelectorAll('.contact-method');
                 contactMethods.forEach(method => {
-                    method.style.display = 'flex';
-                    method.style.alignItems = 'flex-start';
-                    method.style.justifyContent = 'center';
-                    method.style.marginBottom = '25px';
-                    method.style.position = 'relative';
+                    // 移除可能导致冲突的内联样式
+                    method.style.justifyContent = '';
                     
-                    // 处理图标样式
+                    // 处理图标样式 - 使用CSS中定义的绝对定位和固定宽度
                     const icon = method.querySelector('.contact-icon');
                     if (icon) {
-                        icon.style.position = 'absolute';
-                        icon.style.left = '25%';
-                        icon.style.display = 'flex';
-                        icon.style.alignItems = 'center';
-                        icon.style.fontSize = '24px';
-                        icon.style.marginRight = '15px';
-                        icon.style.paddingTop = '3px';
+                        // 移除冲突的内联样式
+                        icon.style.left = '';
+                        icon.style.marginRight = '';
                     }
                     
                     // 处理文本样式
                     const details = method.querySelector('.contact-details');
                     if (details) {
-                        details.style.textAlign = 'left';
-                        details.style.marginLeft = 'calc(25% + 30px)';
-                        
-                        // 优化标题间距
-                        const heading = details.querySelector('h3');
-                        if (heading) {
-                            heading.style.marginTop = '0';
-                            heading.style.marginBottom = '5px';
-                        }
+                        // 移除冲突的内联样式
+                        details.style.marginLeft = '';
                     }
                 });
                 
                 // 处理社交链接
                 const socialLinks = contactInfo.querySelector('.social-links');
                 if (socialLinks) {
+                    // 这些样式可以保留，与CSS兼容
                     socialLinks.style.display = 'flex';
                     socialLinks.style.justifyContent = 'center';
                     socialLinks.style.marginTop = '20px';
                 }
             }
             
-            // 处理联系表单
+            // 处理联系表单 - 使用CSS中定义的网格布局
             const contactForm = document.querySelector('.contact-form');
             if (contactForm) {
-                contactForm.style.width = '100%';
-                contactForm.style.maxWidth = '600px';
-                contactForm.style.margin = '0 auto';
-                
-                // 优化表单布局
-                optimizeFormLayout();
+                // 移除可能导致冲突的内联样式
+                contactForm.style.maxWidth = '';
+                contactForm.style.margin = '';
             }
         }
         
-        // 优化表单布局
+        // 优化表单布局 - 保留这个函数但简化它，让CSS控制布局
         function optimizeFormLayout() {
             const form = document.querySelector('#contact-form');
             if (!form) return;
             
-            // 检测设备类型
-            const isMobile = window.innerWidth <= 768;
+            // 移除可能导致冲突的内联样式
+            form.style.display = '';
+            form.style.gridTemplateColumns = '';
+            form.style.gap = '';
             
-            if (isMobile) {
-                // 移动设备单列布局
-                form.style.display = 'flex';
-                form.style.flexDirection = 'column';
-                form.style.gap = '15px';
+            // 处理表单组
+            const formGroups = form.querySelectorAll('.form-group');
+            formGroups.forEach(group => {
+                // 移除可能导致冲突的内联样式
+                group.style.display = '';
+                group.style.flexDirection = '';
                 
-                // 处理表单组
-                const formGroups = form.querySelectorAll('.form-group');
-                formGroups.forEach(group => {
-                    group.style.display = 'flex';
-                    group.style.flexDirection = 'column';
-                    group.style.marginBottom = '0';
-                    
-                    // 调整标签
-                    const label = group.querySelector('label');
-                    if (label) {
-                        label.style.textAlign = 'left';
-                        label.style.paddingTop = '0';
-                        label.style.marginBottom = '5px';
-                    }
-                });
-            } else {
-                // 桌面设备网格布局
-                form.style.display = 'grid';
-                form.style.gridTemplateColumns = 'minmax(80px, 100px) 1fr';
-                form.style.gap = '15px 10px';
-                form.style.alignItems = 'start';
-                
-                // 处理表单组
-                const formGroups = form.querySelectorAll('.form-group');
-                formGroups.forEach(group => {
-                    group.style.display = 'contents';
-                    
-                    // 调整标签
-                    const label = group.querySelector('label');
-                    if (label) {
-                        label.style.textAlign = 'right';
-                        label.style.paddingTop = '12px';
-                        label.style.fontWeight = '500';
-                        label.style.color = '#333';
-                    }
-                    
-                    // 调整输入框
-                    const input = group.querySelector('input, textarea');
-                    if (input) {
-                        input.style.gridColumn = '2';
-                        input.style.width = '100%';
-                    }
-                });
-                
-                // 调整按钮容器
-                const buttonContainer = form.querySelector('[style*="text-align: center"]');
-                if (buttonContainer) {
-                    buttonContainer.style.gridColumn = '1 / -1';
+                // 调整标签
+                const label = group.querySelector('label');
+                if (label) {
+                    // 移除可能导致冲突的内联样式
+                    label.style.textAlign = '';
+                    label.style.paddingTop = '';
                 }
-            }
+                
+                // 调整输入框
+                const input = group.querySelector('input, textarea');
+                if (input) {
+                    // 移除可能导致冲突的内联样式
+                    input.style.gridColumn = '';
+                    input.style.width = '';
+                }
+            });
         }
         
         // 在页面加载和窗口大小变化时执行
