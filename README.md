@@ -37,6 +37,8 @@
 ├── sitemap.xml                 # 网站地图
 ├── robots.txt                  # 搜索引擎爬虫配置
 ├── baidu-push.js               # 百度推送脚本
+├── wechat-popup.js             # 微信弹窗功能脚本
+├── wechat-popup.css            # 微信弹窗样式
 ├── urls.txt                    # 百度URL推送列表
 ├── baidu_push_commands.txt     # 百度推送命令示例
 ├── articles/                   # 文章目录
@@ -91,6 +93,8 @@
 - 点击微信图标显示二维码
 - 模态弹窗实现
 - 支持点击外部关闭
+- 在所有页面上统一实现（包括首页和文章页）
+- 通过独立的CSS和JS文件管理，便于维护
 
 ### 7. 优化的加载体验
 
