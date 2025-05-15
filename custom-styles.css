@@ -521,3 +521,71 @@
         font-size: 20px;
     }
 }
+
+/* 底部订阅邮箱输入框样式 */
+.newsletter-form {
+    display: flex;
+    margin-top: 15px;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.newsletter-form input[type="email"] {
+    height: 50px;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.newsletter-form button {
+    height: 46px;
+    background-color: #3d70ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.newsletter-form button:hover {
+    background-color: #2a5ceb;
+}
+
+.newsletter-form button i {
+    margin-left: 5px;
+}
+
+/* 确保在所有设备上保持一致的样式 */
+@media (max-width: 992px), (max-width: 768px), (max-width: 480px) {
+    .newsletter-form {
+        max-width: 400px;
+        width: 100%;
+    }
+    
+    .newsletter-form input[type="email"],
+    .newsletter-form button {
+        width: 100%;
+        font-size: 16px;
+    }
+    
+    .newsletter-form input[type="email"] {
+        height: 50px;
+    }
+    
+    .newsletter-form button {
+        height: 46px;
+    }
+}
