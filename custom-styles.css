@@ -283,6 +283,28 @@
     justify-content: center;
 }
 
+/* 页脚中的彩色logo样式 */
+.footer .footer-about .logo img {
+    background-color: white;
+    padding: 8px;
+    border-radius: 5px;
+    max-height: 42px;
+}
+
+@media (max-width: 768px) {
+    .footer .footer-about .logo img {
+        max-height: 36px;
+        padding: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer .footer-about .logo img {
+        max-height: 32px;
+        padding: 5px;
+    }
+}
+
 .wechat-modal-content {
     background-color: white;
     max-width: 400px;
