@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 自定义样式 -->
     <link rel="stylesheet" href="custom-styles.css">
+    <!-- 轮播图样式 -->
+    <link rel="stylesheet" href="carousel.css">
     <!-- 百度自动推送 -->
     <script src="baidu-push.js"></script>
     
@@ -92,30 +94,28 @@
         <div class="container">
             <!-- 轮播图部分 -->
             <div class="carousel">
-                <div class="carousel-slide">
-                    <div class="carousel-item">
-                        <img src="images/carousel-1.jpg" alt="创新数字解决方案展示-企业数字化转型服务">
-                        <div class="carousel-content">
-                            <h3>创新数字解决方案</h3>
-                            <p>我们提供全方位的数字化服务，帮助企业实现数字化转型，提升品牌影响力与市场竞争力。</p>
-                            <a href="#services" class="btn">了解我们的服务</a>
-                        </div>
+                <div class="carousel-item">
+                    <img src="images/carousel-1.jpg" alt="创新数字解决方案展示-企业数字化转型服务">
+                    <div class="carousel-content">
+                        <h3>创新数字解决方案</h3>
+                        <p>我们提供全方位的数字化服务，帮助企业实现数字化转型，提升品牌影响力与市场竞争力。</p>
+                        <a href="#services" class="btn">了解我们的服务</a>
                     </div>
-                    <div class="carousel-item">
-                        <img src="images/carousel-2.jpg" alt="专业网站开发服务-响应式网站设计与开发">
-                        <div class="carousel-content">
-                            <h3>专业网站开发服务</h3>
-                            <p>从企业官网到电子商务平台，我们提供专业的网站设计与开发服务，满足您的各种需求。</p>
-                            <a href="#services" class="btn">了解更多</a>
-                        </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="images/carousel-2.jpg" alt="专业网站开发服务-响应式网站设计与开发">
+                    <div class="carousel-content">
+                        <h3>专业网站开发服务</h3>
+                        <p>从企业官网到电子商务平台，我们提供专业的网站设计与开发服务，满足您的各种需求。</p>
+                        <a href="#services" class="btn">了解更多</a>
                     </div>
-                    <div class="carousel-item">
-                        <img src="images/carousel-3.jpg" alt="移动应用开发服务-iOS和Android平台应用设计与开发">
-                        <div class="carousel-content">
-                            <h3>移动应用开发</h3>
-                            <p>打造功能强大、用户体验出色的移动应用，助力您的业务在移动端取得成功。</p>
-                            <a href="#services" class="btn">了解更多</a>
-                        </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="images/carousel-3.jpg" alt="移动应用开发服务-iOS和Android平台应用设计与开发">
+                    <div class="carousel-content">
+                        <h3>移动应用开发</h3>
+                        <p>打造功能强大、用户体验出色的移动应用，助力您的业务在移动端取得成功。</p>
+                        <a href="#services" class="btn">了解更多</a>
                     </div>
                 </div>
                 <button class="carousel-btn carousel-prev" aria-label="上一张">
@@ -124,9 +124,7 @@
                 <button class="carousel-btn carousel-next" aria-label="下一张">
                     <i class="fas fa-chevron-right"></i>
                 </button>
-                <div class="carousel-dots">
-                    <!-- 点击器会通过JS动态生成 -->
-                </div>
+                <div class="carousel-dots"></div>
             </div>
             
             <!-- 内容部分 -->
@@ -494,8 +492,10 @@
     <!-- JavaScript -->
     <script src="script.js"></script>
     <script src="subscribe.js"></script>
+    <!-- 轮播图脚本 -->
+    <script src="carousel.js"></script>
     
-    <!-- 覆盖滚动效果和加载器，让内容立即显示，同时实现轮播图 -->
+    <!-- 覆盖滚动效果和加载器，让内容立即显示 -->
     <script>
         // 立即执行，不等待DOMContentLoaded
         (function() {
@@ -533,138 +533,6 @@
                 window.initScrollEffects = function() {
                     console.log('滚动效果已禁用');
                 };
-                
-                // 轮播图实现
-                function initCarousel() {
-                    const carousel = document.querySelector('.carousel');
-                    if (!carousel) return;
-                    
-                    const items = carousel.querySelectorAll('.carousel-item');
-                    const dotsContainer = carousel.querySelector('.carousel-dots');
-                    const prevBtn = carousel.querySelector('.carousel-prev');
-                    const nextBtn = carousel.querySelector('.carousel-next');
-                    
-                    if (items.length === 0) return;
-                    
-                    let currentIndex = 0;
-                    let autoPlayTimer = null;
-                    
-                    // 调试输出
-                    console.log('找到轮播图元素:', items.length, '个项目');
-                    
-                    // 切换到指定幻灯片
-                    function goToSlide(index) {
-                        // 先清除所有活动状态
-                        items.forEach(item => {
-                            item.classList.remove('active');
-                        });
-                        
-                        // 设置新的活动项
-                        currentIndex = index;
-                        items[currentIndex].classList.add('active');
-                        
-                        // 更新导航点状态
-                        if (dotsContainer) {
-                            const dots = dotsContainer.querySelectorAll('.carousel-dot');
-                            if (dots && dots.length > 0) {
-                                dots.forEach(dot => dot.classList.remove('active'));
-                                dots[currentIndex].classList.add('active');
-                            }
-                        }
-                        
-                        // 调试输出
-                        console.log('切换到幻灯片:', index);
-                    }
-                    
-                    // 下一张幻灯片
-                    function nextSlide() {
-                        goToSlide((currentIndex + 1) % items.length);
-                    }
-                    
-                    // 上一张幻灯片
-                    function prevSlide() {
-                        goToSlide((currentIndex - 1 + items.length) % items.length);
-                    }
-                    
-                    // 初始化导航点
-                    if (dotsContainer) {
-                        dotsContainer.innerHTML = '';
-                        items.forEach((_, index) => {
-                            const dot = document.createElement('div');
-                            dot.classList.add('carousel-dot');
-                            if (index === 0) dot.classList.add('active');
-                            
-                            dot.addEventListener('click', () => {
-                                clearInterval(autoPlayTimer);
-                                goToSlide(index);
-                                startAutoPlay();
-                            });
-                            
-                            dotsContainer.appendChild(dot);
-                        });
-                    }
-                    
-                    // 绑定按钮事件
-                    if (prevBtn) {
-                        prevBtn.addEventListener('click', () => {
-                            clearInterval(autoPlayTimer);
-                            prevSlide();
-                            startAutoPlay();
-                        });
-                    }
-                    
-                    if (nextBtn) {
-                        nextBtn.addEventListener('click', () => {
-                            clearInterval(autoPlayTimer);
-                            nextSlide();
-                            startAutoPlay();
-                        });
-                    }
-                    
-                    // 触摸支持
-                    let touchStartX = 0;
-                    carousel.addEventListener('touchstart', e => {
-                        touchStartX = e.changedTouches[0].screenX;
-                        clearInterval(autoPlayTimer);
-                    }, {passive: true});
-                    
-                    carousel.addEventListener('touchend', e => {
-                        const touchEndX = e.changedTouches[0].screenX;
-                        const diff = touchEndX - touchStartX;
-                        
-                        if (Math.abs(diff) > 50) {
-                            if (diff > 0) {
-                                prevSlide(); // 右滑，上一张
-                            } else {
-                                nextSlide(); // 左滑，下一张
-                            }
-                        }
-                        
-                        startAutoPlay();
-                    }, {passive: true});
-                    
-                    // 自动播放
-                    function startAutoPlay() {
-                        clearInterval(autoPlayTimer);
-                        autoPlayTimer = setInterval(nextSlide, 5000);
-                    }
-                    
-                    // 页面可见性变化处理
-                    document.addEventListener('visibilitychange', () => {
-                        if (document.visibilityState === 'visible') {
-                            startAutoPlay();
-                        } else {
-                            clearInterval(autoPlayTimer);
-                        }
-                    });
-                    
-                    // 显示第一张并开始自动播放
-                    goToSlide(0);
-                    startAutoPlay();
-                }
-                
-                // 初始化轮播图
-                initCarousel();
                 
                 // 微信弹窗处理
                 const wechatLink = document.getElementById('wechat-link');
