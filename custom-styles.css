@@ -107,10 +107,12 @@
     align-items: flex-start;
     margin-bottom: 25px;
     justify-content: center;
+    position: relative;
 }
 
 .contact-icon {
-    margin-right: 15px;
+    position: absolute;
+    left: 25%;
     display: flex;
     align-items: center;
     font-size: 24px;
@@ -119,6 +121,7 @@
 
 .contact-details {
     text-align: left;
+    margin-left: calc(25% + 30px);
 }
 
 .contact-details h3 {
@@ -188,6 +191,14 @@
         padding: 25px 20px;
     }
     
+    .contact-icon {
+        left: 10%;
+    }
+    
+    .contact-details {
+        margin-left: calc(10% + 30px);
+    }
+    
     /* 手机上改为单列布局 */
     .contact-form form {
         display: flex;
@@ -205,6 +216,17 @@
         text-align: left;
         padding-top: 0;
         margin-bottom: 5px;
+    }
+}
+
+/* 在小屏幕设备上调整对齐距离 */
+@media (max-width: 480px) {
+    .contact-icon {
+        left: 5%;
+    }
+    
+    .contact-details {
+        margin-left: calc(5% + 25px);
     }
 }
 
