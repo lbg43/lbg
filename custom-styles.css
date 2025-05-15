@@ -109,6 +109,25 @@
     .footer-about .responsive-logo {
         max-height: 32px;
     }
+    
+    .contact-info {
+        max-width: 260px;
+    }
+    
+    .icon {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        max-width: 240px;
+    }
+    
+    /* 确保联系表单全宽展示 */
+    .contact-form {
+        padding: 10px;
+    }
 }
 
 /* 联系我们部分居中显示 */
@@ -171,27 +190,32 @@
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 100px 1fr;
-    gap: 15px 10px;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
 }
 
 .form-group {
-    display: contents;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 .form-group label {
-    text-align: right;
-    padding-top: 12px;
+    text-align: center;
+    margin-bottom: 8px;
     font-weight: 500;
     color: #333;
+    width: 100%;
 }
 
 .form-group input,
 .form-group textarea {
-    grid-column: 2;
     width: 100%;
+    max-width: 400px;
     padding: 10px 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -211,9 +235,9 @@
 }
 
 [style*="text-align: center"] {
-    grid-column: 1 / -1;
     text-align: center !important;
     margin-top: 10px;
+    width: 100%;
 }
 
 /* 响应式调整 */
@@ -239,34 +263,9 @@
         margin-bottom: 8px;
     }
     
-    /* 手机上改为单列布局 */
-    #contact-form {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        width: 100%;
-        max-width: 100%;
-    }
-    
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 0;
-        align-items: center;
-        width: 100%;
-    }
-    
-    .form-group label {
-        text-align: center;
-        padding-top: 0;
-        margin-bottom: 5px;
-        width: 100%;
-    }
-    
     .form-group input,
     .form-group textarea {
-        width: 100%;
-        max-width: 400px;
+        max-width: 380px;
     }
 }
 
