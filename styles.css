@@ -821,20 +821,11 @@ nav ul li a.active::after {
     margin-bottom: 25px;
 }
 
-.footer-column {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
 .footer-column h3 {
-    text-align: left;
-    margin-bottom: 15px;
-}
-
-.footer-column p {
-    text-align: left;
-    margin-bottom: 15px;
+    color: var(--white);
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    position: relative;
 }
 
 .footer-column h3::after {
@@ -867,37 +858,29 @@ nav ul li a.active::after {
 
 .newsletter-form {
     display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 400px;
-    margin: 15px 0 0 0;
+    margin-top: 20px;
 }
 
-.newsletter-form input[type="email"] {
-    width: 100%;
-    height: 50px;
-    padding: 12px 20px;
+.newsletter-form input {
+    flex: 1;
+    padding: 12px 15px;
     border: none;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    font-size: 16px;
-    text-align: left;
+    border-radius: 5px 0 0 5px;
+    font-family: var(--body-font);
 }
 
 .newsletter-form button {
-    width: 100%;
-    height: 46px;
-    background-color: #3d70ff;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--white);
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: 0 5px 5px 0;
     padding: 0 20px;
+    cursor: pointer;
+    transition: all var(--transition-fast) ease;
+}
+
+.newsletter-form button:hover {
+    background-color: var(--secondary-color);
 }
 
 .copyright {
