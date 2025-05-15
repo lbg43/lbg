@@ -926,13 +926,20 @@
             
             if (infoItems.length === 0) return;
             
-            // 确保所有联系方式项对齐
+            // 确保所有联系方式项居中对齐
             infoItems.forEach(item => {
-                // 确保图标垂直居中显示
+                // 确保图标居中显示
                 const icon = item.querySelector('.icon');
                 if (icon) {
-                    icon.style.display = 'inline-block';
+                    icon.style.display = 'block';
                     icon.style.textAlign = 'center';
+                    icon.style.margin = '0 auto 10px auto';
+                }
+                
+                // 确保文本居中
+                const infoText = item.querySelector('.info-text');
+                if (infoText) {
+                    infoText.style.textAlign = 'center';
                 }
             });
         }
