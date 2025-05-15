@@ -485,29 +485,23 @@
             </div>
             <div class="contact-grid">
                 <div class="contact-info">
-                    <div class="contact-method">
-                        <div class="contact-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div class="contact-details">
+                    <div class="info-item">
+                        <i class="icon fas fa-map-marker-alt"></i>
+                        <div class="info-text">
                             <h3>地址</h3>
                             <p>中国北京市朝阳区建国路88号</p>
                         </div>
                     </div>
-                    <div class="contact-method">
-                        <div class="contact-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="contact-details">
+                    <div class="info-item">
+                        <i class="icon fas fa-phone"></i>
+                        <div class="info-text">
                             <h3>电话</h3>
                             <p>+86 13376717896</p>
                         </div>
                     </div>
-                    <div class="contact-method">
-                        <div class="contact-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="contact-details">
+                    <div class="info-item">
+                        <i class="icon fas fa-envelope"></i>
+                        <div class="info-text">
                             <h3>邮箱</h3>
                             <p>1508611232@qq.com</p>
                         </div>
@@ -836,13 +830,13 @@
                 // contactInfo.style.width = '100%';
                 
                 // 处理联系方式 - 使用CSS中定义的固定padding布局，而不是百分比定位
-                const contactMethods = contactInfo.querySelectorAll('.contact-method');
+                const contactMethods = contactInfo.querySelectorAll('.info-item');
                 contactMethods.forEach(method => {
                     // 移除可能导致冲突的内联样式
                     method.style.justifyContent = '';
                     
                     // 处理图标样式 - 使用CSS中定义的绝对定位和固定宽度
-                    const icon = method.querySelector('.contact-icon');
+                    const icon = method.querySelector('.icon');
                     if (icon) {
                         // 移除冲突的内联样式
                         icon.style.left = '';
@@ -850,7 +844,7 @@
                     }
                     
                     // 处理文本样式
-                    const details = method.querySelector('.contact-details');
+                    const details = method.querySelector('.info-text');
                     if (details) {
                         // 移除冲突的内联样式
                         details.style.marginLeft = '';
@@ -928,24 +922,17 @@
         // 确保联系区域对齐
         function ensureContactAlignment() {
             // 获取所有联系方式项
-            const contactMethods = document.querySelectorAll('.contact-method');
+            const infoItems = document.querySelectorAll('.info-item');
             
-            if (contactMethods.length === 0) return;
+            if (infoItems.length === 0) return;
             
             // 确保所有联系方式项对齐
-            contactMethods.forEach(method => {
+            infoItems.forEach(item => {
                 // 确保图标垂直居中显示
-                const icon = method.querySelector('.contact-icon');
+                const icon = item.querySelector('.icon');
                 if (icon) {
-                    icon.style.display = 'flex';
-                    icon.style.justifyContent = 'center';
-                    icon.style.alignItems = 'center';
-                }
-                
-                // 确保文本区域宽度一致
-                const details = method.querySelector('.contact-details');
-                if (details) {
-                    details.style.width = 'calc(100% - 39px)';
+                    icon.style.display = 'inline-block';
+                    icon.style.textAlign = 'center';
                 }
             });
         }
