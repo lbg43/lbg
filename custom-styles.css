@@ -118,6 +118,7 @@
     align-items: center;
     font-size: 24px;
     width: 40px; /* 固定宽度 */
+    justify-content: center; /* 居中图标 */
 }
 
 .contact-details {
@@ -128,6 +129,12 @@
 .contact-details h3 {
     margin-top: 0;
     margin-bottom: 5px;
+    font-size: 18px;
+}
+
+.contact-details p {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .social-links {
@@ -137,27 +144,29 @@
     gap: 15px;
 }
 
-/* 表单元素对齐样式 */
-.contact-form form {
+/* 表单对齐样式 */
+#contact-form {
     display: grid;
     grid-template-columns: 100px 1fr;
     gap: 15px 10px;
     align-items: start;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-.contact-form .form-group {
+.form-group {
     display: contents;
 }
 
-.contact-form .form-group label {
+.form-group label {
     text-align: right;
     padding-top: 12px;
     font-weight: 500;
     color: #333;
 }
 
-.contact-form .form-group input,
-.contact-form .form-group textarea {
+.form-group input,
+.form-group textarea {
     grid-column: 2;
     width: 100%;
     padding: 10px 15px;
@@ -166,20 +175,21 @@
     transition: border-color 0.3s ease;
 }
 
-.contact-form .form-group input:focus,
-.contact-form .form-group textarea:focus {
+.form-group input:focus,
+.form-group textarea:focus {
     border-color: #4a6cfa;
     outline: none;
     box-shadow: 0 0 0 2px rgba(74, 108, 250, 0.1);
 }
 
-.contact-form .form-group textarea {
+.form-group textarea {
     min-height: 120px;
     resize: vertical;
 }
 
-.contact-form [style*="text-align: center"] {
+[style*="text-align: center"] {
     grid-column: 1 / -1;
+    text-align: center !important;
     margin-top: 10px;
 }
 
@@ -203,19 +213,19 @@
     }
     
     /* 手机上改为单列布局 */
-    .contact-form form {
+    #contact-form {
         display: flex;
         flex-direction: column;
         gap: 15px;
     }
     
-    .contact-form .form-group {
+    .form-group {
         display: flex;
         flex-direction: column;
         margin-bottom: 0;
     }
     
-    .contact-form .form-group label {
+    .form-group label {
         text-align: left;
         padding-top: 0;
         margin-bottom: 5px;
