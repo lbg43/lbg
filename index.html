@@ -932,28 +932,38 @@
             
             if (contactMethods.length === 0) return;
             
-            // 让所有图标垂直对齐
+            // 确保所有联系方式项使用网格布局
             contactMethods.forEach(method => {
+                // 确保使用网格布局
+                method.style.display = 'grid';
+                
+                // 根据设备宽度设置列宽
+                if (window.innerWidth > 768) {
+                    method.style.gridTemplateColumns = '60px 1fr';
+                } else if (window.innerWidth > 480) {
+                    method.style.gridTemplateColumns = '50px 1fr';
+                } else {
+                    method.style.gridTemplateColumns = '40px 1fr';
+                }
+                
+                // 居中对齐项目
+                method.style.alignItems = 'center';
+                
+                // 处理图标
                 const icon = method.querySelector('.contact-icon');
                 if (icon) {
-                    // 确保图标居中显示
+                    // 设置图标居中
                     icon.style.display = 'flex';
                     icon.style.justifyContent = 'center';
                     icon.style.alignItems = 'center';
-                }
-                
-                // 确保文本内容统一间距
-                const details = method.querySelector('.contact-details');
-                if (details) {
-                    const heading = details.querySelector('h3');
-                    const paragraph = details.querySelector('p');
                     
-                    if (heading) {
-                        heading.style.margin = '0 0 5px 0';
-                    }
-                    
-                    if (paragraph) {
-                        paragraph.style.margin = '0';
+                    // 根据设备宽度设置合适的字体大小
+                    if (window.innerWidth <= 480) {
+                        icon.style.fontSize = '18px';
+                    } else if (window.innerWidth <= 768) {
+                        icon.style.fontSize = '20px';
+                    } else {
+                        icon.style.fontSize = '24px';
                     }
                 }
             });
@@ -962,6 +972,7 @@
         // 页面加载后执行
         document.addEventListener('DOMContentLoaded', ensureContactAlignment);
         window.addEventListener('resize', ensureContactAlignment);
+        window.addEventListener('load', ensureContactAlignment);
     </script>
 </body>
 </html>
