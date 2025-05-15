@@ -2,11 +2,18 @@
  * 增强微信二维码弹窗功能
  */
 document.addEventListener('DOMContentLoaded', function() {
-    // 微信二维码弹窗优化
+    console.log('初始化微信二维码弹窗功能');
+    
+    // 获取微信按钮和弹窗元素
     const wechatLink = document.getElementById('wechat-link');
     const footerWechatLink = document.getElementById('footer-wechat-link');
     const wechatModal = document.getElementById('wechat-modal');
     const closeModal = document.querySelector('.close-modal');
+    
+    // 确保弹窗初始状态为隐藏
+    if (wechatModal) {
+        wechatModal.style.display = 'none';
+    }
     
     function showWechatModal(e) {
         if (e) {
@@ -14,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.stopPropagation();
         }
         if (wechatModal) {
+            console.log('显示微信二维码弹窗');
             wechatModal.style.display = 'flex'; // 使用flex布局
             document.body.style.overflow = 'hidden'; // 防止背景滚动
         }
@@ -25,27 +33,27 @@ document.addEventListener('DOMContentLoaded', function() {
             e.stopPropagation();
         }
         if (wechatModal) {
+            console.log('隐藏微信二维码弹窗');
             wechatModal.style.display = 'none';
             document.body.style.overflow = '';
         }
     }
     
+    // 绑定点击事件
     if (wechatLink) {
-        // 优化点击微信图标显示弹窗
+        console.log('绑定微信图标点击事件');
         wechatLink.addEventListener('click', showWechatModal);
     }
     
-    // 点击页脚微信图标显示弹窗
     if (footerWechatLink) {
+        console.log('绑定页脚微信图标点击事件');
         footerWechatLink.addEventListener('click', showWechatModal);
     }
     
-    // 优化关闭按钮
     if (closeModal) {
         closeModal.addEventListener('click', hideWechatModal);
     }
     
-    // 点击弹窗外区域关闭弹窗
     if (wechatModal) {
         wechatModal.addEventListener('click', function(e) {
             if (e.target === wechatModal) {
@@ -53,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // 防止点击弹窗内容关闭弹窗
         const modalContent = wechatModal.querySelector('.wechat-modal-content');
         if (modalContent) {
             modalContent.addEventListener('click', function(e) {
@@ -62,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // 确保微信图标在所有其他模块中也能工作
+    // 确保所有微信图标都能触发弹窗
     document.querySelectorAll('[id^="wechat-link"]').forEach(function(link) {
         if (link !== wechatLink && link !== footerWechatLink) {
             link.addEventListener('click', showWechatModal);
