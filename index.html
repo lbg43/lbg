@@ -93,24 +93,21 @@
             <!-- 轮播图部分 -->
             <div class="carousel">
                 <div class="carousel-slide">
-                    <div class="carousel-item">
-                        <img src="images/carousel-1.jpg" alt="创新数字解决方案展示-企业数字化转型服务">
+                    <div class="carousel-item" style="background-image: url('images/carousel-1.jpg');">
                         <div class="carousel-content">
                             <h3>创新数字解决方案</h3>
                             <p>我们提供全方位的数字化服务，帮助企业实现数字化转型，提升品牌影响力与市场竞争力。</p>
                             <a href="#services" class="btn">了解我们的服务</a>
                         </div>
                     </div>
-                    <div class="carousel-item">
-                        <img src="images/carousel-2.jpg" alt="专业网站开发服务-响应式网站设计与开发">
+                    <div class="carousel-item" style="background-image: url('images/carousel-2.jpg');">
                         <div class="carousel-content">
                             <h3>专业网站开发服务</h3>
                             <p>从企业官网到电子商务平台，我们提供专业的网站设计与开发服务，满足您的各种需求。</p>
                             <a href="#services" class="btn">了解更多</a>
                         </div>
                     </div>
-                    <div class="carousel-item">
-                        <img src="images/carousel-3.jpg" alt="移动应用开发服务-iOS和Android平台应用设计与开发">
+                    <div class="carousel-item" style="background-image: url('images/carousel-3.jpg');">
                         <div class="carousel-content">
                             <h3>移动应用开发</h3>
                             <p>打造功能强大、用户体验出色的移动应用，助力您的业务在移动端取得成功。</p>
@@ -551,6 +548,12 @@
                     
                     // 切换到指定幻灯片
                     function goToSlide(index) {
+                        // 调试输出
+                        console.log('切换到轮播图：', index);
+                        console.log('轮播图项：', items.length);
+                        console.log('当前轮播图：', items[index]);
+                        console.log('背景图片URL：', items[index].style.backgroundImage);
+
                         // 移除所有活动类
                         items.forEach(item => item.classList.remove('active'));
                         
