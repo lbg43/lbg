@@ -533,6 +533,38 @@
                 window.initScrollEffects = function() {
                     console.log('滚动效果已禁用');
                 };
+                
+                // 确保微信弹窗正常工作
+                const wechatLink = document.getElementById('wechat-link');
+                const footerWechatLink = document.getElementById('footer-wechat-link');
+                const wechatModal = document.getElementById('wechat-modal');
+                const closeModal = document.querySelector('.close-modal');
+                
+                if (wechatLink && wechatModal) {
+                    wechatLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        wechatModal.style.display = 'flex';
+                    });
+                }
+                
+                if (footerWechatLink && wechatModal) {
+                    footerWechatLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        wechatModal.style.display = 'flex';
+                    });
+                }
+                
+                if (closeModal && wechatModal) {
+                    closeModal.addEventListener('click', function() {
+                        wechatModal.style.display = 'none';
+                    });
+                }
+                
+                window.addEventListener('click', function(e) {
+                    if (e.target === wechatModal) {
+                        wechatModal.style.display = 'none';
+                    }
+                });
             });
         })();
     </script>
