@@ -104,34 +104,31 @@
     max-width: 400px;
 }
 
-.contact-method {
+/* 新的联系信息布局样式 */
+.info-item {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 25px;
-    width: 100%;
+    margin-bottom: 20px;
 }
 
-.contact-icon {
-    width: 24px;
-    min-width: 24px;
+.icon {
+    font-size: 24px;
+    color: #3d70ff;
     margin-right: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #4a6cfa;
+    min-width: 30px;
+    text-align: center;
 }
 
-.contact-details {
-    width: calc(100% - 39px);
-}
-
-.contact-details h3 {
-    margin: 0 0 5px 0;
-    font-size: 18px;
-}
-
-.contact-details p {
+.info-text h3 {
     margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.info-text p {
+    margin: 5px 0 0;
+    color: #555;
 }
 
 .social-links {
@@ -197,10 +194,6 @@
         max-width: 400px;
     }
     
-    .contact-details {
-        width: calc(100% - 39px);
-    }
-    
     .contact-grid {
         max-width: 100%;
         padding: 0 15px;
@@ -210,14 +203,9 @@
         padding: 25px 20px;
     }
     
-    .contact-method {
-        grid-template-columns: 50px 1fr;
-    }
-    
-    .contact-icon {
-        width: 24px;
-        min-width: 24px;
-        font-size: 20px;
+    .icon {
+        font-size: 22px;
+        margin-right: 12px;
     }
     
     /* 手机上改为单列布局 */
@@ -245,18 +233,9 @@
         max-width: 300px;
     }
     
-    .contact-details {
-        width: calc(100% - 29px);
-    }
-    
-    .contact-icon {
-        width: 20px;
-        min-width: 20px;
-        margin-right: 9px;
-    }
-    
-    .contact-method {
-        grid-template-columns: 40px 1fr;
+    .icon {
+        font-size: 20px;
+        margin-right: 10px;
     }
 }
 
