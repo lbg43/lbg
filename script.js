@@ -697,7 +697,7 @@ function initWechatModal() {
         if (wechatLink) {
             wechatLink.addEventListener('click', function(e) {
                 e.preventDefault();
-                wechatModal.style.display = 'block';
+                wechatModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // 防止背景滚动
             });
         }
@@ -706,7 +706,7 @@ function initWechatModal() {
         if (footerWechatLink) {
             footerWechatLink.addEventListener('click', function(e) {
                 e.preventDefault();
-                wechatModal.style.display = 'block';
+                wechatModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // 防止背景滚动
             });
         }
@@ -715,7 +715,7 @@ function initWechatModal() {
         if (articleWechatLink) {
             articleWechatLink.addEventListener('click', function(e) {
                 e.preventDefault();
-                wechatModal.style.display = 'block';
+                wechatModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // 防止背景滚动
             });
         }
