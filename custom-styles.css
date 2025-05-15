@@ -87,7 +87,7 @@
     }
 }
 
-/* 联系我们部分居中显示 */
+/* 联系我们部分居中显示 - 改进对齐方式 */
 .contact-grid {
     display: flex;
     flex-direction: column;
@@ -106,22 +106,23 @@
     display: flex;
     align-items: flex-start;
     margin-bottom: 25px;
-    justify-content: center;
     position: relative;
+    padding-left: 50px; /* 固定左侧图标空间 */
 }
 
 .contact-icon {
     position: absolute;
-    left: 25%;
+    left: 0;
+    top: 3px;
     display: flex;
     align-items: center;
     font-size: 24px;
-    padding-top: 3px;
+    width: 40px; /* 固定宽度 */
 }
 
 .contact-details {
     text-align: left;
-    margin-left: calc(25% + 30px);
+    flex: 1;
 }
 
 .contact-details h3 {
@@ -130,14 +131,16 @@
 }
 
 .social-links {
+    display: flex;
     justify-content: center;
     margin-top: 20px;
+    gap: 15px;
 }
 
 /* 表单元素对齐样式 */
 .contact-form form {
     display: grid;
-    grid-template-columns: minmax(80px, 100px) 1fr;
+    grid-template-columns: 100px 1fr;
     gap: 15px 10px;
     align-items: start;
 }
@@ -191,12 +194,12 @@
         padding: 25px 20px;
     }
     
-    .contact-icon {
-        left: 10%;
+    .contact-method {
+        padding-left: 40px; /* 移动端减少左侧间距 */
     }
     
-    .contact-details {
-        margin-left: calc(10% + 30px);
+    .contact-icon {
+        width: 30px; /* 移动端减小图标区域 */
     }
     
     /* 手机上改为单列布局 */
@@ -221,12 +224,12 @@
 
 /* 在小屏幕设备上调整对齐距离 */
 @media (max-width: 480px) {
-    .contact-icon {
-        left: 5%;
+    .contact-method {
+        padding-left: 35px; /* 更小屏幕进一步减少间距 */
     }
     
-    .contact-details {
-        margin-left: calc(5% + 25px);
+    .contact-icon {
+        width: 25px; /* 更小屏幕进一步减小图标区域 */
     }
 }
 
@@ -459,4 +462,4 @@
     .carousel-content h3 {
         font-size: 20px;
     }
-} 
+}
