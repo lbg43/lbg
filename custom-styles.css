@@ -119,9 +119,50 @@
     margin-top: 20px;
 }
 
-.form-group label {
-    text-align: left;
-    display: block;
+/* 表单元素对齐样式 */
+.contact-form form {
+    display: grid;
+    grid-template-columns: minmax(80px, 100px) 1fr;
+    gap: 15px 10px;
+    align-items: start;
+}
+
+.contact-form .form-group {
+    display: contents;
+}
+
+.contact-form .form-group label {
+    text-align: right;
+    padding-top: 12px;
+    font-weight: 500;
+    color: #333;
+}
+
+.contact-form .form-group input,
+.contact-form .form-group textarea {
+    grid-column: 2;
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+.contact-form .form-group input:focus,
+.contact-form .form-group textarea:focus {
+    border-color: #4a6cfa;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(74, 108, 250, 0.1);
+}
+
+.contact-form .form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.contact-form [style*="text-align: center"] {
+    grid-column: 1 / -1;
+    margin-top: 10px;
 }
 
 /* 在手机设备上进一步优化 */
@@ -133,6 +174,25 @@
     
     .contact-form {
         padding: 25px 20px;
+    }
+    
+    /* 手机上改为单列布局 */
+    .contact-form form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .contact-form .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0;
+    }
+    
+    .contact-form .form-group label {
+        text-align: left;
+        padding-top: 0;
+        margin-bottom: 5px;
     }
 }
 
