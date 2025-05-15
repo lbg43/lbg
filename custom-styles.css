@@ -1,3 +1,92 @@
+/* 顶部标志增强自适应样式 */
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.responsive-logo {
+    max-width: 100%;
+    height: auto !important;
+    width: auto;
+    max-height: 48px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.main-header.fixed .responsive-logo {
+    max-height: 40px;
+}
+
+/* 大屏幕设备 */
+@media (min-width: 1200px) {
+    .responsive-logo {
+        max-height: 50px;
+    }
+    
+    .main-header.fixed .responsive-logo {
+        max-height: 45px;
+    }
+}
+
+/* 平板设备 */
+@media (max-width: 992px) {
+    .responsive-logo {
+        max-height: 42px;
+    }
+    
+    .main-header.fixed .responsive-logo {
+        max-height: 38px;
+    }
+}
+
+/* 小型平板和大型手机 */
+@media (max-width: 768px) {
+    .responsive-logo {
+        max-height: 38px;
+    }
+    
+    .main-header.fixed .responsive-logo {
+        max-height: 34px;
+    }
+    
+    .footer-about .responsive-logo {
+        max-height: 40px;
+    }
+}
+
+/* 手机设备 */
+@media (max-width: 480px) {
+    .responsive-logo {
+        max-height: 32px;
+    }
+    
+    .main-header.fixed .responsive-logo {
+        max-height: 30px;
+    }
+    
+    .footer-about .responsive-logo {
+        max-height: 36px;
+    }
+}
+
+/* 小型手机设备 */
+@media (max-width: 360px) {
+    .responsive-logo {
+        max-height: 28px;
+    }
+    
+    .main-header.fixed .responsive-logo {
+        max-height: 26px;
+    }
+    
+    .footer-about .responsive-logo {
+        max-height: 32px;
+    }
+}
+
 /* 微信二维码弹窗样式 */
 .wechat-modal {
     display: none; /* 默认隐藏 */
