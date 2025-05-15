@@ -104,10 +104,9 @@
 
 .contact-method {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 25px;
     justify-content: center;
-    text-align: center;
 }
 
 .contact-icon {
@@ -115,10 +114,16 @@
     display: flex;
     align-items: center;
     font-size: 24px;
+    padding-top: 3px;
 }
 
 .contact-details {
     text-align: left;
+}
+
+.contact-details h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
 }
 
 .social-links {
