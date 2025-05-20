@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /private/
 
-Sitemap: https://www.wbhasdifhwzgja.icu/sitemap.xml 
+Sitemap: https://www.xdhqywz.top/sitemap.xml 
