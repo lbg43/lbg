@@ -1,0 +1,47 @@
+/* 自动更新内容的样式 */
+.info-box {
+    background-color: #f8f9ff;
+    border-left: 4px solid #4a6cf7;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.info-box h4 {
+    margin-top: 0;
+    color: #2d3748;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.info-box p {
+    margin-bottom: 0;
+}
+
+/* 年度更新样式 */
+h3[id^="年最新趋势"] {
+    color: #3d70ff;
+    margin-top: 30px;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed #e2e8ff;
+}
+
+h4[id^="年最新数据"] {
+    color: #4a6cf7;
+    background-color: #f8f9ff;
+    padding: 10px 15px;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .info-box {
+        padding: 12px 15px;
+    }
+    
+    h4[id^="年最新数据"] {
+        padding: 8px 12px;
+    }
+} 
