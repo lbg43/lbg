@@ -1,12 +1,44 @@
 {
     "articles": [
-        {"file": "seo-guide.html", "update_frequency": 1, "last_updated": ""},
-        {"file": "responsive-design.html", "update_frequency": 1, "last_updated": ""},
-        {"file": "ui-ux-design.html", "update_frequency": 2, "last_updated": ""},
-        {"file": "website-development.html", "update_frequency": 1, "last_updated": ""},
-        {"file": "mobile-app-development.html", "update_frequency": 2, "last_updated": ""},
-        {"file": "ecommerce-solutions.html", "update_frequency": 1, "last_updated": ""},
-        {"file": "cloud-services.html", "update_frequency": 2, "last_updated": ""},
-        {"file": "conversion-rate.html", "update_frequency": 1, "last_updated": ""}
+        {
+            "file": "seo-guide.html",
+            "update_frequency": 1,
+            "last_updated": "2025-05-21"
+        },
+        {
+            "file": "responsive-design.html",
+            "update_frequency": 1,
+            "last_updated": "2025-05-21"
+        },
+        {
+            "file": "ui-ux-design.html",
+            "update_frequency": 2,
+            "last_updated": "2025-05-21"
+        },
+        {
+            "file": "website-development.html",
+            "update_frequency": 1,
+            "last_updated": "2025-05-21"
+        },
+        {
+            "file": "mobile-app-development.html",
+            "update_frequency": 2,
+            "last_updated": "2025-05-21"
+        },
+        {
+            "file": "ecommerce-solutions.html",
+            "update_frequency": 1,
+            "last_updated": "2025-05-21"
+        },
+        {
+            "file": "cloud-services.html",
+            "update_frequency": 2,
+            "last_updated": "2025-05-21"
+        },
+        {
+            "file": "conversion-rate.html",
+            "update_frequency": 1,
+            "last_updated": "2025-05-21"
+        }
     ]
-} 
+}
