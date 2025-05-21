@@ -4,6 +4,7 @@ import datetime
 import re
 import json
 from pathlib import Path
+from update_sitemap import update_sitemap  # 导入sitemap更新功能
 
 # 配置
 ARTICLES_DIR = 'articles'
@@ -26,14 +27,14 @@ def load_config():
         # 默认配置
         default_config = {
             "articles": [
-                {"file": "seo-guide.html", "update_frequency": 7, "last_updated": ""},
-                {"file": "responsive-design.html", "update_frequency": 5, "last_updated": ""},
-                {"file": "ui-ux-design.html", "update_frequency": 10, "last_updated": ""},
-                {"file": "website-development.html", "update_frequency": 7, "last_updated": ""},
-                {"file": "mobile-app-development.html", "update_frequency": 10, "last_updated": ""},
-                {"file": "ecommerce-solutions.html", "update_frequency": 8, "last_updated": ""},
-                {"file": "cloud-services.html", "update_frequency": 12, "last_updated": ""},
-                {"file": "conversion-rate.html", "update_frequency": 6, "last_updated": ""}
+                {"file": "seo-guide.html", "update_frequency": 1, "last_updated": ""},
+                {"file": "responsive-design.html", "update_frequency": 1, "last_updated": ""},
+                {"file": "ui-ux-design.html", "update_frequency": 2, "last_updated": ""},
+                {"file": "website-development.html", "update_frequency": 1, "last_updated": ""},
+                {"file": "mobile-app-development.html", "update_frequency": 2, "last_updated": ""},
+                {"file": "ecommerce-solutions.html", "update_frequency": 1, "last_updated": ""},
+                {"file": "cloud-services.html", "update_frequency": 2, "last_updated": ""},
+                {"file": "conversion-rate.html", "update_frequency": 1, "last_updated": ""}
             ]
         }
         with open(ARTICLES_CONFIG, 'w', encoding='utf-8') as f:
@@ -173,6 +174,15 @@ if __name__ == "__main__":
     try:
         log_message("开始自动更新文章...")
         update_articles()
-        log_message("更新完成")
+        
+        # 更新sitemap.xml
+        log_message("开始更新sitemap.xml...")
+        sitemap_updated = update_sitemap()
+        if sitemap_updated:
+            log_message("sitemap.xml更新完成")
+        else:
+            log_message("sitemap.xml更新失败")
+        
+        log_message("所有更新完成")
     except Exception as e:
         log_message(f"更新过程中发生错误: {str(e)}") 
