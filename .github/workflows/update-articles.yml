@@ -1,41 +1,45 @@
-name: 自动更新文章
+name: 自动更新文章与网站地图
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # 每天凌晨2点运行
-  workflow_dispatch:     # 允许手动触发
+    # 每天凌晨2点运行（UTC时间为18:00，北京时间+8小时为凌晨2:00）
+    - cron: '0 18 * * *'
+  # 允许手动触发工作流
+  workflow_dispatch:
 
 jobs:
-  update:
+  update-articles:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      
-      - name: 设置Python
+      - name: 检出代码
+        uses: actions/checkout@v2
+        
+      - name: 设置Python环境
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
+          python-version: '3.9'
           
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          pip install pillow
+          # 如果有依赖包，可以在这里安装
           
-      - name: 更新CSS链接
-        run: python update_css_links.py
-        
       - name: 运行更新脚本
-        run: python auto_update_articles.py
-        
+        run: |
+          python auto_update_articles.py
+          
+      - name: 确保sitemap更新
+        run: |
+          python update_sitemap.py
+          
       - name: 提交更改
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
           git add .
-          git commit -m "自动更新文章内容" || echo "没有需要提交的更改"
+          git diff --staged --quiet || git commit -m "自动更新文章和sitemap [$(date +'%Y-%m-%d')]"
           
       - name: 推送更改
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          github_token: ${{ secrets.GITHUB_TOKEN }} 
