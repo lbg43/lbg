@@ -126,6 +126,7 @@
 - 自动添加最新行业趋势、提示和数据统计
 - 通过JSON配置文件控制更新策略
 - 自动记录更新日志
+- 自动更新sitemap.xml中的lastmod日期，保持搜索引擎索引的时效性
 - 无需人工干预的内容持续更新
 
 ## 代码细节
@@ -204,7 +205,8 @@
 2. 对于GitHub部署：
    - 确保GitHub Actions已启用 (Settings > Actions > General)
    - 设置工作流权限为"Read and write permissions" (Settings > Actions > General > Workflow permissions)
-3. 文章自动更新系统将按照设定的时间表自动运行
+3. sitemap.xml会随着文章更新自动更新lastmod日期，确保搜索引擎知晓最新内容
+4. 文章自动更新系统将按照设定的时间表自动运行
 
 ## 浏览器兼容性
 
@@ -254,7 +256,8 @@
 - 设置了安全头部和性能优化参数，提高页面加载速度
 
 ### 3. 更新频率优化
-- 更新了`sitemap.xml`中所有页面的lastmod日期为当前日期(2025-05-15)
+- 更新了`sitemap.xml`中所有页面的lastmod日期为当前日期
+- 实现了sitemap.xml的自动更新功能，确保搜索引擎始终获取最新的内容变更信息
 - 统一了所有页面的日期，确保搜索引擎识别为最新内容
 - 实现了基于GitHub Actions的自动化文章更新系统，定期更新内容保持网站活跃性
 - 通过配置文件控制不同文章的更新频率，确保内容持续更新
