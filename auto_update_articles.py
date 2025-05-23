@@ -79,61 +79,82 @@ def add_new_content(article_path):
     with open(article_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # 查找文章正文的结尾位置
-    body_end = content.find('<h2>结论</h2>')
-    if body_end == -1:
-        body_end = content.find('<div class="article-footer">')
-    
-    if body_end == -1:
-        log_message(f"无法在文件 {article_path} 中找到合适的插入点")
-        return False
-    
-    # 获取文章标题，用于生成相关内容
+    # 获取文章标题
     title_match = re.search(r'<h1>(.*?)</h1>', content)
     if not title_match:
         article_title = '文章'
     else:
         article_title = title_match.group(1)
     
-    # 随机选择一种更新方式
-    update_types = ['add_tip', 'add_section', 'update_statistics']
-    update_type = random.choice(update_types)
+    # 查找文章主体内容区域
+    start_marker = '</h1>'
+    end_marker = '<h2>结论</h2>'
+    if end_marker not in content:
+        end_marker = '<div class="article-footer">'
     
+    start_pos = content.find(start_marker)
+    if start_pos == -1:
+        log_message(f"无法在文件 {article_path} 中找到文章开始标记")
+        return False
+    
+    end_pos = content.find(end_marker)
+    if end_pos == -1:
+        log_message(f"无法在文件 {article_path} 中找到文章结束标记")
+        return False
+    
+    start_pos += len(start_marker)
+    
+    # 生成新的文章主体内容
     current_year = datetime.datetime.now().year
     
-    if update_type == 'add_tip':
-        new_content_block = f'''
+    # 生成随机数据（确保每篇文章使用相同的数据）
+    traffic_increase = random.randint(65, 80)
+    growth_rate = random.randint(5, 15)
+    stay_time_increase = random.randint(25, 40)
+    conversion_rate = random.randint(20, 35)
+    
+    # 生成新的文章内容
+    new_article_content = f'''
+            <div class="article-content">
+                <p>在{current_year}年的数字化浪潮中，{article_title.split(':')[0] if ':' in article_title else article_title}领域发生了重大变革。本文将为您深入分析最新趋势和实践方法。</p>
+                
+                <h3>一、行业最新发展趋势</h3>
+                <p>随着技术的快速迭代，我们观察到以下关键趋势：</p>
+                <ul>
+                    <li><strong>人工智能驱动</strong>：AI技术正在重塑{article_title.split(':')[0] if ':' in article_title else article_title}的实现方式</li>
+                    <li><strong>用户体验至上</strong>：个性化和响应式设计成为标准配置</li>
+                    <li><strong>数据安全升级</strong>：隐私保护和数据合规成为重中之重</li>
+                </ul>
+                
                 <div class="info-box">
-                    <h4>最新提示 ({current_year}年更新)</h4>
-                    <p>随着技术和行业标准的不断发展，我们建议您定期检查并更新您的策略。最近的研究表明，持续优化和适应新趋势的企业比竞争对手获得了30%以上的市场份额增长。</p>
+                    <h4>最新市场数据 ({current_year}年更新)</h4>
+                    <ul>
+                        <li>移动端访问比例达到{traffic_increase}%，同比增长{growth_rate}%</li>
+                        <li>用户平均停留时间提升{stay_time_increase}%</li>
+                        <li>实施现代化策略的企业转化率提升{conversion_rate}%</li>
+                    </ul>
                 </div>
                 
-                '''
-    elif update_type == 'add_section':
-        new_content_block = f'''
-                <h3>{current_year}年最新趋势更新</h3>
-                <p>随着数字环境的快速发展，最新的行业数据显示了几个值得关注的新兴趋势：</p>
-                <ul>
-                    <li><strong>人工智能集成</strong>：企业正在将AI工具整合到其{article_title.split(':')[0] if ':' in article_title else article_title}策略中，实现更高效的流程和个性化体验。</li>
-                    <li><strong>数据驱动决策</strong>：基于实时数据分析的决策流程正在成为标准做法，帮助企业更准确地预测市场变化。</li>
-                    <li><strong>可持续发展实践</strong>：消费者越来越关注企业的环保措施，将其纳入您的业务战略可以增强品牌形象。</li>
-                </ul>
+                <h3>二、最佳实践方案</h3>
+                <p>基于最新的行业数据和实践经验，我们建议：</p>
+                <ol>
+                    <li><strong>技术栈更新</strong>：采用最新的技术框架和工具</li>
+                    <li><strong>性能优化</strong>：实施智能缓存和按需加载策略</li>
+                    <li><strong>安全防护</strong>：部署多层次的安全防护机制</li>
+                </ol>
                 
-                '''
-    else:  # update_statistics
-        new_content_block = f'''
-                <h4>{current_year}年最新数据统计</h4>
-                <p>根据最新行业报告，我们更新了以下关键统计数据：</p>
+                <h3>三、未来展望</h3>
+                <p>展望未来，{article_title.split(':')[0] if ':' in article_title else article_title}领域将继续快速发展：</p>
                 <ul>
-                    <li>移动设备访问占总网站流量的{random.randint(65, 80)}%，比去年增长了{random.randint(5, 15)}%</li>
-                    <li>用户平均在响应迅速的网站上停留时间增加了{random.randint(25, 40)}%</li>
-                    <li>采用现代化{article_title.split(':')[0] if ':' in article_title else article_title}策略的企业报告转化率提高了{random.randint(20, 35)}%</li>
+                    <li>更智能的自动化解决方案</li>
+                    <li>更深入的数据分析能力</li>
+                    <li>更完善的用户体验优化</li>
                 </ul>
-                
-                '''
+            </div>
+    '''
     
-    # 插入新内容
-    new_content = content[:body_end] + new_content_block + content[body_end:]
+    # 替换文章主体内容
+    new_content = content[:start_pos] + new_article_content + content[end_pos:]
     
     # 写回文件
     with open(article_path, 'w', encoding='utf-8') as f:
