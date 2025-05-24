@@ -26,6 +26,11 @@ jobs:
           
       - name: 运行更新脚本
         run: |
+          set -x  # 显示执行的每个命令
+          pwd  # 显示当前目录
+          ls -la  # 列出文件
+          python -V  # 显示Python版本
+          pip list  # 显示已安装的包
           python auto_update_articles.py
           
       - name: 确保sitemap更新
