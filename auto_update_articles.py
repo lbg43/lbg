@@ -5,8 +5,20 @@ import re
 import json
 import shutil
 import urllib.parse
+import sys
+import subprocess
+
+# 自动安装所需的依赖
+try:
+    from PIL import Image
+    print("PIL已成功导入")
+except ImportError:
+    print("正在安装PIL/Pillow库...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
+    from PIL import Image
+    print("PIL/Pillow安装和导入成功")
+
 from pathlib import Path
-from PIL import Image  # 用于图片处理
 from update_sitemap import update_sitemap  # 导入sitemap更新功能
 
 # 配置
