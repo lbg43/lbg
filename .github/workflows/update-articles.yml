@@ -23,7 +23,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install Pillow  # 安装PIL/Pillow图像处理库
-          # 如果有其他依赖包，也可以在这里安装
+          pip install -r requirements.txt  # 安装所有依赖
+          # 验证PIL是否正确安装
+          python -c "from PIL import Image; print('PIL正确安装')"
           
       - name: 运行更新脚本
         run: |
@@ -32,7 +34,10 @@ jobs:
           ls -la  # 列出文件
           python -V  # 显示Python版本
           pip list  # 显示已安装的包
-          python auto_update_articles.py
+          # 查看auto_update_articles.py中的导入语句
+          grep "import" auto_update_articles.py
+          # 运行脚本并捕获所有输出
+          python auto_update_articles.py 2>&1
           
       - name: 确保sitemap更新
         run: |
