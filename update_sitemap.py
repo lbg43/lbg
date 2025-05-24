@@ -2,6 +2,25 @@ import os
 import datetime
 import re
 import logging
+import sys
+import subprocess
+
+# 自动安装所需的依赖（如果需要的话）
+def ensure_dependencies():
+    """确保所有依赖都已安装"""
+    required_packages = []  # 目前这个脚本没有特殊依赖，但可以根据需要添加
+    
+    for package in required_packages:
+        try:
+            __import__(package)
+            print(f"{package}已成功导入")
+        except ImportError:
+            print(f"正在安装{package}库...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+            print(f"{package}安装成功")
+
+# 确保依赖已安装
+ensure_dependencies()
 
 # 配置
 SITEMAP_FILE = 'sitemap.xml'
