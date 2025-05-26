@@ -183,6 +183,50 @@ def add_latest_update_section(article_path, article_config):
     
     start_pos += len(start_marker)
     
+    # 首先检查并删除已有的"最近更新"区块，使用更精确的匹配方式
+    original_length = len(content)
+    log_message(f"开始清理文章 {article_path} 中的旧最近更新区块")
+    
+    # 尝试查找任何包含"最近更新"文字的div块
+    update_box_pattern = r'<div[^>]*class=["\']latest-update-box["\'][^>]*>[\s\S]*?最新更新[\s\S]*?</div>\s*'
+    style_pattern = r'<style>\s*\.latest-update-box[\s\S]*?</style>\s*'
+    
+    # 尝试按最严格的方式匹配完整的更新区块
+    full_pattern = update_box_pattern + style_pattern
+    
+    # 如果没有匹配到完整模式，则尝试分别匹配和删除
+    if re.search(full_pattern, content):
+        content = re.sub(full_pattern, '', content)
+        log_message(f"已清理文章 {article_path} 中的完整最近更新区块")
+    else:
+        # 先删除更新框
+        if re.search(update_box_pattern, content):
+            content = re.sub(update_box_pattern, '', content)
+            log_message(f"已清理文章 {article_path} 中的最近更新区块框")
+        
+        # 再删除样式
+        if re.search(style_pattern, content):
+            content = re.sub(style_pattern, '', content)
+            log_message(f"已清理文章 {article_path} 中的最近更新样式")
+    
+    # 如果还有其他包含"最新更新"的区块，继续清理
+    additional_pattern = r'<div[^>]*>[\s\S]*?最新更新[\s\S]*?</div>\s*'
+    cleaned_count = 0
+    while re.search(additional_pattern, content):
+        old_content = content
+        content = re.sub(additional_pattern, '', content, count=1)
+        if len(old_content) > len(content):
+            cleaned_count += 1
+    
+    if cleaned_count > 0:
+        log_message(f"已清理文章 {article_path} 中的额外最近更新区块，共 {cleaned_count} 个")
+    
+    bytes_removed = original_length - len(content)
+    if bytes_removed > 0:
+        log_message(f"文章 {article_path} 中共清理了 {bytes_removed} 字节的旧最近更新内容")
+    else:
+        log_message(f"文章 {article_path} 中未找到需要清理的旧最近更新内容")
+    
     # 生成随机数据（确保每篇文章使用相同的数据）
     current_year = datetime.datetime.now().year
     traffic_increase = random.randint(65, 80)
@@ -245,8 +289,18 @@ def add_latest_update_section(article_path, article_config):
             </style>
     '''
     
+    # 重新查找文章主体内容区域开始位置（因为我们已经删除了旧的更新区块）
+    start_marker = '</h1>'
+    start_pos = content.find(start_marker)
+    if start_pos == -1:
+        log_message(f"无法在文件 {article_path} 中找到文章开始标记")
+        return False
+    
+    start_pos += len(start_marker)
+    
     # 插入更新区块
     new_content = content[:start_pos] + latest_update_section + content[start_pos:]
+    log_message(f"已在文章 {article_path} 中添加新的最近更新区块")
     
     # 写回文件
     with open(article_path, 'w', encoding='utf-8') as f:
@@ -265,6 +319,64 @@ def insert_new_content(article_path, article_config):
         article_title = '文章'
     else:
         article_title = title_match.group(1)
+    
+    # 先检查并删除已有的新见解区块
+    original_length = len(content)
+    log_message(f"开始清理文章 {article_path} 中的旧见解区块")
+    
+    # 尝试查找并删除已有的新见解区块
+    insight_box_pattern = r'<div[^>]*class=["\']new-insight-box["\'][^>]*>[\s\S]*?</div>\s*'
+    insight_style_pattern = r'<style>\s*\.new-insight-box[\s\S]*?</style>\s*'
+    
+    # 尝试按最严格的方式匹配完整的区块
+    full_pattern = insight_box_pattern + insight_style_pattern
+    
+    # 如果没有匹配到完整模式，则尝试分别匹配和删除
+    if re.search(full_pattern, content):
+        content = re.sub(full_pattern, '', content)
+        log_message(f"已清理文章 {article_path} 中的完整见解区块")
+    else:
+        # 先删除内容框
+        if re.search(insight_box_pattern, content):
+            content = re.sub(insight_box_pattern, '', content)
+            log_message(f"已清理文章 {article_path} 中的见解区块框")
+        
+        # 再删除样式
+        if re.search(insight_style_pattern, content):
+            content = re.sub(insight_style_pattern, '', content)
+            log_message(f"已清理文章 {article_path} 中的见解区块样式")
+    
+    # 如果还有其他包含"最新趋势分析"或"常见问题解答"的区块，继续清理
+    trend_pattern = r'<div[^>]*>[\s\S]*?最新趋势分析[\s\S]*?</div>\s*'
+    faq_pattern = r'<div[^>]*class=["\']faq-section["\'][^>]*>[\s\S]*?</div>\s*'
+    
+    # 清理趋势分析区块
+    cleaned_count = 0
+    while re.search(trend_pattern, content):
+        old_content = content
+        content = re.sub(trend_pattern, '', content, count=1)
+        if len(old_content) > len(content):
+            cleaned_count += 1
+    
+    if cleaned_count > 0:
+        log_message(f"已清理文章 {article_path} 中的额外趋势分析区块，共 {cleaned_count} 个")
+    
+    # 清理FAQ区块
+    cleaned_count = 0
+    while re.search(faq_pattern, content):
+        old_content = content
+        content = re.sub(faq_pattern, '', content, count=1)
+        if len(old_content) > len(content):
+            cleaned_count += 1
+    
+    if cleaned_count > 0:
+        log_message(f"已清理文章 {article_path} 中的额外FAQ区块，共 {cleaned_count} 个")
+    
+    bytes_removed = original_length - len(content)
+    if bytes_removed > 0:
+        log_message(f"文章 {article_path} 中共清理了 {bytes_removed} 字节的旧见解内容")
+    else:
+        log_message(f"文章 {article_path} 中未找到需要清理的旧见解内容")
     
     # 查找文章中的h2或h3标签位置，用于插入新内容
     h2_matches = list(re.finditer(r'<h[23]>.*?</h[23]>', content))
@@ -373,6 +485,7 @@ def insert_new_content(article_path, article_config):
     
     # 插入新内容
     new_content = content[:insert_pos] + new_insight + content[insert_pos:]
+    log_message(f"已在文章 {article_path} 中添加新的见解区块")
     
     # 写回文件
     with open(article_path, 'w', encoding='utf-8') as f:
