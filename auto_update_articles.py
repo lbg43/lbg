@@ -7,6 +7,7 @@ import shutil
 import urllib.parse
 import sys
 import subprocess
+import hashlib
 
 # 自动安装所需的依赖
 try:
@@ -30,12 +31,53 @@ IMAGES_DIR = 'images'  # 图片目录
 MAX_IMAGE_WIDTH = 1200  # 最大图片宽度
 IMAGE_QUALITY = 85  # 图片压缩质量
 
+# 添加内容区块标识符
+CONTENT_BLOCK_MARKERS = {
+    'latest_update': '<!-- AUTO_UPDATE_BLOCK: LATEST_UPDATE -->',
+    'latest_update_end': '<!-- AUTO_UPDATE_BLOCK_END: LATEST_UPDATE -->',
+    'new_insight': '<!-- AUTO_UPDATE_BLOCK: NEW_INSIGHT -->',
+    'new_insight_end': '<!-- AUTO_UPDATE_BLOCK_END: NEW_INSIGHT -->',
+    'related_articles': '<!-- AUTO_UPDATE_BLOCK: RELATED_ARTICLES -->',
+    'related_articles_end': '<!-- AUTO_UPDATE_BLOCK_END: RELATED_ARTICLES -->',
+    'schema_markup': '<!-- AUTO_UPDATE_BLOCK: SCHEMA_MARKUP -->',
+    'schema_markup_end': '<!-- AUTO_UPDATE_BLOCK_END: SCHEMA_MARKUP -->',
+    'social_meta': '<!-- AUTO_UPDATE_BLOCK: SOCIAL_META -->',
+    'social_meta_end': '<!-- AUTO_UPDATE_BLOCK_END: SOCIAL_META -->',
+    'mobile_style': '<!-- AUTO_UPDATE_BLOCK: MOBILE_STYLE -->',
+    'mobile_style_end': '<!-- AUTO_UPDATE_BLOCK_END: MOBILE_STYLE -->'
+}
+
 def log_message(message):
     """记录日志"""
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     with open(LOG_FILE, 'a', encoding='utf-8') as f:
         f.write(f'[{timestamp}] {message}\n')
     print(f'[{timestamp}] {message}')
+
+def generate_content_id(content_type, article_path):
+    """生成内容区块的唯一ID，用于跟踪更新"""
+    filename = os.path.basename(article_path)
+    current_date = datetime.datetime.now().strftime('%Y%m%d')
+    unique_string = f"{content_type}_{filename}_{current_date}"
+    return hashlib.md5(unique_string.encode()).hexdigest()[:8]
+
+def clean_marked_blocks(content, block_type):
+    """清理具有标记的内容区块"""
+    start_marker = CONTENT_BLOCK_MARKERS[block_type]
+    end_marker = CONTENT_BLOCK_MARKERS[f"{block_type}_end"]
+    
+    # 尝试查找并删除标记的区块
+    pattern = re.escape(start_marker) + r'[\s\S]*?' + re.escape(end_marker)
+    if re.search(pattern, content):
+        cleaned_content = re.sub(pattern, '', content)
+        return cleaned_content, True
+    
+    return content, False
+
+def has_marked_block(content, block_type):
+    """检查内容中是否已存在指定类型的标记区块"""
+    start_marker = CONTENT_BLOCK_MARKERS[block_type]
+    return start_marker in content
 
 def load_config():
     """加载文章配置"""
@@ -183,49 +225,62 @@ def add_latest_update_section(article_path, article_config):
     
     start_pos += len(start_marker)
     
-    # 首先检查并删除已有的"最近更新"区块，使用更精确的匹配方式
-    original_length = len(content)
-    log_message(f"开始清理文章 {article_path} 中的旧最近更新区块")
+    # 清理已有的最新更新区块（使用标记系统）
+    content, cleaned_marked = clean_marked_blocks(content, 'latest_update')
     
-    # 尝试查找任何包含"最近更新"文字的div块
-    update_box_pattern = r'<div[^>]*class=["\']latest-update-box["\'][^>]*>[\s\S]*?最新更新[\s\S]*?</div>\s*'
-    style_pattern = r'<style>\s*\.latest-update-box[\s\S]*?</style>\s*'
-    
-    # 尝试按最严格的方式匹配完整的更新区块
-    full_pattern = update_box_pattern + style_pattern
-    
-    # 如果没有匹配到完整模式，则尝试分别匹配和删除
-    if re.search(full_pattern, content):
-        content = re.sub(full_pattern, '', content)
-        log_message(f"已清理文章 {article_path} 中的完整最近更新区块")
-    else:
-        # 先删除更新框
-        if re.search(update_box_pattern, content):
-            content = re.sub(update_box_pattern, '', content)
-            log_message(f"已清理文章 {article_path} 中的最近更新区块框")
+    # 如果没有找到标记的区块，尝试使用旧方法清理
+    if not cleaned_marked:
+        original_length = len(content)
+        log_message(f"开始清理文章 {article_path} 中的旧最近更新区块")
         
-        # 再删除样式
-        if re.search(style_pattern, content):
-            content = re.sub(style_pattern, '', content)
-            log_message(f"已清理文章 {article_path} 中的最近更新样式")
+        # 尝试查找任何包含"最近更新"文字的div块
+        update_box_pattern = r'<div[^>]*class=["\']latest-update-box["\'][^>]*>[\s\S]*?最新更新[\s\S]*?</div>\s*'
+        style_pattern = r'<style>\s*\.latest-update-box[\s\S]*?</style>\s*'
+        
+        # 尝试按最严格的方式匹配完整的更新区块
+        full_pattern = update_box_pattern + style_pattern
+        
+        # 如果没有匹配到完整模式，则尝试分别匹配和删除
+        if re.search(full_pattern, content):
+            content = re.sub(full_pattern, '', content)
+            log_message(f"已清理文章 {article_path} 中的完整最近更新区块")
+        else:
+            # 先删除更新框
+            if re.search(update_box_pattern, content):
+                content = re.sub(update_box_pattern, '', content)
+                log_message(f"已清理文章 {article_path} 中的最近更新区块框")
+            
+            # 再删除样式
+            if re.search(style_pattern, content):
+                content = re.sub(style_pattern, '', content)
+                log_message(f"已清理文章 {article_path} 中的最近更新样式")
+        
+        # 如果还有其他包含"最新更新"的区块，继续清理
+        additional_pattern = r'<div[^>]*>[\s\S]*?最新更新[\s\S]*?</div>\s*'
+        cleaned_count = 0
+        while re.search(additional_pattern, content):
+            old_content = content
+            content = re.sub(additional_pattern, '', content, count=1)
+            if len(old_content) > len(content):
+                cleaned_count += 1
+        
+        if cleaned_count > 0:
+            log_message(f"已清理文章 {article_path} 中的额外最近更新区块，共 {cleaned_count} 个")
+        
+        bytes_removed = original_length - len(content)
+        if bytes_removed > 0:
+            log_message(f"文章 {article_path} 中共清理了 {bytes_removed} 字节的旧最近更新内容")
+        else:
+            log_message(f"文章 {article_path} 中未找到需要清理的旧最近更新内容")
     
-    # 如果还有其他包含"最新更新"的区块，继续清理
-    additional_pattern = r'<div[^>]*>[\s\S]*?最新更新[\s\S]*?</div>\s*'
-    cleaned_count = 0
-    while re.search(additional_pattern, content):
-        old_content = content
-        content = re.sub(additional_pattern, '', content, count=1)
-        if len(old_content) > len(content):
-            cleaned_count += 1
+    # 重新查找插入位置（可能已变化）
+    start_marker = '</h1>'
+    start_pos = content.find(start_marker)
+    if start_pos == -1:
+        log_message(f"无法在文件 {article_path} 中找到文章开始标记")
+        return False
     
-    if cleaned_count > 0:
-        log_message(f"已清理文章 {article_path} 中的额外最近更新区块，共 {cleaned_count} 个")
-    
-    bytes_removed = original_length - len(content)
-    if bytes_removed > 0:
-        log_message(f"文章 {article_path} 中共清理了 {bytes_removed} 字节的旧最近更新内容")
-    else:
-        log_message(f"文章 {article_path} 中未找到需要清理的旧最近更新内容")
+    start_pos += len(start_marker)
     
     # 生成随机数据（确保每篇文章使用相同的数据）
     current_year = datetime.datetime.now().year
@@ -246,10 +301,13 @@ def add_latest_update_section(article_path, article_config):
         num_keywords = min(len(keywords), random.randint(2, 3))
         enhanced_keywords = random.sample(keywords, num_keywords)
     
-    # 生成新的更新区块
+    # 生成新的更新区块，添加标记
     update_date = datetime.datetime.now().strftime('%Y年%m月%d日')
+    content_id = generate_content_id('latest_update', article_path)
+    
     latest_update_section = f'''
-            <div class="latest-update-box">
+            {CONTENT_BLOCK_MARKERS['latest_update']}
+            <div class="latest-update-box" data-update-id="{content_id}">
                 <h3>🔔 最新更新 ({update_date})</h3>
                 <p>我们对本文进行了更新，以反映{article_title.split(':')[0] if ':' in article_title else article_title}领域的最新发展：</p>
                 
@@ -266,41 +324,33 @@ def add_latest_update_section(article_path, article_config):
                         <li><strong>新趋势</strong>：{current_year}年{', '.join(enhanced_keywords)}领域出现重大突破</li>
         '''
     
-    latest_update_section += '''
+    latest_update_section += f'''
                     </ul>
                 </div>
                 <p><em>继续阅读获取完整分析和实施建议...</em></p>
             </div>
             
             <style>
-                .latest-update-box {
+                .latest-update-box {{
                     background-color: #f8f9fa;
                     border-left: 4px solid #4CAF50;
                     padding: 15px;
                     margin: 20px 0;
                     border-radius: 3px;
-                }
-                .update-highlights {
+                }}
+                .update-highlights {{
                     margin: 10px 0;
-                }
-                .update-highlights ul {
+                }}
+                .update-highlights ul {{
                     margin-bottom: 0;
-                }
+                }}
             </style>
+            {CONTENT_BLOCK_MARKERS['latest_update_end']}
     '''
-    
-    # 重新查找文章主体内容区域开始位置（因为我们已经删除了旧的更新区块）
-    start_marker = '</h1>'
-    start_pos = content.find(start_marker)
-    if start_pos == -1:
-        log_message(f"无法在文件 {article_path} 中找到文章开始标记")
-        return False
-    
-    start_pos += len(start_marker)
     
     # 插入更新区块
     new_content = content[:start_pos] + latest_update_section + content[start_pos:]
-    log_message(f"已在文章 {article_path} 中添加新的最近更新区块")
+    log_message(f"已在文章 {article_path} 中添加新的最近更新区块 (ID: {content_id})")
     
     # 写回文件
     with open(article_path, 'w', encoding='utf-8') as f:
@@ -320,63 +370,67 @@ def insert_new_content(article_path, article_config):
     else:
         article_title = title_match.group(1)
     
-    # 先检查并删除已有的新见解区块
-    original_length = len(content)
-    log_message(f"开始清理文章 {article_path} 中的旧见解区块")
+    # 清理已有的见解区块（使用标记系统）
+    content, cleaned_marked = clean_marked_blocks(content, 'new_insight')
     
-    # 尝试查找并删除已有的新见解区块
-    insight_box_pattern = r'<div[^>]*class=["\']new-insight-box["\'][^>]*>[\s\S]*?</div>\s*'
-    insight_style_pattern = r'<style>\s*\.new-insight-box[\s\S]*?</style>\s*'
-    
-    # 尝试按最严格的方式匹配完整的区块
-    full_pattern = insight_box_pattern + insight_style_pattern
-    
-    # 如果没有匹配到完整模式，则尝试分别匹配和删除
-    if re.search(full_pattern, content):
-        content = re.sub(full_pattern, '', content)
-        log_message(f"已清理文章 {article_path} 中的完整见解区块")
-    else:
-        # 先删除内容框
-        if re.search(insight_box_pattern, content):
-            content = re.sub(insight_box_pattern, '', content)
-            log_message(f"已清理文章 {article_path} 中的见解区块框")
+    # 如果没有找到标记的区块，尝试使用旧方法清理
+    if not cleaned_marked:
+        original_length = len(content)
+        log_message(f"开始清理文章 {article_path} 中的旧见解区块")
         
-        # 再删除样式
-        if re.search(insight_style_pattern, content):
-            content = re.sub(insight_style_pattern, '', content)
-            log_message(f"已清理文章 {article_path} 中的见解区块样式")
-    
-    # 如果还有其他包含"最新趋势分析"或"常见问题解答"的区块，继续清理
-    trend_pattern = r'<div[^>]*>[\s\S]*?最新趋势分析[\s\S]*?</div>\s*'
-    faq_pattern = r'<div[^>]*class=["\']faq-section["\'][^>]*>[\s\S]*?</div>\s*'
-    
-    # 清理趋势分析区块
-    cleaned_count = 0
-    while re.search(trend_pattern, content):
-        old_content = content
-        content = re.sub(trend_pattern, '', content, count=1)
-        if len(old_content) > len(content):
-            cleaned_count += 1
-    
-    if cleaned_count > 0:
-        log_message(f"已清理文章 {article_path} 中的额外趋势分析区块，共 {cleaned_count} 个")
-    
-    # 清理FAQ区块
-    cleaned_count = 0
-    while re.search(faq_pattern, content):
-        old_content = content
-        content = re.sub(faq_pattern, '', content, count=1)
-        if len(old_content) > len(content):
-            cleaned_count += 1
-    
-    if cleaned_count > 0:
-        log_message(f"已清理文章 {article_path} 中的额外FAQ区块，共 {cleaned_count} 个")
-    
-    bytes_removed = original_length - len(content)
-    if bytes_removed > 0:
-        log_message(f"文章 {article_path} 中共清理了 {bytes_removed} 字节的旧见解内容")
-    else:
-        log_message(f"文章 {article_path} 中未找到需要清理的旧见解内容")
+        # 尝试查找并删除已有的新见解区块
+        insight_box_pattern = r'<div[^>]*class=["\']new-insight-box["\'][^>]*>[\s\S]*?</div>\s*'
+        insight_style_pattern = r'<style>\s*\.new-insight-box[\s\S]*?</style>\s*'
+        
+        # 尝试按最严格的方式匹配完整的区块
+        full_pattern = insight_box_pattern + insight_style_pattern
+        
+        # 如果没有匹配到完整模式，则尝试分别匹配和删除
+        if re.search(full_pattern, content):
+            content = re.sub(full_pattern, '', content)
+            log_message(f"已清理文章 {article_path} 中的完整见解区块")
+        else:
+            # 先删除内容框
+            if re.search(insight_box_pattern, content):
+                content = re.sub(insight_box_pattern, '', content)
+                log_message(f"已清理文章 {article_path} 中的见解区块框")
+            
+            # 再删除样式
+            if re.search(insight_style_pattern, content):
+                content = re.sub(insight_style_pattern, '', content)
+                log_message(f"已清理文章 {article_path} 中的见解区块样式")
+        
+        # 如果还有其他包含"最新趋势分析"或"常见问题解答"的区块，继续清理
+        trend_pattern = r'<div[^>]*>[\s\S]*?最新趋势分析[\s\S]*?</div>\s*'
+        faq_pattern = r'<div[^>]*class=["\']faq-section["\'][^>]*>[\s\S]*?</div>\s*'
+        
+        # 清理趋势分析区块
+        cleaned_count = 0
+        while re.search(trend_pattern, content):
+            old_content = content
+            content = re.sub(trend_pattern, '', content, count=1)
+            if len(old_content) > len(content):
+                cleaned_count += 1
+        
+        if cleaned_count > 0:
+            log_message(f"已清理文章 {article_path} 中的额外趋势分析区块，共 {cleaned_count} 个")
+        
+        # 清理FAQ区块
+        cleaned_count = 0
+        while re.search(faq_pattern, content):
+            old_content = content
+            content = re.sub(faq_pattern, '', content, count=1)
+            if len(old_content) > len(content):
+                cleaned_count += 1
+        
+        if cleaned_count > 0:
+            log_message(f"已清理文章 {article_path} 中的额外FAQ区块，共 {cleaned_count} 个")
+        
+        bytes_removed = original_length - len(content)
+        if bytes_removed > 0:
+            log_message(f"文章 {article_path} 中共清理了 {bytes_removed} 字节的旧见解内容")
+        else:
+            log_message(f"文章 {article_path} 中未找到需要清理的旧见解内容")
     
     # 查找文章中的h2或h3标签位置，用于插入新内容
     h2_matches = list(re.finditer(r'<h[23]>.*?</h[23]>', content))
@@ -406,9 +460,12 @@ def insert_new_content(article_path, article_config):
         num_keywords = min(len(keywords), random.randint(1, 2))
         enhanced_keywords = random.sample(keywords, num_keywords)
     
-    # 生成新的插入内容，添加FAQ结构
+    # 生成新的插入内容，添加FAQ结构和标记
+    content_id = generate_content_id('new_insight', article_path)
+    
     new_insight = f'''
-            <div class="new-insight-box">
+            {CONTENT_BLOCK_MARKERS['new_insight']}
+            <div class="new-insight-box" data-insight-id="{content_id}">
                 <h4>{current_year}年最新趋势分析</h4>
                 <p>随着技术的快速迭代，{article_title.split(':')[0] if ':' in article_title else article_title}领域出现了新的发展趋势：</p>
                 
@@ -430,7 +487,7 @@ def insert_new_content(article_path, article_config):
                         <li>{'，'.join(keyword_insights)}</li>
         '''
     
-    new_insight += '''
+    new_insight += f'''
                     </ul>
                 </div>
                 
@@ -457,35 +514,36 @@ def insert_new_content(article_path, article_config):
             </div>
             
             <style>
-                .new-insight-box {
+                .new-insight-box {{
                     background-color: #f0f8ff;
                     border: 1px solid #d1e7ff;
                     padding: 15px;
                     margin: 20px 0;
                     border-radius: 5px;
-                }
-                .trend-data {
+                }}
+                .trend-data {{
                     margin: 10px 0;
-                }
-                .faq-section {
+                }}
+                .faq-section {{
                     margin-top: 25px;
                     border-top: 1px solid #e0e0e0;
                     padding-top: 15px;
-                }
-                .faq-item {
+                }}
+                .faq-item {{
                     margin-bottom: 15px;
-                }
-                .faq-item h5 {
+                }}
+                .faq-item h5 {{
                     margin-bottom: 8px;
                     color: #2c3e50;
                     font-weight: 600;
-                }
+                }}
             </style>
+            {CONTENT_BLOCK_MARKERS['new_insight_end']}
     '''
     
     # 插入新内容
     new_content = content[:insert_pos] + new_insight + content[insert_pos:]
-    log_message(f"已在文章 {article_path} 中添加新的见解区块")
+    log_message(f"已在文章 {article_path} 中添加新的见解区块 (ID: {content_id})")
     
     # 写回文件
     with open(article_path, 'w', encoding='utf-8') as f:
@@ -498,6 +556,13 @@ def add_internal_links(article_path, article_config, all_articles):
     """添加相关文章的内部链接"""
     with open(article_path, 'r', encoding='utf-8') as f:
         content = f.read()
+    
+    # 检查是否已有相关文章区块
+    if has_marked_block(content, 'related_articles'):
+        # 已存在相关文章，每次更新都清理和重建
+        content, cleaned = clean_marked_blocks(content, 'related_articles')
+        if not cleaned:
+            log_message(f"警告：找到相关文章标记但无法清理，文件: {article_path}")
     
     # 获取当前文章的关键词
     current_keywords = article_config.get('keywords', [])
@@ -550,9 +615,13 @@ def add_internal_links(article_path, article_config, all_articles):
     if not top_related:
         return False
     
-    # 在文章底部添加相关文章链接
-    related_links_section = '''
-            <div class="related-articles">
+    # 生成相关文章区块ID
+    content_id = generate_content_id('related_articles', article_path)
+    
+    # 在文章底部添加相关文章链接，带标记
+    related_links_section = f'''
+            {CONTENT_BLOCK_MARKERS['related_articles']}
+            <div class="related-articles" data-related-id="{content_id}">
                 <h3>相关推荐</h3>
                 <ul>
     '''
@@ -562,29 +631,30 @@ def add_internal_links(article_path, article_config, all_articles):
                     <li><a href="{related['file']}">{related['title']}</a></li>
         '''
     
-    related_links_section += '''
+    related_links_section += f'''
                 </ul>
             </div>
             
             <style>
-                .related-articles {
+                .related-articles {{
                     background-color: #f9f9f9;
                     padding: 15px;
                     margin: 30px 0;
                     border-radius: 5px;
                     border-top: 2px solid #e0e0e0;
-                }
-                .related-articles h3 {
+                }}
+                .related-articles h3 {{
                     margin-top: 0;
                     color: #333;
-                }
-                .related-articles ul {
+                }}
+                .related-articles ul {{
                     padding-left: 20px;
-                }
-                .related-articles li {
+                }}
+                .related-articles li {{
                     margin-bottom: 8px;
-                }
+                }}
             </style>
+            {CONTENT_BLOCK_MARKERS['related_articles_end']}
     '''
     
     # 查找文章结束位置
@@ -600,6 +670,7 @@ def add_internal_links(article_path, article_config, all_articles):
     
     # 插入相关文章链接
     new_content = content[:end_pos] + related_links_section + content[end_pos:]
+    log_message(f"已在文章 {article_path} 中添加相关文章链接 (ID: {content_id})")
     
     # 写回文件
     with open(article_path, 'w', encoding='utf-8') as f:
@@ -612,9 +683,16 @@ def add_schema_markup(article_path, article_config):
     with open(article_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # 检查是否已有结构化数据
-    if 'itemtype="https://schema.org/Article"' in content:
-        return False
+    # 检查是否已有结构化数据（通过标记检查）
+    if has_marked_block(content, 'schema_markup'):
+        content, cleaned = clean_marked_blocks(content, 'schema_markup')
+        if not cleaned:
+            log_message(f"警告：找到结构化数据标记但无法清理，文件: {article_path}")
+    elif 'itemtype="https://schema.org/Article"' in content or 'application/ld+json' in content:
+        # 尝试使用正则表达式清理旧的结构化数据
+        old_schema_pattern = r'<script type="application/ld\+json">[\s\S]*?</script>'
+        content = re.sub(old_schema_pattern, '', content)
+        log_message(f"已清理文章 {article_path} 中的旧结构化数据")
     
     # 获取文章标题
     title_match = re.search(r'<h1>(.*?)</h1>', content)
@@ -640,9 +718,13 @@ def add_schema_markup(article_path, article_config):
     author_match = re.search(r'<span class="article-author">(.*?)</span>', content)
     article_author = author_match.group(1) if author_match else '网站管理员'
     
-    # 构建结构化数据
+    # 生成结构化数据ID
+    content_id = generate_content_id('schema_markup', article_path)
+    
+    # 构建结构化数据，带标记
     schema_markup = f'''
-    <script type="application/ld+json">
+    {CONTENT_BLOCK_MARKERS['schema_markup']}
+    <script type="application/ld+json" data-schema-id="{content_id}">
     {{"@context":"https://schema.org",
       "@type":"Article",
       "headline":"{article_title}",
@@ -653,6 +735,7 @@ def add_schema_markup(article_path, article_config):
       "dateModified":"{datetime.datetime.now().strftime('%Y年%m月%d日')}"
     }}
     </script>
+    {CONTENT_BLOCK_MARKERS['schema_markup_end']}
     '''
     
     # 查找</head>标签位置
@@ -663,6 +746,7 @@ def add_schema_markup(article_path, article_config):
     
     # 插入结构化数据
     new_content = content[:head_end_pos] + schema_markup + content[head_end_pos:]
+    log_message(f"已在文章 {article_path} 中添加结构化数据 (ID: {content_id})")
     
     # 写回文件
     with open(article_path, 'w', encoding='utf-8') as f:
@@ -764,9 +848,9 @@ def enhance_mobile_seo(article_path):
     with open(article_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # 检查是否已有移动端优化
-    if 'viewport' in content and 'mobile-optimization' in content:
-        return False
+    # 检查是否已有移动端优化（通过标记检查）
+    if has_marked_block(content, 'mobile_style'):
+        return False  # 移动端样式只需添加一次，不需要每次更新
     
     modified = False
     
@@ -780,49 +864,55 @@ def enhance_mobile_seo(article_path):
     
     # 2. 添加移动端优化CSS
     if 'mobile-optimization' not in content:
-        style_section = '''
-        <style class="mobile-optimization">
+        # 生成内容ID
+        content_id = generate_content_id('mobile_style', article_path)
+        
+        style_section = f'''
+        {CONTENT_BLOCK_MARKERS['mobile_style']}
+        <style class="mobile-optimization" data-mobile-id="{content_id}">
             /* 移动端优化样式 */
-            @media (max-width: 768px) {
-                body {
+            @media (max-width: 768px) {{
+                body {{
                     font-size: 16px;
                     line-height: 1.6;
-                }
-                h1 {
+                }}
+                h1 {{
                     font-size: 24px;
                     line-height: 1.3;
-                }
-                h2 {
+                }}
+                h2 {{
                     font-size: 20px;
-                }
-                h3 {
+                }}
+                h3 {{
                     font-size: 18px;
-                }
-                .container, .content {
+                }}
+                .container, .content {{
                     padding-left: 15px;
                     padding-right: 15px;
-                }
-                img {
+                }}
+                img {{
                     max-width: 100%;
                     height: auto;
-                }
+                }}
                 /* 改善触摸目标尺寸 */
-                a, button {
+                a, button {{
                     min-height: 44px;
                     min-width: 44px;
-                }
+                }}
                 /* 改善表单元素在移动端的可用性 */
-                input, select, textarea {
+                input, select, textarea {{
                     font-size: 16px; /* 防止iOS缩放 */
-                }
-            }
+                }}
+            }}
         </style>
+        {CONTENT_BLOCK_MARKERS['mobile_style_end']}
         '''
         
         head_end_pos = content.find('</head>')
         if head_end_pos != -1:
             content = content[:head_end_pos] + style_section + content[head_end_pos:]
             modified = True
+            log_message(f"已在文章 {article_path} 中添加移动端优化样式 (ID: {content_id})")
     
     if modified:
         # 写回文件
@@ -837,9 +927,19 @@ def add_social_meta_tags(article_path):
     with open(article_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # 检查是否已有社交媒体标签
-    if 'og:title' in content and 'twitter:card' in content:
-        return False
+    # 检查是否已有社交媒体标签（通过标记检查）
+    if has_marked_block(content, 'social_meta'):
+        content, cleaned = clean_marked_blocks(content, 'social_meta')
+        if not cleaned:
+            log_message(f"警告：找到社交媒体标记但无法清理，文件: {article_path}")
+    elif 'og:title' in content or 'twitter:card' in content:
+        # 尝试使用正则表达式清理旧的社交媒体标签
+        og_pattern = r'<meta property="og:[^"]*"[^>]*>'
+        twitter_pattern = r'<meta name="twitter:[^"]*"[^>]*>'
+        
+        content = re.sub(og_pattern, '', content)
+        content = re.sub(twitter_pattern, '', content)
+        log_message(f"已清理文章 {article_path} 中的旧社交媒体标签")
     
     # 获取文章标题
     title_match = re.search(r'<h1>(.*?)</h1>', content)
@@ -866,8 +966,12 @@ def add_social_meta_tags(article_path):
         if not article_image.startswith('http'):
             article_image = f"/{article_image.lstrip('/')}" if article_image else ''
     
-    # 构建社交媒体元标签
+    # 生成社交媒体标签ID
+    content_id = generate_content_id('social_meta', article_path)
+    
+    # 构建社交媒体元标签，带标记
     social_meta_tags = f'''
+    {CONTENT_BLOCK_MARKERS['social_meta']}
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:title" content="{article_title}">
@@ -892,6 +996,10 @@ def add_social_meta_tags(article_path):
     <meta name="twitter:image" content="{article_image}">
         '''
     
+    social_meta_tags += f'''
+    {CONTENT_BLOCK_MARKERS['social_meta_end']}
+    '''
+    
     # 查找</head>标签位置
     head_end_pos = content.find('</head>')
     if head_end_pos == -1:
@@ -900,12 +1008,63 @@ def add_social_meta_tags(article_path):
     
     # 插入社交媒体元标签
     new_content = content[:head_end_pos] + social_meta_tags + content[head_end_pos:]
+    log_message(f"已在文章 {article_path} 中添加社交媒体标签 (ID: {content_id})")
     
     # 写回文件
     with open(article_path, 'w', encoding='utf-8') as f:
         f.write(new_content)
     
     return True
+
+def cleanup_all_blocks(article_path):
+    """清理文章中所有的自动生成区块"""
+    with open(article_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    original_size = len(content)
+    blocks_cleaned = 0
+    
+    # 清理所有类型的区块
+    for block_type in CONTENT_BLOCK_MARKERS:
+        if block_type.endswith('_end'):  # 跳过结束标记
+            continue
+        
+        cleaned_content, cleaned = clean_marked_blocks(content, block_type)
+        if cleaned:
+            content = cleaned_content
+            blocks_cleaned += 1
+    
+    # 如果内容被修改，保存文件
+    if blocks_cleaned > 0:
+        with open(article_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        bytes_removed = original_size - len(content)
+        log_message(f"已清理文章 {article_path} 中的 {blocks_cleaned} 个区块，减少 {bytes_removed} 字节")
+        return True
+    
+    return False
+
+def scan_for_duplicate_blocks(article_path):
+    """扫描文章中是否存在重复的区块标记"""
+    with open(article_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    duplicates_found = False
+    
+    # 检查每种类型的区块
+    for block_type in CONTENT_BLOCK_MARKERS:
+        if block_type.endswith('_end'):  # 跳过结束标记
+            continue
+        
+        start_marker = CONTENT_BLOCK_MARKERS[block_type]
+        matches = re.findall(re.escape(start_marker), content)
+        
+        if len(matches) > 1:
+            duplicates_found = True
+            log_message(f"警告：文章 {article_path} 中发现 {len(matches)} 个 '{block_type}' 区块标记")
+    
+    return duplicates_found
 
 def update_articles():
     """更新需要更新的文章"""
@@ -928,6 +1087,11 @@ def update_articles():
             if not os.path.exists(article_path):
                 log_message(f"文件不存在: {article_path}")
                 continue
+            
+            # 扫描检查重复区块
+            if scan_for_duplicate_blocks(article_path):
+                log_message(f"文章 {article_path} 存在重复区块，进行完全清理")
+                cleanup_all_blocks(article_path)
             
             # 备份文章
             backup_path = backup_article(article_path)
@@ -974,6 +1138,11 @@ def update_articles():
             if social_tags_added:
                 log_message(f"已添加社交媒体元标签: {article['file']}")
             
+            # 最后再次扫描检查是否有重复区块
+            has_duplicates = scan_for_duplicate_blocks(article_path)
+            if has_duplicates:
+                log_message(f"警告：更新后文章 {article_path} 仍存在重复区块，这可能需要手动检查")
+            
             # 更新文章状态
             if date_updated or content_updated or internal_links_added or schema_added or \
                images_optimized or mobile_enhanced or social_tags_added:
@@ -1003,3 +1172,22 @@ if __name__ == "__main__":
         log_message("所有更新完成")
     except Exception as e:
         log_message(f"更新过程中发生错误: {str(e)}")
+        
+        # 尝试清理所有文章中可能留下的不完整区块
+        try:
+            log_message("尝试清理可能的不完整区块...")
+            config = load_config()
+            cleanup_count = 0
+            
+            for article in config['articles']:
+                article_path = os.path.join(ARTICLES_DIR, article['file'])
+                if os.path.exists(article_path):
+                    if cleanup_all_blocks(article_path):
+                        cleanup_count += 1
+            
+            if cleanup_count > 0:
+                log_message(f"已清理 {cleanup_count} 篇文章中的不完整区块")
+            else:
+                log_message("未发现需要清理的不完整区块")
+        except Exception as cleanup_error:
+            log_message(f"清理过程中发生错误: {str(cleanup_error)}")
