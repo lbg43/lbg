@@ -67,45 +67,7 @@
     font-size: 16px;
 }
 
-/* 社交分享按钮样式 */
-.social-share {
-    display: flex;
-    gap: 10px;
-    margin: 20px 0;
-}
-
-.social-share a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    color: #fff;
-    transition: all 0.3s ease;
-}
-
-.social-share a:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.social-share .weixin {
-    background-color: #07C160;
-}
-
-.social-share .weibo {
-    background-color: #E6162D;
-}
-
-.social-share .linkedin {
-    background-color: #0A66C2;
-}
-
-.social-share .github {
-    background-color: #333;
-}
-
-.social-share i {
-    font-size: 18px;
-}
+/* 确保弹窗不被其他元素遮挡 */
+.wechat-popup {
+    z-index: 9999;
+} 
