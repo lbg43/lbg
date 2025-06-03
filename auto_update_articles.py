@@ -1348,91 +1348,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     return True
 
-def fix_footer_icons(article_path):
-    """调整页面底部的图标位置，使其对齐"""
-    with open(article_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    modified = False
-    
-    # 查找页脚区域
-    footer_patterns = [
-        r'<div[^>]*class="[^"]*social-icons[^"]*"[^>]*>[\s\S]*?</div>',
-        r'<div[^>]*class="[^"]*footer[^"]*"[^>]*>[\s\S]*?<a[^>]*><i class="fab fa-[^"]*"></i></a>[\s\S]*?</div>',
-        r'<footer[^>]*>[\s\S]*?<a[^>]*><i class="fab fa-[^"]*"></i></a>[\s\S]*?</footer>'
-    ]
-    
-    # 标准的图标HTML结构，确保居中对齐
-    standard_icons_html = """
-    <div class="social-icons" style="display: flex; justify-content: center; align-items: center; gap: 20px; margin: 20px 0;">
-        <a href="javascript:void(0)" class="social-link" id="wechat-link" style="background-color: rgba(59, 89, 152, 0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
-            <i class="fab fa-weixin" style="color: #3b5998;"></i>
-        </a>
-        <a href="https://weibo.com/" target="_blank" class="social-link" style="background-color: rgba(230, 22, 45, 0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
-            <i class="fab fa-weibo" style="color: #e6162d;"></i>
-        </a>
-        <a href="https://www.linkedin.com/" target="_blank" class="social-link" style="background-color: rgba(14, 118, 168, 0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
-            <i class="fab fa-linkedin-in" style="color: #0e76a8;"></i>
-        </a>
-        <a href="https://github.com/" target="_blank" class="social-link" style="background-color: rgba(51, 51, 51, 0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
-            <i class="fab fa-github" style="color: #333;"></i>
-        </a>
-    </div>
-    """
-    
-    # 尝试查找并替换现有的社交图标区域
-    found_icons = False
-    for pattern in footer_patterns:
-        matches = list(re.finditer(pattern, content))
-        if matches:
-            found_icons = True
-            # 如果找到多个匹配项，只替换第一个（通常是真正的页脚图标）
-            match = matches[0]
-            # 替换原有的图标HTML
-            content = content[:match.start()] + standard_icons_html + content[match.end():]
-            log_message(f"已调整文章 {article_path} 中的底部图标位置")
-            modified = True
-            break
-    
-    # 如果没有找到图标区域，尝试在页脚前或文档末尾插入
-    if not found_icons:
-        # 尝试在页脚前插入
-        footer_match = re.search(r'<footer[^>]*>', content)
-        if footer_match:
-            insert_pos = footer_match.start()
-            content = content[:insert_pos] + standard_icons_html + content[insert_pos:]
-            log_message(f"已在文章 {article_path} 的页脚前添加标准图标")
-            modified = True
-        else:
-            # 如果没有找到页脚，尝试在</body>前插入
-            body_end = content.rfind('</body>')
-            if body_end != -1:
-                content = content[:body_end] + standard_icons_html + content[body_end:]
-                log_message(f"已在文章 {article_path} 的</body>前添加标准图标")
-                modified = True
-    
-    # 删除可能存在的多余图标区域（除了我们刚刚添加的）
-    if modified:
-        # 先查找我们刚刚添加的标准图标的位置
-        standard_icon_pos = content.find(standard_icons_html)
-        if standard_icon_pos != -1:
-            # 在其他位置查找并删除其他社交图标
-            for pattern in footer_patterns:
-                matches = list(re.finditer(pattern, content))
-                for match in matches:
-                    # 确保这不是我们刚刚添加的标准图标
-                    if not (standard_icon_pos <= match.start() < standard_icon_pos + len(standard_icons_html)):
-                        content = content[:match.start()] + content[match.end():]
-                        log_message(f"已删除文章 {article_path} 中的冗余图标")
-    
-    # 写回文件
-    if modified:
-        with open(article_path, 'w', encoding='utf-8') as f:
-            f.write(content)
-        return True
-    
-    return False
-
 def update_articles():
     """更新需要更新的文章"""
     config = load_config()
@@ -1510,11 +1425,6 @@ def update_articles():
             if wechat_popup_updated:
                 log_message(f"已更新微信弹窗: {article['file']}")
             
-            # 7. 修复页脚图标位置，使其对齐
-            footer_icons_fixed = fix_footer_icons(article_path)
-            if footer_icons_fixed:
-                log_message(f"已调整底部图标位置: {article['file']}")
-            
             # 最后再次扫描检查是否有重复区块
             has_duplicates = scan_for_duplicate_blocks(article_path)
             if has_duplicates:
@@ -1522,7 +1432,7 @@ def update_articles():
             
             # 更新文章状态
             if date_updated or content_updated or internal_links_added or schema_added or \
-               images_optimized or mobile_enhanced or social_tags_added or wechat_popup_updated or footer_icons_fixed:
+               images_optimized or mobile_enhanced or social_tags_added or wechat_popup_updated:
                 article['last_updated'] = today
                 updated_count += 1
                 log_message(f"已完成文章更新和SEO优化: {article['file']} (类型: {article_type})")
