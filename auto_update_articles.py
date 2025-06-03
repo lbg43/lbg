@@ -8,6 +8,7 @@ import urllib.parse
 import sys
 import subprocess
 import hashlib
+from PIL import Image, ImageDraw, ImageFont
 
 # 自动安装所需的依赖
 try:
@@ -1066,6 +1067,287 @@ def scan_for_duplicate_blocks(article_path):
     
     return duplicates_found
 
+def update_wechat_popup(article_path):
+    """确保微信图标点击后只显示二维码窗口，不显示其他内容"""
+    with open(article_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    modified = False
+    
+    # 首先查找并完全删除所有可能的微信弹窗
+    wechat_modal_start_pattern = r'<div\s+id="wechat-modal"'
+    wechat_modal_starts = [m.start() for m in re.finditer(wechat_modal_start_pattern, content)]
+    
+    if wechat_modal_starts:
+        # 如果找到微信弹窗，删除所有的
+        log_message(f"在文章 {article_path} 中找到 {len(wechat_modal_starts)} 个微信弹窗，准备清理")
+        
+        # 创建一个新的内容字符串，排除所有微信弹窗
+        new_content = content
+        for start_pos in sorted(wechat_modal_starts, reverse=True):  # 从后向前处理
+            # 找到弹窗开始的div
+            div_count = 1
+            end_pos = start_pos
+            
+            # 向后查找匹配的</div>标签
+            while div_count > 0 and end_pos < len(content):
+                end_pos += 1
+                if content.find('<div', end_pos, end_pos + 20) == end_pos:
+                    div_count += 1
+                elif content.find('</div>', end_pos, end_pos + 20) == end_pos:
+                    div_count -= 1
+            
+            if div_count == 0:  # 找到了匹配的结束标签
+                # 删除整个弹窗
+                modal_content = content[start_pos:end_pos + 6]  # +6 是</div>的长度
+                new_content = new_content.replace(modal_content, '')
+                log_message(f"已清理一个微信弹窗，长度: {len(modal_content)} 字节")
+        
+        content = new_content
+        modified = True
+    
+    # 标准的微信弹窗结构
+    wechat_popup = '''
+    <!-- 微信二维码弹窗 -->
+    <div id="wechat-modal" class="wechat-modal wechat-popup">
+        <div class="wechat-modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>扫描二维码添加微信</h3>
+            <div class="qrcode-container">
+                <img loading="lazy" src="../images/optimized_wechat-qrcode.jpg" alt="微信二维码" width="200" height="200">
+            </div>
+            <p>微信号: pds051207</p>
+        </div>
+    </div>
+    '''
+    
+    # 在</body>标签前插入标准的微信弹窗
+    body_end_pos = content.rfind('</body>')
+    if body_end_pos != -1:
+        content = content[:body_end_pos] + wechat_popup + content[body_end_pos:]
+        log_message(f"已在文章 {article_path} 中添加标准微信弹窗")
+        modified = True
+    
+    # 确保微信弹窗CSS被正确引用
+    if '<link rel="stylesheet" href="../wechat-popup.css">' not in content:
+        head_end_pos = content.find('</head>')
+        if head_end_pos != -1:
+            content = content[:head_end_pos] + '\n    <!-- 微信弹窗样式 -->\n    <link rel="stylesheet" href="../wechat-popup.css">' + content[head_end_pos:]
+            modified = True
+    
+    # 确保微信弹窗JS被正确引用
+    if '<script src="../wechat-popup.js"></script>' not in content:
+        body_end_pos = content.rfind('</body>')
+        if body_end_pos != -1:
+            content = content[:body_end_pos] + '\n    <!-- 微信弹窗脚本 -->\n    <script src="../wechat-popup.js"></script>' + content[body_end_pos:]
+            modified = True
+    
+    # 写回文件
+    if modified:
+        with open(article_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        return True
+    
+    return False
+
+def create_wechat_popup_files():
+    """确保wechat-popup.js和wechat-popup.css文件存在并包含正确的内容"""
+    # 创建wechat-popup.css文件
+    css_content = """/* 微信弹窗样式 */
+.wechat-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999; /* 确保在最上层 */
+    justify-content: center;
+    align-items: center;
+}
+
+.wechat-modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    max-width: 90%;
+    width: 350px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.qrcode-container {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.qrcode-container img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #eee;
+}
+
+.wechat-modal h3 {
+    color: #333;
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.wechat-modal p {
+    margin-bottom: 0;
+    color: #666;
+    font-size: 16px;
+}
+
+/* 确保弹窗不被其他元素遮挡 */
+.wechat-popup {
+    z-index: 9999;
+} 
+"""
+
+    # 创建wechat-popup.js文件
+    js_content = """// 微信二维码弹窗脚本
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取微信弹窗元素
+    const wechatModal = document.getElementById('wechat-modal');
+    if (!wechatModal) {
+        console.error('未找到微信弹窗元素，ID为wechat-modal');
+        return;
+    }
+    
+    // 获取关闭按钮
+    const closeModal = wechatModal.querySelector('.close-modal');
+    
+    // 显示弹窗的函数
+    function showWechatModal(e) {
+        if (e) e.preventDefault();
+        wechatModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // 防止背景滚动
+    }
+    
+    // 关闭弹窗的函数
+    function closeWechatModal() {
+        wechatModal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    // 为页面上所有微信相关链接添加点击事件
+    // 1. 通过ID查找微信链接
+    const wechatLinks = [
+        document.getElementById('wechat-link'),
+        document.getElementById('footer-wechat-link'),
+        document.getElementById('article-wechat-link')
+    ].filter(Boolean); // 过滤掉不存在的元素
+    
+    // 2. 通过类名和标题查找微信链接
+    document.querySelectorAll('.social-link[title="分享到微信"], .social-link[title="微信"], .fab.fa-weixin').forEach(function(link) {
+        link.addEventListener('click', showWechatModal);
+    });
+    
+    // 3. 为所有微信图标添加事件（不依赖于特定ID或标题）
+    document.querySelectorAll('.fab.fa-weixin').forEach(function(icon) {
+        // 找到包含此图标的最近的a标签
+        const parentLink = icon.closest('a');
+        if (parentLink) {
+            parentLink.addEventListener('click', showWechatModal);
+        }
+    });
+    
+    // 4. 为找到的ID链接添加事件
+    wechatLinks.forEach(function(link) {
+        link.addEventListener('click', showWechatModal);
+    });
+    
+    // 5. 为文章页面中的社交分享按钮添加事件
+    document.querySelectorAll('.share-buttons a').forEach(function(link) {
+        if (link.querySelector('.fa-weixin') || link.querySelector('.fab.fa-weixin')) {
+            link.addEventListener('click', showWechatModal);
+        }
+    });
+    
+    // 为关闭按钮添加点击事件
+    if (closeModal) {
+        closeModal.addEventListener('click', closeWechatModal);
+    }
+    
+    // 点击弹窗外部关闭弹窗
+    window.addEventListener('click', function(e) {
+        if (e.target === wechatModal) {
+            closeWechatModal();
+        }
+    });
+});
+"""
+
+    # 写入CSS文件
+    with open('wechat-popup.css', 'w', encoding='utf-8') as f:
+        f.write(css_content)
+    log_message("已创建或更新wechat-popup.css文件")
+
+    # 写入JS文件
+    with open('wechat-popup.js', 'w', encoding='utf-8') as f:
+        f.write(js_content)
+    log_message("已创建或更新wechat-popup.js文件")
+    
+    # 确保images目录存在
+    if not os.path.exists('images'):
+        os.makedirs('images')
+        log_message("已创建images目录")
+    
+    # 检查微信二维码图片是否存在
+    qrcode_path = os.path.join('images', 'optimized_wechat-qrcode.jpg')
+    if not os.path.exists(qrcode_path):
+        # 如果图片不存在，创建一个简单的占位图片
+        try:
+            # 尝试使用PIL创建一个简单的二维码占位图
+            # 创建一个200x200的白色图片
+            img = Image.new('RGB', (200, 200), color='white')
+            draw = ImageDraw.Draw(img)
+            
+            # 绘制边框
+            draw.rectangle([(0, 0), (199, 199)], outline='black')
+            
+            # 添加文字
+            try:
+                # 尝试加载字体，如果失败则使用默认字体
+                font = ImageFont.truetype("arial.ttf", 20)
+            except:
+                font = ImageFont.load_default()
+            
+            draw.text((40, 80), "微信二维码", fill='black', font=font)
+            draw.text((30, 110), "请替换为实际图片", fill='black', font=font)
+            
+            # 保存图片
+            img.save(qrcode_path, 'JPEG', quality=95)
+            log_message(f"已创建微信二维码占位图: {qrcode_path}")
+        except Exception as e:
+            log_message(f"创建微信二维码占位图失败: {str(e)}")
+    
+    return True
+
 def update_articles():
     """更新需要更新的文章"""
     config = load_config()
@@ -1138,6 +1420,11 @@ def update_articles():
             if social_tags_added:
                 log_message(f"已添加社交媒体元标签: {article['file']}")
             
+            # 6. 更新微信弹窗，确保点击微信图标只显示二维码
+            wechat_popup_updated = update_wechat_popup(article_path)
+            if wechat_popup_updated:
+                log_message(f"已更新微信弹窗: {article['file']}")
+            
             # 最后再次扫描检查是否有重复区块
             has_duplicates = scan_for_duplicate_blocks(article_path)
             if has_duplicates:
@@ -1145,7 +1432,7 @@ def update_articles():
             
             # 更新文章状态
             if date_updated or content_updated or internal_links_added or schema_added or \
-               images_optimized or mobile_enhanced or social_tags_added:
+               images_optimized or mobile_enhanced or social_tags_added or wechat_popup_updated:
                 article['last_updated'] = today
                 updated_count += 1
                 log_message(f"已完成文章更新和SEO优化: {article['file']} (类型: {article_type})")
@@ -1159,6 +1446,10 @@ def update_articles():
 if __name__ == "__main__":
     try:
         log_message("开始自动更新文章...")
+        
+        # 确保微信弹窗相关文件存在
+        create_wechat_popup_files()
+        
         update_articles()
         
         # 更新sitemap.xml
