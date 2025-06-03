@@ -1,6 +1,4 @@
 // 微信二维码弹窗脚本
-// 由于微信弹窗功能已经整合到disable-effects.js中
-// 这个文件仅作为兼容用途，确保所有页面都能正常显示微信弹窗
 document.addEventListener('DOMContentLoaded', function() {
     // 获取微信弹窗元素
     const wechatModal = document.getElementById('wechat-modal');
@@ -17,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e) e.preventDefault();
         wechatModal.style.display = 'flex';
         document.body.style.overflow = 'hidden'; // 防止背景滚动
-        console.log('显示微信弹窗');
     }
     
     // 关闭弹窗的函数
@@ -35,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ].filter(Boolean); // 过滤掉不存在的元素
     
     // 2. 通过类名和标题查找微信链接
-    const shareWechatLinks = document.querySelectorAll('.social-link[title="分享到微信"], .social-link[title="微信"], .fab.fa-weixin').forEach(function(link) {
+    document.querySelectorAll('.social-link[title="分享到微信"], .social-link[title="微信"], .fab.fa-weixin').forEach(function(link) {
         link.addEventListener('click', showWechatModal);
     });
     
@@ -71,6 +68,4 @@ document.addEventListener('DOMContentLoaded', function() {
             closeWechatModal();
         }
     });
-    
-    console.log('微信弹窗功能已加载（来自wechat-popup.js）');
 });
