@@ -302,14 +302,63 @@ def add_latest_update_section(article_path, article_config):
         num_keywords = min(len(keywords), random.randint(2, 3))
         enhanced_keywords = random.sample(keywords, num_keywords)
     
-    # 生成新的更新区块，添加标记
+    # 生成新的更新区块，添加标记 - 使用更清晰的样式
     update_date = datetime.datetime.now().strftime('%Y年%m月%d日')
     content_id = generate_content_id('latest_update', article_path)
+    
+    # 使用三重引号的原始字符串，避免CSS属性被误认为Python变量
+    css_style = """
+                .latest-update-box {
+                    background-color: #f8f9fa;
+                    border-left: 4px solid #4CAF50;
+                    padding: 20px;
+                    margin: 25px 0;
+                    border-radius: 6px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                }
+                .update-header {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 15px;
+                }
+                .update-icon {
+                    font-size: 22px;
+                    margin-right: 10px;
+                }
+                .update-header h3 {
+                    margin: 0;
+                    font-size: 18px;
+                    color: #333;
+                }
+                .update-date {
+                    font-weight: normal;
+                    color: #666;
+                    font-size: 16px;
+                }
+                .update-highlights {
+                    margin: 15px 0;
+                }
+                .update-highlights ul {
+                    margin-bottom: 0;
+                    padding-left: 20px;
+                }
+                .update-highlights li {
+                    margin-bottom: 8px;
+                    line-height: 1.5;
+                }
+                .update-footer {
+                    margin-bottom: 0;
+                    color: #555;
+                }
+    """
     
     latest_update_section = f'''
             {CONTENT_BLOCK_MARKERS['latest_update']}
             <div class="latest-update-box" data-update-id="{content_id}">
-                <h3>🔔 最新更新 ({update_date})</h3>
+                <div class="update-header">
+                    <span class="update-icon">🔔</span>
+                    <h3>最新更新 <span class="update-date">({update_date})</span></h3>
+                </div>
                 <p>我们对本文进行了更新，以反映{article_title.split(':')[0] if ':' in article_title else article_title}领域的最新发展：</p>
                 
                 <div class="update-highlights">
@@ -328,23 +377,11 @@ def add_latest_update_section(article_path, article_config):
     latest_update_section += f'''
                     </ul>
                 </div>
-                <p><em>继续阅读获取完整分析和实施建议...</em></p>
+                <p class="update-footer"><em>继续阅读获取完整分析和实施建议...</em></p>
             </div>
             
             <style>
-                .latest-update-box {{
-                    background-color: #f8f9fa;
-                    border-left: 4px solid #4CAF50;
-                    padding: 15px;
-                    margin: 20px 0;
-                    border-radius: 3px;
-                }}
-                .update-highlights {{
-                    margin: 10px 0;
-                }}
-                .update-highlights ul {{
-                    margin-bottom: 0;
-                }}
+            {css_style}
             </style>
             {CONTENT_BLOCK_MARKERS['latest_update_end']}
     '''
@@ -461,6 +498,33 @@ def insert_new_content(article_path, article_config):
         num_keywords = min(len(keywords), random.randint(1, 2))
         enhanced_keywords = random.sample(keywords, num_keywords)
     
+    # 使用三重引号的原始字符串，避免CSS属性被误认为Python变量
+    css_style = """
+                .new-insight-box {
+                    background-color: #f0f8ff;
+                    border: 1px solid #d1e7ff;
+                    padding: 15px;
+                    margin: 20px 0;
+                    border-radius: 5px;
+                }
+                .trend-data {
+                    margin: 10px 0;
+                }
+                .faq-section {
+                    margin-top: 25px;
+                    border-top: 1px solid #e0e0e0;
+                    padding-top: 15px;
+                }
+                .faq-item {
+                    margin-bottom: 15px;
+                }
+                .faq-item h5 {
+                    margin-bottom: 8px;
+                    color: #2c3e50;
+                    font-weight: 600;
+                }
+    """
+    
     # 生成新的插入内容，添加FAQ结构和标记
     content_id = generate_content_id('new_insight', article_path)
     
@@ -515,29 +579,7 @@ def insert_new_content(article_path, article_config):
             </div>
             
             <style>
-                .new-insight-box {{
-                    background-color: #f0f8ff;
-                    border: 1px solid #d1e7ff;
-                    padding: 15px;
-                    margin: 20px 0;
-                    border-radius: 5px;
-                }}
-                .trend-data {{
-                    margin: 10px 0;
-                }}
-                .faq-section {{
-                    margin-top: 25px;
-                    border-top: 1px solid #e0e0e0;
-                    padding-top: 15px;
-                }}
-                .faq-item {{
-                    margin-bottom: 15px;
-                }}
-                .faq-item h5 {{
-                    margin-bottom: 8px;
-                    color: #2c3e50;
-                    font-weight: 600;
-                }}
+            {css_style}
             </style>
             {CONTENT_BLOCK_MARKERS['new_insight_end']}
     '''
@@ -619,41 +661,64 @@ def add_internal_links(article_path, article_config, all_articles):
     # 生成相关文章区块ID
     content_id = generate_content_id('related_articles', article_path)
     
-    # 在文章底部添加相关文章链接，带标记
+    # 使用三重引号的原始字符串，避免CSS属性被误认为Python变量
+    css_style = """
+                .related-articles {
+                    background-color: #f9f9f9;
+                    padding: 20px;
+                    margin: 30px 0;
+                    border-radius: 8px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                }
+                .related-articles h3 {
+                    margin-top: 0;
+                    margin-bottom: 15px;
+                    color: #333;
+                    font-size: 18px;
+                    border-bottom: 1px solid #eee;
+                    padding-bottom: 10px;
+                }
+                .related-article-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                .related-article-item {
+                    padding: 8px 0;
+                }
+                .related-article-item a {
+                    color: #2c3e50;
+                    text-decoration: none;
+                    font-weight: 500;
+                    transition: color 0.2s;
+                }
+                .related-article-item a:hover {
+                    color: #3498db;
+                    text-decoration: underline;
+                }
+    """
+    
+    # 在文章底部添加相关文章链接，带标记 - 使用第三和第四张图片的样式
     related_links_section = f'''
             {CONTENT_BLOCK_MARKERS['related_articles']}
             <div class="related-articles" data-related-id="{content_id}">
-                <h3>相关推荐</h3>
-                <ul>
+                <h3>相关文章</h3>
+                <div class="related-article-list">
     '''
     
     for related in top_related:
         related_links_section += f'''
-                    <li><a href="{related['file']}">{related['title']}</a></li>
+                    <div class="related-article-item">
+                        <a href="{related['file']}">{related['title']}</a>
+                    </div>
         '''
     
     related_links_section += f'''
-                </ul>
+                </div>
             </div>
             
             <style>
-                .related-articles {{
-                    background-color: #f9f9f9;
-                    padding: 15px;
-                    margin: 30px 0;
-                    border-radius: 5px;
-                    border-top: 2px solid #e0e0e0;
-                }}
-                .related-articles h3 {{
-                    margin-top: 0;
-                    color: #333;
-                }}
-                .related-articles ul {{
-                    padding-left: 20px;
-                }}
-                .related-articles li {{
-                    margin-bottom: 8px;
-                }}
+            {css_style}
             </style>
             {CONTENT_BLOCK_MARKERS['related_articles_end']}
     '''
@@ -1106,10 +1171,10 @@ def update_wechat_popup(article_path):
         content = new_content
         modified = True
     
-    # 标准的微信弹窗结构
+    # 标准的微信弹窗结构 - 使用第三和第四张图片的样式
     wechat_popup = '''
     <!-- 微信二维码弹窗 -->
-    <div id="wechat-modal" class="wechat-modal wechat-popup">
+    <div id="wechat-modal" class="wechat-modal">
         <div class="wechat-modal-content">
             <span class="close-modal">&times;</span>
             <h3>扫描二维码添加微信</h3>
@@ -1152,7 +1217,7 @@ def update_wechat_popup(article_path):
 
 def create_wechat_popup_files():
     """确保wechat-popup.js和wechat-popup.css文件存在并包含正确的内容"""
-    # 创建wechat-popup.css文件
+    # 创建wechat-popup.css文件 - 使用原始字符串避免CSS属性被误认为Python变量
     css_content = """/* 微信弹窗样式 */
 .wechat-modal {
     display: none;
@@ -1222,10 +1287,48 @@ def create_wechat_popup_files():
     font-size: 16px;
 }
 
-/* 确保弹窗不被其他元素遮挡 */
-.wechat-popup {
-    z-index: 9999;
-} 
+/* 社交分享按钮样式 */
+.social-share {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.social-share a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.social-share a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.social-share .weixin {
+    background-color: #07C160;
+}
+
+.social-share .weibo {
+    background-color: #E6162D;
+}
+
+.social-share .linkedin {
+    background-color: #0A66C2;
+}
+
+.social-share .github {
+    background-color: #333;
+}
+
+.social-share i {
+    font-size: 18px;
+}
 """
 
     # 创建wechat-popup.js文件
@@ -1255,35 +1358,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // 为页面上所有微信相关链接添加点击事件
-    // 1. 通过ID查找微信链接
+    // 1. 通过类名查找微信链接
+    document.querySelectorAll('.weixin, .fa-weixin, .fab.fa-weixin').forEach(function(element) {
+        const link = element.tagName === 'A' ? element : element.closest('a');
+        if (link) {
+            link.addEventListener('click', showWechatModal);
+        }
+    });
+    
+    // 2. 通过ID查找微信链接
     const wechatLinks = [
         document.getElementById('wechat-link'),
         document.getElementById('footer-wechat-link'),
         document.getElementById('article-wechat-link')
     ].filter(Boolean); // 过滤掉不存在的元素
     
-    // 2. 通过类名和标题查找微信链接
-    document.querySelectorAll('.social-link[title="分享到微信"], .social-link[title="微信"], .fab.fa-weixin').forEach(function(link) {
-        link.addEventListener('click', showWechatModal);
-    });
-    
-    // 3. 为所有微信图标添加事件（不依赖于特定ID或标题）
-    document.querySelectorAll('.fab.fa-weixin').forEach(function(icon) {
-        // 找到包含此图标的最近的a标签
-        const parentLink = icon.closest('a');
-        if (parentLink) {
-            parentLink.addEventListener('click', showWechatModal);
-        }
-    });
-    
-    // 4. 为找到的ID链接添加事件
     wechatLinks.forEach(function(link) {
         link.addEventListener('click', showWechatModal);
     });
     
-    // 5. 为文章页面中的社交分享按钮添加事件
-    document.querySelectorAll('.share-buttons a').forEach(function(link) {
-        if (link.querySelector('.fa-weixin') || link.querySelector('.fab.fa-weixin')) {
+    // 3. 为文章页面中的社交分享按钮添加事件
+    document.querySelectorAll('.social-share a').forEach(function(link) {
+        if (link.classList.contains('weixin') || 
+            link.querySelector('.fa-weixin') || 
+            link.querySelector('.fab.fa-weixin')) {
             link.addEventListener('click', showWechatModal);
         }
     });
@@ -1345,6 +1443,67 @@ document.addEventListener('DOMContentLoaded', function() {
             log_message(f"已创建微信二维码占位图: {qrcode_path}")
         except Exception as e:
             log_message(f"创建微信二维码占位图失败: {str(e)}")
+    
+    return True
+
+def add_social_sharing_buttons(article_path):
+    """添加社交分享按钮，匹配第三和第四张图片中的样式"""
+    with open(article_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    modified = False
+    
+    # 检查是否已有社交分享按钮
+    if '<div class="social-share">' in content:
+        # 清理旧的社交分享按钮
+        social_share_pattern = r'<div\s+class=["\']social-share["\'][^>]*>[\s\S]*?</div>\s*'
+        content = re.sub(social_share_pattern, '', content)
+        log_message(f"已清理文章 {article_path} 中的旧社交分享按钮")
+        modified = True
+    
+    # 查找文章标题位置，在标题后添加社交分享按钮
+    h1_end_pos = content.find('</h1>')
+    if h1_end_pos == -1:
+        log_message(f"无法在文件 {article_path} 中找到文章标题结束标记")
+        return False
+    
+    # 获取文章标题
+    title_match = re.search(r'<h1>(.*?)</h1>', content)
+    article_title = title_match.group(1) if title_match else '文章分享'
+    
+    # 生成社交分享按钮
+    social_share_buttons = f'''
+    <div class="social-share">
+        <a href="javascript:void(0);" class="weixin" title="分享到微信">
+            <i class="fab fa-weixin"></i>
+        </a>
+        <a href="https://service.weibo.com/share/share.php?url={urllib.parse.quote(os.path.basename(article_path))}&title={urllib.parse.quote(article_title)}" target="_blank" class="weibo" title="分享到微博">
+            <i class="fab fa-weibo"></i>
+        </a>
+        <a href="https://www.linkedin.com/shareArticle?mini=true&url={urllib.parse.quote(os.path.basename(article_path))}&title={urllib.parse.quote(article_title)}" target="_blank" class="linkedin" title="分享到LinkedIn">
+            <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://github.com/" target="_blank" class="github" title="在GitHub上查看">
+            <i class="fab fa-github"></i>
+        </a>
+    </div>
+    '''
+    
+    # 插入社交分享按钮
+    new_content = content[:h1_end_pos + 5] + social_share_buttons + content[h1_end_pos + 5:]
+    log_message(f"已在文章 {article_path} 中添加社交分享按钮")
+    
+    # 确保引用了Font Awesome
+    if '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">' not in content:
+        head_end_pos = content.find('</head>')
+        if head_end_pos != -1:
+            font_awesome_link = '\n    <!-- Font Awesome -->\n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">'
+            new_content = new_content[:head_end_pos] + font_awesome_link + new_content[head_end_pos:]
+            log_message(f"已在文章 {article_path} 中添加Font Awesome引用")
+    
+    # 写回文件
+    with open(article_path, 'w', encoding='utf-8') as f:
+        f.write(new_content)
     
     return True
 
@@ -1425,6 +1584,11 @@ def update_articles():
             if wechat_popup_updated:
                 log_message(f"已更新微信弹窗: {article['file']}")
             
+            # 7. 添加社交分享按钮
+            social_sharing_added = add_social_sharing_buttons(article_path)
+            if social_sharing_added:
+                log_message(f"已添加社交分享按钮: {article['file']}")
+            
             # 最后再次扫描检查是否有重复区块
             has_duplicates = scan_for_duplicate_blocks(article_path)
             if has_duplicates:
@@ -1432,7 +1596,8 @@ def update_articles():
             
             # 更新文章状态
             if date_updated or content_updated or internal_links_added or schema_added or \
-               images_optimized or mobile_enhanced or social_tags_added or wechat_popup_updated:
+               images_optimized or mobile_enhanced or social_tags_added or wechat_popup_updated or \
+               social_sharing_added:
                 article['last_updated'] = today
                 updated_count += 1
                 log_message(f"已完成文章更新和SEO优化: {article['file']} (类型: {article_type})")
