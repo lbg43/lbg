@@ -73,28 +73,6 @@ def clean_marked_blocks(content, block_type):
         cleaned_content = re.sub(pattern, '', content)
         return cleaned_content, True
     
-    # 增强：尝试查找不完整的区块（只有开始标记没有结束标记）
-    if start_marker in content and end_marker not in content:
-        # 找到开始标记的位置
-        start_pos = content.find(start_marker)
-        # 尝试找到下一个区块的开始标记
-        next_block_pos = float('inf')
-        for other_type in CONTENT_BLOCK_MARKERS:
-            if other_type != block_type and not other_type.endswith('_end'):
-                other_marker = CONTENT_BLOCK_MARKERS[other_type]
-                pos = content.find(other_marker, start_pos + len(start_marker))
-                if pos != -1 and pos < next_block_pos:
-                    next_block_pos = pos
-        
-        # 如果找到了下一个区块，删除从当前区块开始到下一个区块之前的内容
-        if next_block_pos != float('inf'):
-            cleaned_content = content[:start_pos] + content[next_block_pos:]
-            return cleaned_content, True
-        # 否则删除从当前区块开始到文档结束的内容（不太可能发生，但以防万一）
-        else:
-            cleaned_content = content[:start_pos]
-            return cleaned_content, True
-    
     return content, False
 
 def has_marked_block(content, block_type):
@@ -587,28 +565,6 @@ def add_internal_links(article_path, article_config, all_articles):
         if not cleaned:
             log_message(f"警告：找到相关文章标记但无法清理，文件: {article_path}")
     
-    # 清理所有可能的旧相关文章区块（无论是否有标记）
-    related_div_pattern = r'<div\s+[^>]*class=["\'][^"\\\']*related-articles[^"\\\']*["\'][^>]*>[\s\S]*?</div>\s*(?:<style>[\s\S]*?</style>\s*)?'
-    related_style_pattern = r'<style>\s*\.related-articles[\s\S]*?</style>\s*'
-    
-    # 尝试清理所有相关文章区块
-    original_length = len(content)
-    content = re.sub(related_div_pattern, '', content)
-    content = re.sub(related_style_pattern, '', content)
-    
-    bytes_removed = original_length - len(content)
-    if bytes_removed > 0:
-        log_message(f"已清理文章 {article_path} 中的旧相关文章区块，共 {bytes_removed} 字节")
-    
-    # 尝试清理所有相关文章区块
-    original_length = len(content)
-    content = re.sub(related_div_pattern, '', content)
-    content = re.sub(related_style_pattern, '', content)
-    
-    bytes_removed = original_length - len(content)
-    if bytes_removed > 0:
-        log_message(f"已清理文章 {article_path} 中的旧相关文章区块，共 {bytes_removed} 字节")
-    
     # 获取当前文章的关键词
     current_keywords = article_config.get('keywords', [])
     if not current_keywords:
@@ -653,9 +609,9 @@ def add_internal_links(article_path, article_config, all_articles):
                         'common_keywords': len(common_keywords)
                     })
     
-    # 按相关性排序并选择前2篇
+    # 按相关性排序并选择前3篇
     related_articles.sort(key=lambda x: x['common_keywords'], reverse=True)
-    top_related = related_articles[:2] if len(related_articles) > 2 else related_articles
+    top_related = related_articles[:3] if len(related_articles) > 3 else related_articles
     
     if not top_related:
         return False
@@ -667,62 +623,36 @@ def add_internal_links(article_path, article_config, all_articles):
     related_links_section = f'''
             {CONTENT_BLOCK_MARKERS['related_articles']}
             <div class="related-articles" data-related-id="{content_id}">
-                <h3>相关文章</h3>
-            <div class="related-grid">
+                <h3>相关推荐</h3>
+                <ul>
     '''
     
     for related in top_related:
         related_links_section += f'''
-                    <div class="related-item">
-                        <a href="{related['file']}">
-                            <img loading="lazy" src="../images/optimized_article{top_related.index(related) + 1}.jpg" alt="{related['title']}">
-                            <h4>{related['title']}</h4>
-                        </a>
-                    </div>
+                    <li><a href="{related['file']}">{related['title']}</a></li>
         '''
     
     related_links_section += f'''
-                </div>
+                </ul>
             </div>
             
             <style>
                 .related-articles {{
+                    background-color: #f9f9f9;
+                    padding: 15px;
                     margin: 30px 0;
+                    border-radius: 5px;
+                    border-top: 2px solid #e0e0e0;
                 }}
                 .related-articles h3 {{
-                    margin-bottom: 20px;
+                    margin-top: 0;
                     color: #333;
                 }}
-                .related-grid {{
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                    gap: 20px;
+                .related-articles ul {{
+                    padding-left: 20px;
                 }}
-                .related-item {{
-                    border: 1px solid #eee;
-                    border-radius: 5px;
-                    overflow: hidden;
-                    transition: transform 0.3s, box-shadow 0.3s;
-                }}
-                .related-item:hover {{
-                    transform: translateY(-5px);
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-                }}
-                .related-item img {{
-                    width: 100%;
-                    height: 160px;
-                    object-fit: cover;
-                }}
-                .related-item h4 {{
-                    padding: 15px;
-                    margin: 0;
-                    font-size: 16px;
-                    color: #333;
-                }}
-                @media (max-width: 768px) {{
-                    .related-grid {{
-                        grid-template-columns: 1fr;
-                    }}
+                .related-articles li {{
+                    margin-bottom: 8px;
                 }}
             </style>
             {CONTENT_BLOCK_MARKERS['related_articles_end']}
@@ -733,7 +663,7 @@ def add_internal_links(article_path, article_config, all_articles):
     end_pos = content.find(end_marker)
     if end_pos == -1:
         end_marker = '</div>'
-        end_pos = content.rfind(end_marker, 0, content.find('<footer'))
+        end_pos = content.rfind(end_marker)
     
     if end_pos == -1:
         log_message(f"无法在文件 {article_path} 中找到文章结束标记")
@@ -1115,45 +1045,6 @@ def cleanup_all_blocks(article_path):
         return True
     
     return False
-
-def check_content_integrity(article_path):
-    """执行全面的完整性检查，确保每种类型的区块在文章中只出现一次"""
-    with open(article_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    integrity_issues = []
-    
-    # 检查每种类型的区块
-    for block_type in CONTENT_BLOCK_MARKERS:
-        if block_type.endswith('_end'):
-            continue
-        
-        start_marker = CONTENT_BLOCK_MARKERS[block_type]
-        end_marker = CONTENT_BLOCK_MARKERS[f"{block_type}_end"]
-        
-        # 检查开始标记和结束标记的数量是否匹配
-        start_count = content.count(start_marker)
-        end_count = content.count(end_marker)
-        
-        if start_count > 1 or end_count > 1:
-            integrity_issues.append(f"区块类型 '{block_type}' 有多个实例 (开始标记: {start_count}, 结束标记: {end_count})")
-        elif start_count == 1 and end_count == 0:
-            integrity_issues.append(f"区块类型 '{block_type}' 缺少结束标记")
-        elif start_count == 0 and end_count == 1:
-            integrity_issues.append(f"区块类型 '{block_type}' 缺少开始标记")
-    
-    # 检查特定的HTML结构（如相关文章区块）
-    related_divs = re.findall(r'<div\s+[^>]*class=["\'][^"\\\']*related-articles[^"\\\']*["\'][^>]*>', content)
-    if len(related_divs) > 1:
-        integrity_issues.append(f"发现 {len(related_divs)} 个相关文章div元素")
-    
-    # 检查其他可能的重复结构
-    # 例如，检查微信弹窗
-    wechat_modals = re.findall(r'<div\s+id="wechat-modal"', content)
-    if len(wechat_modals) > 1:
-        integrity_issues.append(f"发现 {len(wechat_modals)} 个微信弹窗元素")
-    
-    return integrity_issues
 
 def scan_for_duplicate_blocks(article_path):
     """扫描文章中是否存在重复的区块标记"""
@@ -1537,32 +1428,7 @@ def update_articles():
             # 最后再次扫描检查是否有重复区块
             has_duplicates = scan_for_duplicate_blocks(article_path)
             if has_duplicates:
-                log_message(f"警告：更新后文章 {article_path} 存在重复区块，执行自动清理")
-                # 自动清理重复区块
-                cleanup_all_blocks(article_path)
-                # 再次检查是否清理成功
-                if scan_for_duplicate_blocks(article_path):
-                    log_message(f"警告：自动清理后文章 {article_path} 仍存在重复区块，这可能需要手动检查")
-                else:
-                    log_message(f"自动清理成功：文章 {article_path} 的重复区块已被移除")
-            
-            # 在所有更新完成后执行完整性检查
-            integrity_issues = check_content_integrity(article_path)
-            if integrity_issues:
-                log_message(f"文章 {article_path} 存在以下完整性问题:")
-                for issue in integrity_issues:
-                    log_message(f"  - {issue}")
-                
-                # 尝试再次清理所有区块
-                log_message(f"尝试通过完全清理解决完整性问题...")
-                cleanup_all_blocks(article_path)
-                
-                # 再次检查完整性
-                remaining_issues = check_content_integrity(article_path)
-                if remaining_issues:
-                    log_message(f"警告：清理后仍存在 {len(remaining_issues)} 个完整性问题，可能需要手动检查")
-                else:
-                    log_message(f"完整性问题已解决")
+                log_message(f"警告：更新后文章 {article_path} 仍存在重复区块，这可能需要手动检查")
             
             # 更新文章状态
             if date_updated or content_updated or internal_links_added or schema_added or \
