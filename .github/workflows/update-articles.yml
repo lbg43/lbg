@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v2
+        with:
+          # 确保获取完整的历史记录，以便正确处理文件
+          fetch-depth: 0
         
       - name: 设置Python环境
         uses: actions/setup-python@v2
@@ -25,15 +28,33 @@ jobs:
           pip install Pillow  # 安装PIL/Pillow图像处理库
           pip install -r requirements.txt  # 安装所有依赖
           # 验证PIL是否正确安装
-          python -c "from PIL import Image; print('PIL正确安装')"
+          python -c "from PIL import Image, ImageDraw, ImageFont; print('PIL正确安装')"
+          
+      - name: 检查环境和目录结构
+        run: |
+          echo "当前工作目录: $(pwd)"
+          echo "目录内容:"
+          ls -la
+          echo "Python版本: $(python --version)"
+          echo "系统信息: $(uname -a)"
+          echo "articles目录内容:"
+          ls -la articles/
+          echo "images目录内容:"
+          if [ -d "images" ]; then
+            ls -la images/
+          else
+            echo "images目录不存在，将自动创建"
+          fi
+          echo "备份目录内容:"
+          if [ -d "articles_backup" ]; then
+            ls -la articles_backup/
+          else
+            echo "articles_backup目录不存在，将自动创建"
+          fi
           
       - name: 运行更新脚本
         run: |
           set -x  # 显示执行的每个命令
-          pwd  # 显示当前目录
-          ls -la  # 列出文件
-          python -V  # 显示Python版本
-          pip list  # 显示已安装的包
           # 查看auto_update_articles.py中的导入语句
           grep "import" auto_update_articles.py
           # 运行脚本并捕获所有输出
