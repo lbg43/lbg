@@ -1089,7 +1089,7 @@ def scan_for_duplicate_blocks(article_path):
     return duplicates_found
 
 def update_wechat_popup(article_path):
-    """确保微信图标点击后只显示二维码窗口，不显示其他内容"""
+    """确保微信图标点击后只显示二维码窗口，不显示其他内容，并修复相关文章结构"""
     with open(article_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
@@ -1101,7 +1101,7 @@ def update_wechat_popup(article_path):
     
     if wechat_modal_starts:
         # 如果找到微信弹窗，删除所有的
-        log_message(f"在文章 {article_path} 中找到 {len(wechat_modal_starts)} 个微信弹窗，准备清理")
+        log_message(f"在文章 {os.path.basename(article_path)} 中找到 {len(wechat_modal_starts)} 个微信弹窗，准备清理")
         
         # 创建一个新的内容字符串，排除所有微信弹窗
         new_content = content
@@ -1127,6 +1127,36 @@ def update_wechat_popup(article_path):
         content = new_content
         modified = True
     
+    # 修复相关文章部分的结构
+    related_item_pattern = r'<div class="related-item">'
+    if related_item_pattern in content:
+        # 检查相关文章的HTML结构是否正确
+        related_articles_wrapper_start = '<div class="related-articles">'
+        related_articles_grid_start = '<div class="related-articles-grid">'
+        
+        if related_articles_wrapper_start not in content and related_articles_grid_start not in content:
+            # 如果没有正确的结构，修复它
+            log_message(f"修复文章 {os.path.basename(article_path)} 中的相关文章结构")
+            
+            # 找到相关文章项的位置
+            related_item_pos = content.find(related_item_pattern)
+            if related_item_pos != -1:
+                # 在相关文章项之前插入正确的包装元素
+                before_related_item = content[:related_item_pos]
+                after_related_item = content[related_item_pos:]
+                
+                # 找到相关文章项的结束位置
+                related_item_end_pos = after_related_item.find('</div>') + 6
+                related_item_content = after_related_item[:related_item_end_pos]
+                after_related_item_end = after_related_item[related_item_end_pos:]
+                
+                # 构建正确的HTML结构
+                correct_structure = '<div class="related-articles">\n                <h3>相关文章</h3>\n                <div class="related-articles-grid">\n                    ' + related_item_content + '\n                </div>\n            </div>'
+                
+                # 替换原来的结构
+                content = before_related_item + correct_structure + after_related_item_end
+                modified = True
+    
     # 标准的微信弹窗结构
     wechat_popup = '''
     <!-- 微信二维码弹窗 -->
@@ -1145,9 +1175,11 @@ def update_wechat_popup(article_path):
     # 在</body>标签前插入标准的微信弹窗
     body_end_pos = content.rfind('</body>')
     if body_end_pos != -1:
-        content = content[:body_end_pos] + wechat_popup + content[body_end_pos:]
-        log_message(f"已在文章 {article_path} 中添加标准微信弹窗")
-        modified = True
+        # 检查是否已经有微信弹窗
+        if '<div id="wechat-modal"' not in content[body_end_pos-500:body_end_pos]:
+            content = content[:body_end_pos] + wechat_popup + content[body_end_pos:]
+            log_message(f"已在文章 {os.path.basename(article_path)} 中添加标准微信弹窗")
+            modified = True
     
     # 确保微信弹窗CSS被正确引用
     if '<link rel="stylesheet" href="../wechat-popup.css">' not in content:
@@ -1160,7 +1192,19 @@ def update_wechat_popup(article_path):
     if '<script src="../wechat-popup.js"></script>' not in content:
         body_end_pos = content.rfind('</body>')
         if body_end_pos != -1:
-            content = content[:body_end_pos] + '\n    <!-- 微信弹窗脚本 -->\n    <script src="../wechat-popup.js"></script>' + content[body_end_pos:]
+            script_pos = content.rfind('</script>', 0, body_end_pos)
+            if script_pos != -1:
+                content = content[:script_pos+9] + '\n    <!-- 微信弹窗脚本 -->\n    <script src="../wechat-popup.js"></script>' + content[script_pos+9:]
+                modified = True
+    
+    # 删除多余的微信弹窗注释
+    extra_comments = [
+        '<!-- 微信二维码弹窗 -->\n    \n    ',
+        '<!-- 微信二维码弹窗 -->\n    \n    \n    <!-- 微信二维码弹窗 -->\n    \n    \n    <!-- 微信二维码弹窗 -->\n    \n    \n    <!-- 微信二维码弹窗 -->\n    \n    '
+    ]
+    for comment in extra_comments:
+        if comment in content:
+            content = content.replace(comment, '')
             modified = True
     
     # 写回文件
