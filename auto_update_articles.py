@@ -8,6 +8,7 @@ import urllib.parse
 import sys
 import subprocess
 import hashlib
+import platform
 from PIL import Image, ImageDraw, ImageFont
 
 # 自动安装所需的依赖
@@ -31,6 +32,9 @@ BACKUP_DIR = 'articles_backup'  # 文章备份目录
 IMAGES_DIR = 'images'  # 图片目录
 MAX_IMAGE_WIDTH = 1200  # 最大图片宽度
 IMAGE_QUALITY = 85  # 图片压缩质量
+
+# 检测操作系统类型
+IS_WINDOWS = platform.system() == 'Windows'
 
 # 添加内容区块标识符
 CONTENT_BLOCK_MARKERS = {
@@ -136,7 +140,7 @@ def backup_article(article_path):
     filename = os.path.basename(article_path)
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     backup_filename = f"{os.path.splitext(filename)[0]}_{timestamp}{os.path.splitext(filename)[1]}"
-    backup_path = os.path.join(BACKUP_DIR, backup_filename)
+    backup_path = normalize_path(os.path.join(BACKUP_DIR, backup_filename))
     
     # 复制文件
     shutil.copy2(article_path, backup_path)
@@ -206,158 +210,175 @@ def update_article_date(article_path):
     return True
 
 def add_latest_update_section(article_path, article_config):
-    """在文章顶部添加"最新更新"区块，保留原有内容"""
+    """添加最新更新区块"""
     with open(article_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # 获取文章标题
-    title_match = re.search(r'<h1>(.*?)</h1>', content)
-    if not title_match:
-        article_title = '文章'
+    # 查找文章内容开始位置（通常在第一个h1或h2标签之后）
+    article_start = None
+    h1_match = re.search(r'<h1[^>]*>(.*?)</h1>', content)
+    h2_match = re.search(r'<h2[^>]*>(.*?)</h2>', content)
+    
+    if h1_match:
+        article_start = h1_match.end()
+    elif h2_match:
+        article_start = h2_match.end()
+    
+    if article_start is None:
+        log_message(f"无法在文件 {os.path.basename(article_path)} 中找到文章开始标记")
+        return False
+    
+    # 清理旧的最近更新区块
+    original_size = len(content)
+    cleaned_content = content
+    bytes_removed = 0
+    cleaned_count = 0
+    
+    # 清理完整的最近更新区块（包含开始和结束标记）
+    log_message(f"开始清理文章 {os.path.basename(article_path)} 中的旧最近更新区块")
+    pattern = re.escape(CONTENT_BLOCK_MARKERS['latest_update']) + r'[\s\S]*?' + re.escape(CONTENT_BLOCK_MARKERS['latest_update_end'])
+    if re.search(pattern, cleaned_content):
+        cleaned_content = re.sub(pattern, '', cleaned_content)
+        log_message(f"已清理文章 {os.path.basename(article_path)} 中的完整最近更新区块")
+        cleaned_count += 1
+    
+    # 清理可能残留的最近更新区块框
+    pattern = r'<div class="latest-update-box">[\s\S]*?</div>\s*</div>'
+    if re.search(pattern, cleaned_content):
+        cleaned_content = re.sub(pattern, '', cleaned_content)
+        log_message(f"已清理文章 {os.path.basename(article_path)} 中的最近更新区块框")
+        cleaned_count += 1
+    
+    # 清理可能残留的样式
+    pattern = r'<style>\s*\.latest-update-box[\s\S]*?</style>'
+    if re.search(pattern, cleaned_content):
+        cleaned_content = re.sub(pattern, '', cleaned_content)
+        log_message(f"已清理文章 {os.path.basename(article_path)} 中的最近更新样式")
+        cleaned_count += 1
+    
+    # 清理其他可能的最近更新区块变体
+    patterns = [
+        r'<div[^>]*class="[^"]*update[^"]*"[^>]*>[\s\S]*?</div>\s*</div>',
+        r'<section[^>]*class="[^"]*update[^"]*"[^>]*>[\s\S]*?</section>',
+        r'<div[^>]*id="[^"]*update[^"]*"[^>]*>[\s\S]*?</div>\s*</div>'
+    ]
+    
+    for pattern in patterns:
+        matches = re.findall(pattern, cleaned_content)
+        if matches:
+            cleaned_content = re.sub(pattern, '', cleaned_content)
+            cleaned_count += len(matches)
+    
+    if cleaned_count > 0:
+        log_message(f"已清理文章 {os.path.basename(article_path)} 中的额外最近更新区块，共 {cleaned_count} 个")
+    
+    bytes_removed = original_size - len(cleaned_content)
+    
+    if bytes_removed > 0:
+        log_message(f"文章 {os.path.basename(article_path)} 中共清理了 {bytes_removed} 字节的旧最近更新内容")
     else:
-        article_title = title_match.group(1)
+        log_message(f"文章 {os.path.basename(article_path)} 中未找到需要清理的旧最近更新内容")
     
-    # 查找文章主体内容区域开始位置
-    start_marker = '</h1>'
-    start_pos = content.find(start_marker)
-    if start_pos == -1:
-        log_message(f"无法在文件 {article_path} 中找到文章开始标记")
+    # 查找文章内容开始位置（通常在第一个h1或h2标签之后）
+    article_start = None
+    h1_match = re.search(r'<h1[^>]*>(.*?)</h1>', cleaned_content)
+    h2_match = re.search(r'<h2[^>]*>(.*?)</h2>', cleaned_content)
+    
+    if h1_match:
+        article_start = h1_match.end()
+    elif h2_match:
+        article_start = h2_match.end()
+    
+    if article_start is None:
+        log_message(f"无法在文件 {os.path.basename(article_path)} 中找到文章开始标记")
         return False
     
-    start_pos += len(start_marker)
-    
-    # 清理已有的最新更新区块（使用标记系统）
-    content, cleaned_marked = clean_marked_blocks(content, 'latest_update')
-    
-    # 如果没有找到标记的区块，尝试使用旧方法清理
-    if not cleaned_marked:
-        original_length = len(content)
-        log_message(f"开始清理文章 {article_path} 中的旧最近更新区块")
-        
-        # 尝试查找任何包含"最近更新"文字的div块
-        update_box_pattern = r'<div[^>]*class=["\']latest-update-box["\'][^>]*>[\s\S]*?最新更新[\s\S]*?</div>\s*'
-        style_pattern = r'<style>\s*\.latest-update-box[\s\S]*?</style>\s*'
-        
-        # 尝试按最严格的方式匹配完整的更新区块
-        full_pattern = update_box_pattern + style_pattern
-        
-        # 如果没有匹配到完整模式，则尝试分别匹配和删除
-        if re.search(full_pattern, content):
-            content = re.sub(full_pattern, '', content)
-            log_message(f"已清理文章 {article_path} 中的完整最近更新区块")
-        else:
-            # 先删除更新框
-            if re.search(update_box_pattern, content):
-                content = re.sub(update_box_pattern, '', content)
-                log_message(f"已清理文章 {article_path} 中的最近更新区块框")
-            
-            # 再删除样式
-            if re.search(style_pattern, content):
-                content = re.sub(style_pattern, '', content)
-                log_message(f"已清理文章 {article_path} 中的最近更新样式")
-        
-        # 如果还有其他包含"最新更新"的区块，继续清理
-        additional_pattern = r'<div[^>]*>[\s\S]*?最新更新[\s\S]*?</div>\s*'
-        cleaned_count = 0
-        while re.search(additional_pattern, content):
-            old_content = content
-            content = re.sub(additional_pattern, '', content, count=1)
-            if len(old_content) > len(content):
-                cleaned_count += 1
-        
-        if cleaned_count > 0:
-            log_message(f"已清理文章 {article_path} 中的额外最近更新区块，共 {cleaned_count} 个")
-        
-        bytes_removed = original_length - len(content)
-        if bytes_removed > 0:
-            log_message(f"文章 {article_path} 中共清理了 {bytes_removed} 字节的旧最近更新内容")
-        else:
-            log_message(f"文章 {article_path} 中未找到需要清理的旧最近更新内容")
-    
-    # 重新查找插入位置（可能已变化）
-    start_marker = '</h1>'
-    start_pos = content.find(start_marker)
-    if start_pos == -1:
-        log_message(f"无法在文件 {article_path} 中找到文章开始标记")
-        return False
-    
-    start_pos += len(start_marker)
-    
-    # 生成随机数据（确保每篇文章使用相同的数据）
+    # 生成最新更新内容
     current_year = datetime.datetime.now().year
-    traffic_increase = random.randint(65, 80)
-    growth_rate = random.randint(5, 15)
-    stay_time_increase = random.randint(25, 40)
-    conversion_rate = random.randint(20, 35)
-    
-    # 提取关键词并增强
-    keywords = article_config.get('keywords', [])
-    if not keywords:
-        keywords = extract_keywords(content)
-        article_config['keywords'] = keywords
-    
-    # 随机选择2-3个关键词强化
-    enhanced_keywords = []
-    if keywords:
-        num_keywords = min(len(keywords), random.randint(2, 3))
-        enhanced_keywords = random.sample(keywords, num_keywords)
-    
-    # 生成新的更新区块，添加标记
-    update_date = datetime.datetime.now().strftime('%Y年%m月%d日')
+    current_date = datetime.datetime.now().strftime('%Y年%m月%d日')
     content_id = generate_content_id('latest_update', article_path)
     
-    latest_update_section = f'''
-            {CONTENT_BLOCK_MARKERS['latest_update']}
-            <div class="latest-update-box" data-update-id="{content_id}">
-                <h3>🔔 最新更新 ({update_date})</h3>
-                <p>我们对本文进行了更新，以反映{article_title.split(':')[0] if ':' in article_title else article_title}领域的最新发展：</p>
-                
-                <div class="update-highlights">
-                    <ul>
-                        <li><strong>最新数据</strong>：{current_year}年移动端访问比例达到{traffic_increase}%，同比增长{growth_rate}%</li>
-                        <li><strong>用户体验</strong>：实施现代化策略的企业用户停留时间提升{stay_time_increase}%</li>
-                        <li><strong>转化效果</strong>：优化后的方案平均转化率提升{conversion_rate}%</li>
-    '''
+    # 随机选择更新类型
+    update_types = [
+        f"{current_year}年最新趋势",
+        f"{current_year}年行业动态",
+        f"{current_year}年最新数据",
+        f"{current_year}年技术更新",
+        f"{current_year}年市场变化"
+    ]
+    update_type = random.choice(update_types)
     
-    # 添加关键词强化部分
-    if enhanced_keywords:
-        latest_update_section += f'''
-                        <li><strong>新趋势</strong>：{current_year}年{', '.join(enhanced_keywords)}领域出现重大突破</li>
-        '''
+    # 根据文章类型生成不同的更新内容
+    article_type = article_config.get('type', 'data')
     
-    latest_update_section += f'''
-                    </ul>
-                </div>
-                <p><em>继续阅读获取完整分析和实施建议...</em></p>
-            </div>
-            
-            <style>
-                .latest-update-box {{
-                    background-color: #f8f9fa;
-                    border-left: 4px solid #4CAF50;
-                    padding: 15px;
-                    margin: 20px 0;
-                    border-radius: 3px;
-                }}
-                .update-highlights {{
-                    margin: 10px 0;
-                }}
-                .update-highlights ul {{
-                    margin-bottom: 0;
-                }}
-            </style>
-            {CONTENT_BLOCK_MARKERS['latest_update_end']}
-    '''
+    if article_type == 'core':
+        # 核心内容的更新更保守，主要是行业趋势
+        update_items = [
+            f"AI技术正在改变{random.choice(['市场格局', '用户体验', '开发流程', '设计理念'])}，企业需要积极适应。",
+            f"根据最新调研，{random.randint(60, 85)}%的用户更看重{random.choice(['移动端体验', '加载速度', '内容质量', '交互设计'])}。",
+            f"{random.choice(['数据驱动决策', '用户体验至上', '全渠道营销策略'])}成为{current_year}年的关键趋势。"
+        ]
+    else:
+        # 数据内容的更新更激进，包含更多数据和统计
+        update_items = [
+            f"{current_year}年第{random.choice(['一', '二', '三', '四'])}季度数据显示，{random.choice(['移动端流量', '用户停留时间', '转化率', '跳出率'])}提升了{random.randint(15, 40)}%。",
+            f"最新统计表明，采用{random.choice(['响应式设计', 'AI驱动内容', '个性化用户体验', '多渠道营销'])}的网站，转化率平均提高{random.randint(20, 50)}%。",
+            f"{random.randint(70, 90)}%的成功案例表明，{random.choice(['内容质量', '页面速度', '移动友好性', '用户界面设计'])}是影响排名的关键因素。"
+        ]
     
-    # 插入更新区块
-    new_content = content[:start_pos] + latest_update_section + content[start_pos:]
-    log_message(f"已在文章 {article_path} 中添加新的最近更新区块 (ID: {content_id})")
+    # 随机选择更新项目
+    random.shuffle(update_items)
+    selected_items = update_items[:random.randint(2, len(update_items))]
+    update_content = "\n".join([f"<li>{item}</li>" for item in selected_items])
     
-    # 写回文件
-    with open(article_path, 'w', encoding='utf-8') as f:
-        f.write(new_content)
+    latest_update_html = f"""
+{CONTENT_BLOCK_MARKERS['latest_update']}
+<style>
+.latest-update-box {{
+  background-color: #f8f9fa;
+  border-left: 4px solid #4CAF50;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}}
+.latest-update-box h4 {{
+  margin-top: 0;
+  color: #2E7D32;
+  font-weight: 600;
+}}
+.latest-update-box ul {{
+  margin-bottom: 0;
+  padding-left: 20px;
+}}
+.latest-update-box .update-date {{
+  font-size: 0.85em;
+  color: #666;
+  margin-top: 10px;
+  text-align: right;
+}}
+</style>
+<div class="latest-update-box" data-update-id="{content_id}">
+  <h4>📊 {update_type}</h4>
+  <ul>
+    {update_content}
+  </ul>
+  <div class="update-date">更新日期: {current_date}</div>
+</div>
+{CONTENT_BLOCK_MARKERS['latest_update_end']}
+"""
     
-    return True
+    # 插入最新更新区块到文章开始位置之后
+    updated_content = cleaned_content[:article_start] + latest_update_html + cleaned_content[article_start:]
+    
+    # 检查是否真的有变化
+    if updated_content != content:
+        log_message(f"已在文章 {os.path.basename(article_path)} 中添加新的最近更新区块 (ID: {content_id})")
+        with open(article_path, 'w', encoding='utf-8') as f:
+            f.write(updated_content)
+        return True
+    
+    return False
 
 def insert_new_content(article_path, article_config):
     """在文章现有内容中插入新的段落和数据，而非完全替换"""
@@ -585,7 +606,7 @@ def add_internal_links(article_path, article_config, all_articles):
         # 获取其他文章的关键词
         other_keywords = other_article.get('keywords', [])
         if not other_keywords:
-            other_article_path = os.path.join(ARTICLES_DIR, other_filename)
+            other_article_path = normalize_path(os.path.join(ARTICLES_DIR, other_filename))
             if os.path.exists(other_article_path):
                 with open(other_article_path, 'r', encoding='utf-8') as f:
                     other_content = f.read()
@@ -596,7 +617,7 @@ def add_internal_links(article_path, article_config, all_articles):
         common_keywords = set(current_keywords).intersection(set(other_keywords))
         if common_keywords:
             # 获取文章标题
-            other_article_path = os.path.join(ARTICLES_DIR, other_filename)
+            other_article_path = normalize_path(os.path.join(ARTICLES_DIR, other_filename))
             if os.path.exists(other_article_path):
                 with open(other_article_path, 'r', encoding='utf-8') as f:
                     other_content = f.read()
@@ -780,7 +801,7 @@ def optimize_images(article_path):
             continue
         
         # 构建图片路径
-        img_path = os.path.join(os.path.dirname(article_path), img_src)
+        img_path = normalize_path(os.path.join(os.path.dirname(article_path), img_src))
         if not os.path.exists(img_path):
             continue
         
@@ -789,7 +810,7 @@ def optimize_images(article_path):
             img_name = os.path.basename(img_src)
             img_ext = os.path.splitext(img_name)[1].lower()
             optimized_img_name = f"optimized_{img_name}"
-            optimized_img_path = os.path.join(IMAGES_DIR, optimized_img_name)
+            optimized_img_path = normalize_path(os.path.join(IMAGES_DIR, optimized_img_name))
             
             # 优化图片尺寸和质量
             with Image.open(img_path) as img:
@@ -1318,11 +1339,37 @@ document.addEventListener('DOMContentLoaded', function() {
         log_message("已创建images目录")
     
     # 检查微信二维码图片是否存在
-    qrcode_path = os.path.join('images', 'optimized_wechat-qrcode.jpg')
+    qrcode_path = normalize_path(os.path.join('images', 'optimized_wechat-qrcode.jpg'))
     if not os.path.exists(qrcode_path):
         # 如果图片不存在，创建一个简单的占位图片
         try:
-            # 尝试使用PIL创建一个简单的二维码占位图
+            # 尝试加载系统字体，根据不同操作系统选择不同的字体
+            if platform.system() == 'Windows':
+                font = ImageFont.truetype("arial.ttf", 20)
+            elif platform.system() == 'Linux':
+                # Linux系统常用字体路径
+                font_paths = [
+                    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                    "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+                    "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
+                ]
+                font = None
+                for font_path in font_paths:
+                    try:
+                        if os.path.exists(font_path):
+                            font = ImageFont.truetype(font_path, 20)
+                            break
+                    except:
+                        continue
+                if font is None:
+                    font = ImageFont.load_default()
+            else:
+                # macOS或其他系统
+                try:
+                    font = ImageFont.truetype("Arial.ttf", 20)
+                except:
+                    font = ImageFont.load_default()
+            
             # 创建一个200x200的白色图片
             img = Image.new('RGB', (200, 200), color='white')
             draw = ImageDraw.Draw(img)
@@ -1331,12 +1378,6 @@ document.addEventListener('DOMContentLoaded', function() {
             draw.rectangle([(0, 0), (199, 199)], outline='black')
             
             # 添加文字
-            try:
-                # 尝试加载字体，如果失败则使用默认字体
-                font = ImageFont.truetype("arial.ttf", 20)
-            except:
-                font = ImageFont.load_default()
-            
             draw.text((40, 80), "微信二维码", fill='black', font=font)
             draw.text((30, 110), "请替换为实际图片", fill='black', font=font)
             
@@ -1347,6 +1388,10 @@ document.addEventListener('DOMContentLoaded', function() {
             log_message(f"创建微信二维码占位图失败: {str(e)}")
     
     return True
+
+def normalize_path(path):
+    """标准化路径，确保在不同操作系统上使用正确的路径分隔符"""
+    return os.path.normpath(path)
 
 def update_articles():
     """更新需要更新的文章"""
@@ -1364,7 +1409,7 @@ def update_articles():
     
     for article in config['articles']:
         if should_update_article(article):
-            article_path = os.path.join(ARTICLES_DIR, article['file'])
+            article_path = normalize_path(os.path.join(ARTICLES_DIR, article['file']))
             
             if not os.path.exists(article_path):
                 log_message(f"文件不存在: {article_path}")
@@ -1463,6 +1508,8 @@ if __name__ == "__main__":
         log_message("所有更新完成")
     except Exception as e:
         log_message(f"更新过程中发生错误: {str(e)}")
+        import traceback
+        log_message(f"错误详情: {traceback.format_exc()}")
         
         # 尝试清理所有文章中可能留下的不完整区块
         try:
@@ -1471,7 +1518,7 @@ if __name__ == "__main__":
             cleanup_count = 0
             
             for article in config['articles']:
-                article_path = os.path.join(ARTICLES_DIR, article['file'])
+                article_path = normalize_path(os.path.join(ARTICLES_DIR, article['file']))
                 if os.path.exists(article_path):
                     if cleanup_all_blocks(article_path):
                         cleanup_count += 1
@@ -1482,3 +1529,4 @@ if __name__ == "__main__":
                 log_message("未发现需要清理的不完整区块")
         except Exception as cleanup_error:
             log_message(f"清理过程中发生错误: {str(cleanup_error)}")
+            log_message(f"清理错误详情: {traceback.format_exc()}")
