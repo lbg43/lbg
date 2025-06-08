@@ -386,53 +386,6 @@
             
             <div class="related-articles">
                 <h3>相关文章</h3>
-                <div class="related-articles-grid">
-                    <div class="related-item">
-                        <a href="seo-guide.html">
-                            <img loading="lazy" src="../images/optimized_article3.jpg" alt="SEO最佳实践指南">
-                            <h4>SEO最佳实践指南</h4>
-                        </a>
-                    </div>
-                </div>
-            </div>
-                </div>
-            </div>
-        
-            
-    </div>
-    </section>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-about">
-                    <div class="logo">
-                        <img loading="lazy" src="../images/optimized_logo-white.png" alt="公司Logo" class="responsive-logo">
-                    </div>
-                    <p>我们是一家专注于提供高质量数字解决方案的公司，致力于帮助企业实现数字化转型和业务增长。</p>
-                    <div class="social-links">
-                        <a href="javascript:void(0)" class="social-link" id="footer-wechat-link"><i class="fab fa-weixin"></i></a>
-                        <a href="javascript:void(0)" onclick="alert('微博账号正在审核中');" class="social-link"><i class="fab fa-weibo"></i></a>
-                        <a href="javascript:void(0)" onclick="alert('LinkedIn账号正在审核中');" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="javascript:void(0)" onclick="alert('GitHub账号正在审核中');" class="social-link"><i class="fab fa-github"></i></a>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h3>服务</h3>
-            
-    
-                    <ul class="footer-links">
-                        <li><a href="../articles/website-development.html">网站开发</a></li>
-                        <li><a href="../articles/mobile-app-development.html">移动应用开发</a></li>
-                        <li><a href="../articles/ui-ux-design.html">UI/UX设计</a></li>
-                        <li><a href="../articles/seo-guide.html">数字营销</a></li>
-                        <li><a href="../articles/ecommerce-solutions.html">电子商务解决方案</a></li>
-                        <li><a href="../articles/cloud-services.html">云服务和托管</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>快速链接</h3>
             <!-- AUTO_UPDATE_BLOCK: NEW_INSIGHT -->
             <div class="new-insight-box" data-insight-id="673bf44b">
                 <h4>2025年最新趋势分析</h4>
@@ -497,7 +450,81 @@
                 }
             </style>
             <!-- AUTO_UPDATE_BLOCK_END: NEW_INSIGHT -->
+                
+                <style>
+                    .related-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                        gap: 30px;
+                        margin-top: 30px;
+                    }
+                    .related-item {
+                        background: #fff;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                        transition: all 0.3s ease;
+                    }
+                    .related-item:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                    }
+                    .related-item img {
+                        width: 100%;
+                        height: 180px;
+                        object-fit: cover;
+                    }
+                    .related-item h4 {
+                        padding: 15px;
+                        margin: 0;
+                        font-size: 18px;
+                        color: #333;
+                    }
+                </style>
+                
+                <div class="related-grid">
+                    <div class="related-item">
+                        <a href="seo-guide.html">
+                            <img loading="lazy" src="../images/optimized_article3.jpg" alt="SEO最佳实践指南">
+                            <h4>SEO最佳实践指南</h4>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo">
+                        <img loading="lazy" src="../images/optimized_logo-white.png" alt="公司Logo" class="responsive-logo">
+                    </div>
+                    <p>我们是一家专注于提供高质量数字解决方案的公司，致力于帮助企业实现数字化转型和业务增长。</p>
+                    <div class="social-links">
+                        <a href="javascript:void(0)" class="social-link" id="footer-wechat-link"><i class="fab fa-weixin"></i></a>
+                        <a href="javascript:void(0)" onclick="alert('微博账号正在审核中');" class="social-link"><i class="fab fa-weibo"></i></a>
+                        <a href="javascript:void(0)" onclick="alert('LinkedIn账号正在审核中');" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="javascript:void(0)" onclick="alert('GitHub账号正在审核中');" class="social-link"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>服务</h3>
+            
     
+                    <ul class="footer-links">
+                        <li><a href="../articles/website-development.html">网站开发</a></li>
+                        <li><a href="../articles/mobile-app-development.html">移动应用开发</a></li>
+                        <li><a href="../articles/ui-ux-design.html">UI/UX设计</a></li>
+                        <li><a href="../articles/seo-guide.html">数字营销</a></li>
+                        <li><a href="../articles/ecommerce-solutions.html">电子商务解决方案</a></li>
+                        <li><a href="../articles/cloud-services.html">云服务和托管</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>快速链接</h3>
                     <ul class="footer-links">
                         <li><a href="../index.html#home">首页</a></li>
                         <li><a href="../index.html#services">服务</a></li>
